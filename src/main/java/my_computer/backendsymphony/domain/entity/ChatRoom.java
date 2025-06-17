@@ -2,6 +2,8 @@ package my_computer.backendsymphony.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -19,8 +21,9 @@ import java.util.List;
 public class ChatRoom {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(insertable = false, updatable = false, nullable = false, columnDefinition = "CHAR(36)")
+    private String id;
 
     private String name;
 
@@ -35,9 +38,9 @@ public class ChatRoom {
     @JoinColumn(name = "class_room_id")
     private ClassRoom classRoom;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by", nullable = false)
-    private User createdBy;
+    @CreatedBy
+    @Column(name = "created_by")
+    private String createdBy;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<MessageContent> messages;

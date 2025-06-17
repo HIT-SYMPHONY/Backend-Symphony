@@ -8,8 +8,8 @@ import java.util.Objects;
 @Data
 public class ChatRoomUserId implements Serializable {
 
-    private Long chatRoom;
-    private Long user;
+    private String chatRoom;
+    private String user;
 
     @Override
     public boolean equals(Object o) {

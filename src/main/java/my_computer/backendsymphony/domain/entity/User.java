@@ -2,6 +2,9 @@ package my_computer.backendsymphony.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import my_computer.backendsymphony.constant.Gender;
+import my_computer.backendsymphony.constant.Role;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -21,8 +24,9 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(insertable = false, updatable = false, nullable = false, columnDefinition = "CHAR(36)")
+    private String id;
 
     @Column(nullable = false)
     private String username;
@@ -70,35 +74,8 @@ public class User {
 
     private String intake;
 
-    @OneToMany(mappedBy = "createdBy",  fetch = FetchType.LAZY)
-    private List<Post> posts;
-
-    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<CommentPost> commentPosts;
-
-    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<CommentCompetition> commentCompetitions;
-
-    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Notification> notifications;
-
-    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
-    private List<Competition> competitions;
-
-    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
-    private List<ChatRoom> chatRooms;
-
-    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<MessageContent> messageContents;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ChatRoomUser> chatRoomUsers;
-
-    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
-    private List<Lesson> lessons;
-
-    @OneToMany(mappedBy = "leader", fetch = FetchType.LAZY)
-    private List<ClassRoom> leaderClasses;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

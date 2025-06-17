@@ -1,4 +1,4 @@
-package my_computer.backendsymphony.domain.entity;
+package my_computer.backendsymphony.constant;
 
 public enum Role {
     USER,

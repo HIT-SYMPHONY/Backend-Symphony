@@ -19,8 +19,9 @@ import java.util.List;
 public class ClassRoom {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(insertable = false, updatable = false, nullable = false, columnDefinition = "CHAR(36)")
+    private String id;
 
     private String name;
 
@@ -35,9 +36,8 @@ public class ClassRoom {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "leader_id")
-    private User leader;
+    private String leaderId;
 
     @ManyToMany(mappedBy = "classRooms", fetch = FetchType.LAZY)
     private List<User> members;
@@ -54,6 +54,6 @@ public class ClassRoom {
     @OneToMany(mappedBy = "classRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Lesson> lessons;
 
-    @OneToOne(mappedBy = "classRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToOne(mappedBy = "classRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private ChatRoom chatRoom;
 }
