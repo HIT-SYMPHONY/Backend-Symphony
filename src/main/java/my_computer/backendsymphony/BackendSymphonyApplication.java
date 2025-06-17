@@ -8,6 +8,7 @@ public class BackendSymphonyApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(BackendSymphonyApplication.class, args);
+        System.out.println("BackendSymphony Application Started");
     }
 
 }
