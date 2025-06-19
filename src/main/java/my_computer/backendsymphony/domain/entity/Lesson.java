@@ -30,7 +30,7 @@ public class Lesson {
     private String content;
 
     @Column(name = "location", length = 255)
-    private String location;
+    private String location = "806 A1";
 
     @Column(name = "time_slot", length = 10)
     private String timeSlot;
