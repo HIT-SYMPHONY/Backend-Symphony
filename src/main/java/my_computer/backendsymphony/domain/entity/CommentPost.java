@@ -25,6 +25,7 @@ public class CommentPost {
     @Column(insertable = false, updatable = false, nullable = false, columnDefinition = "CHAR(36)")
     private String id;
 
+    private LocalDateTime deadline;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
