@@ -29,6 +29,12 @@ public class Lesson {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @Column(name = "location", length = 255)
+    private String location;
+
+    @Column(name = "time_slot", length = 10)
+    private String timeSlot;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
