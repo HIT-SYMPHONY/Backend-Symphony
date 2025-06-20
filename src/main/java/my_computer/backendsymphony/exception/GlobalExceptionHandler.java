@@ -16,4 +16,5 @@ public class GlobalExceptionHandler {
         log.error(ex.getMessage(), ex);
         return VsResponseUtil.error(ex.getStatus(), ex.getMessage());
     }
+
 }
