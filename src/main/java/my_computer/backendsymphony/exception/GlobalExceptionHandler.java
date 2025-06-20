@@ -31,7 +31,6 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        log.warn("Validation failed for request body: {}", errors);
         return VsResponseUtil.error(HttpStatus.BAD_REQUEST, errors);
     }
 
@@ -44,7 +43,6 @@ public class GlobalExceptionHandler {
         );
 
         HttpStatus status = ex.getStatus();
-        log.error("DuplicateResourceException: Status={}, Message='{}'", status, resolvedMessage, ex);
         return VsResponseUtil.error(status, resolvedMessage);
     }
 
@@ -56,7 +54,6 @@ public class GlobalExceptionHandler {
                 LocaleContextHolder.getLocale()
         );
         HttpStatus status = ex.getStatus();
-        log.error("NotFoundException: Status={}, Message='{}'", status, resolvedMessage, ex);
         return VsResponseUtil.error(status, resolvedMessage);
     }
 
