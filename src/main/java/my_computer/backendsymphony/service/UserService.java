@@ -5,4 +5,6 @@ import my_computer.backendsymphony.domain.dto.response.UserResponse;
 
 public interface UserService {
     UserResponse createUser(UserCreationRequest request);
+
+    UserResponse getUser(String id);
 }

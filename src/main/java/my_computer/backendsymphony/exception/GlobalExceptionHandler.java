@@ -57,6 +57,13 @@ public class GlobalExceptionHandler {
         return VsResponseUtil.error(status, resolvedMessage);
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<RestData<?>> handleUnauthorizedException(UnauthorizedException ex) {
+        String message = messageSource.getMessage(ex.getMessage(), ex.getParams(), LocaleContextHolder.getLocale());
+        log.error(message, ex);
+        return VsResponseUtil.error(ex.getStatus(), message);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<RestData<?>> handleUncategorizedException(Exception ex) {
         log.error(ex.getMessage(), ex);

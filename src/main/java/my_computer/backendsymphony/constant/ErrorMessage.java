@@ -15,13 +15,12 @@ public class ErrorMessage {
         public static final String INVALID_STUDENT_CODE="{invalid.student-code}";
     }
     public static class Auth {
-        public static final String ERR_INCORRECT_USERNAME = "exception.auth.incorrect.username";
-        public static final String ERR_INCORRECT_PASSWORD = "exception.auth.incorrect.password";
+        public static final String ERR_INCORRECT_CREDENTIALS = "exception.auth.incorrect.credentials";
     }
 
     public static class User {
-        public static final String ERR_NOT_FOUND_USERNAME = "exception.user.not.found.username";
         public static final String ERR_NOT_FOUND_ID = "exception.user.not.found.id";
+        public static final String ERR_NOT_FOUND_STUDENT_CODE = "exception.user.not.found.student-code";
     }
 
 }
