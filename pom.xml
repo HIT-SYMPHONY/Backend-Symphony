@@ -94,12 +94,12 @@
       <version>6.4.5</version>
     </dependency>
 
-    <!-- authorization OAUTH 2 -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-      <version>3.5.0</version>
-    </dependency>
+<!--    &lt;!&ndash; authorization OAUTH 2 &ndash;&gt;-->
+<!--    <dependency>-->
+<!--      <groupId>org.springframework.boot</groupId>-->
+<!--      <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>-->
+<!--      <version>3.5.0</version>-->
+<!--    </dependency>-->
 
     <!-- send mail -->
     <dependency>
@@ -113,12 +113,12 @@
       <artifactId>commons-lang3</artifactId>
     </dependency>
 
-<!--    &lt;!&ndash; test &ndash;&gt;-->
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.boot</groupId>-->
-<!--      <artifactId>spring-boot-starter-test</artifactId>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
+    <!-- test -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 

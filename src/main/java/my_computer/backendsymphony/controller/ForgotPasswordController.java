@@ -16,13 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Map;
 
 @RestApiV1
-@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class ForgotPasswordController {
 
     private final ForgotPasswordService forgotPasswordService;
 
-    @PostMapping("/forgot-password")
+    @PostMapping("/auth/forgot-password")
     public ResponseEntity<RestData<?>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request){
         forgotPasswordService.forgotPassword(request.getEmail());
         return VsResponseUtil.success(Map.of("status", "SUCCESS", "message", "Temporary password has been sent to email"));

@@ -21,7 +21,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
 
     private final UserRepository userRepository;
 
-    //private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     private final EmailService emailService;
 
@@ -32,9 +32,9 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
 
         String temporaryPasswordPlainText = RandomStringUtils.randomAlphanumeric(10);
 
-        //user.setTemporaryPassword(passwordEncoder.encode(temporaryPasswordPlainText));
+        user.setTemporaryPassword(passwordEncoder.encode(temporaryPasswordPlainText));
 
-        user.setTemporaryPassword(temporaryPasswordPlainText);
+        //user.setTemporaryPassword(temporaryPasswordPlainText);
 
         user.setTemporaryPasswordExpiredAt(LocalDateTime.now().plusMinutes(15));
 
