@@ -1,7 +1,9 @@
 package my_computer.backendsymphony.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.domain.entity.User;
+import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.EmailService;
 import my_computer.backendsymphony.service.ForgotPasswordService;
@@ -17,29 +19,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ForgotPasswordServiceImpl implements ForgotPasswordService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    //private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
 
     @Override
-    public boolean forgotPassword(String email) {
+    public void forgotPassword(String email) throws NotFoundException {
 
-        Optional<User> userOptional = userRepository.findByEmail(email);
-
-        if (!userOptional.isPresent()) {
-            return false;
-        }
-
-        User user = userOptional.get();
+        User user = userRepository.findByEmail(email).orElseThrow(()->new NotFoundException(ErrorMessage.EmailNotFound));
 
         String temporaryPasswordPlainText = RandomStringUtils.randomAlphanumeric(10);
 
-        user.setTemporaryPassword(passwordEncoder.encode(temporaryPasswordPlainText));
+        //user.setTemporaryPassword(passwordEncoder.encode(temporaryPasswordPlainText));
+
+        user.setTemporaryPassword(temporaryPasswordPlainText);
 
         user.setTemporaryPasswordExpiredAt(LocalDateTime.now().plusMinutes(15));
 
@@ -52,6 +47,5 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
 
         emailService.sendEmail(user.getEmail(), "Your Temporary Password", emailBody);
 
-        return true;
     }
 }

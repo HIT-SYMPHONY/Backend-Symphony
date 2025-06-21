@@ -2,6 +2,8 @@ package my_computer.backendsymphony;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
 public class BackendSymphonyApplication {
@@ -10,5 +12,4 @@ public class BackendSymphonyApplication {
         SpringApplication.run(BackendSymphonyApplication.class, args);
         System.out.println("BackendSymphony Application Started");
     }
-
 }
