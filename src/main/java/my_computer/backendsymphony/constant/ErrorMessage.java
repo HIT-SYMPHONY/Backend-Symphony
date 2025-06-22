@@ -19,8 +19,8 @@ public class ErrorMessage {
     }
 
     public static class User {
-        public static final String ERR_NOT_FOUND_ID = "Không tìm thấy người dùng nào với mã sinh viên: {0}";
-        public static final String ERR_NOT_FOUND_STUDENT_CODE = "Không tìm thấy người dùng nào với id: {0}";
+        public static final String ERR_NOT_FOUND_ID = "Không tìm thấy người dùng nào với mã sinh viên: %s";
+        public static final String ERR_NOT_FOUND_STUDENT_CODE = "Không tìm thấy người dùng nào với id: %s";
     }
 
 }
