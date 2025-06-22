@@ -1,5 +1,5 @@
 package my_computer.backendsymphony.service;
 
-public interface ForgotPasswordService {
+public interface AuthService {
     void forgotPassword(String email);
 }

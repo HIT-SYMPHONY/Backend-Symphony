@@ -6,18 +6,16 @@ import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.EmailService;
-import my_computer.backendsymphony.service.ForgotPasswordService;
+import my_computer.backendsymphony.service.AuthService;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ForgotPasswordServiceImpl implements ForgotPasswordService {
+public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
 

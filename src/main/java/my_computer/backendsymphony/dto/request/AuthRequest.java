@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class ForgotPasswordRequest {
+public class AuthRequest {
 
     @NotBlank(message = "Email cannot blank!")
     @Email(message = "Invalid email format!")
