@@ -63,16 +63,6 @@ public class JwtTokenProvider {
         }
     }
 
-    public boolean validateToken(String token) {
-        try {
-            verifyToken(token);
-            return true;
-        } catch (Exception e) {
-            log.error("Token validation failed: {}", e.getMessage());
-            return false;
-        }
-    }
-
     public SignedJWT verifyToken(String token) throws JOSEException, ParseException {
         JWSVerifier verifier = new MACVerifier(SECRET_KEY.getBytes());
         SignedJWT signedJWT = SignedJWT.parse(token);
@@ -86,10 +76,6 @@ public class JwtTokenProvider {
         }
 
         return signedJWT;
-    }
-
-    public JWTClaimsSet getClaimsFromToken(String token) throws ParseException, JOSEException {
-        return verifyToken(token).getJWTClaimsSet();
     }
 
     private String buildScope(UserPrincipal userPrincipal) {

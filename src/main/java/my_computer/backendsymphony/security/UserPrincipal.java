@@ -52,7 +52,7 @@ public class UserPrincipal implements UserDetails {
 
   public static UserPrincipal create(User user) {
     List<GrantedAuthority> authorities = new LinkedList<>();
-    authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+    authorities.add(new SimpleGrantedAuthority(user.getRole().name()));
     return new UserPrincipal(user.getId(), user.getFirstName(), user.getLastName(),
         user.getStudentCode(), user.getPassword(), authorities);
   }
