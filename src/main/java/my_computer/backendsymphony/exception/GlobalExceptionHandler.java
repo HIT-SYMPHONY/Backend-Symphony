@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(UploadFileException.class)
-    public ResponseEntity<RestData<?>> handleUploadImageException(UploadFileException ex) {
-        log.error(ex.getMessage(), ex);
-        return VsResponseUtil.error(ex.getStatus(), ex.getMessage());
-    }
-
+  @ExceptionHandler(NotFoundException.class)
+  public ResponseEntity<RestData<?>> handleUploadImageException(NotFoundException ex) {
+    log.error(ex.getMessage(), ex);
+    return VsResponseUtil.error(ex.getStatus(), ex.getMessage());
+  }
 }
