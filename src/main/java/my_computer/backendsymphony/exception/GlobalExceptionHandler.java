@@ -45,4 +45,5 @@ public class GlobalExceptionHandler {
         log.error("An unexpected server error occurred: ", ex);
         return VsResponseUtil.error(HttpStatus.INTERNAL_SERVER_ERROR, ErrorMessage.ERR_EXCEPTION_GENERAL);
     }
+  
 }
