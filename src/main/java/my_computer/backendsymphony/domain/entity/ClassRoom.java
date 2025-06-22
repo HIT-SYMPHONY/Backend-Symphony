@@ -36,7 +36,6 @@ public class ClassRoom {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @JoinColumn(name = "leader_id")
     private String leaderId;
 
     @ManyToMany(mappedBy = "classRooms", fetch = FetchType.LAZY)

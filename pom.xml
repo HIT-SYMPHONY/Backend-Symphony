@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.4.4</version>
+    <version>3.3.1</version>
     <relativePath/>
   </parent>
 
@@ -72,6 +72,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <!--   Cloudinary   -->
+    <dependency>
+      <groupId>com.cloudinary</groupId>
+      <artifactId>cloudinary-http44</artifactId>
+      <version>1.29.0</version>
+    </dependency>
+
     <!-- Spring Boot Devtools -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -87,11 +94,30 @@
       <version>6.4.5</version>
     </dependency>
 
-    <!-- authorization OAUTH 2 -->
+<!--    &lt;!&ndash; authorization OAUTH 2 &ndash;&gt;-->
+<!--    <dependency>-->
+<!--      <groupId>org.springframework.boot</groupId>-->
+<!--      <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>-->
+<!--      <version>3.5.0</version>-->
+<!--    </dependency>-->
+
+    <!-- send mail -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-      <version>3.5.0</version>
+      <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
+
+    <!-- create temp password -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+    <!-- test -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
@@ -120,6 +146,8 @@
           </annotationProcessorPaths>
         </configuration>
       </plugin>
+
+
 
       <!-- Plugin dùng để build và chạy Spring Boot -->
       <plugin>

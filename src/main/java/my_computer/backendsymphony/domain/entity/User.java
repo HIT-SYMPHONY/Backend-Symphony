@@ -74,6 +74,12 @@ public class User {
 
     private String intake;
 
+    @Column(name = "temporary_password")
+    private String temporaryPassword;
+
+    @Column(name = "temporary_password_expired_at")
+    private LocalDateTime temporaryPasswordExpiredAt;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ChatRoomUser> chatRoomUsers;
 

@@ -5,4 +5,5 @@ import my_computer.backendsymphony.domain.dto.response.LoginResponse;
 
 public interface AuthService {
     LoginResponse login(LoginRequest request);
+    void forgotPassword(String email);
 }

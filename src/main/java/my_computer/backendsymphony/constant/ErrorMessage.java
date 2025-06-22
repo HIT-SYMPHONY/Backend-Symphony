@@ -23,4 +23,5 @@ public class ErrorMessage {
         public static final String ERR_NOT_FOUND_STUDENT_CODE = "Không tìm thấy người dùng nào với id: %s";
     }
 
+    public static final String EmailNotFound = "Email not found!";
 }
