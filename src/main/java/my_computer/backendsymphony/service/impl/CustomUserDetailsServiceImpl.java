@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.exception.NotFoundException;
@@ -26,9 +25,10 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService, CustomU
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String studentCode) throws UsernameNotFoundException {
-        User user=userRepository.findByStudentCode(studentCode)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_STUDENT_CODE,
-                        new String[]{studentCode}));
+        User user = userRepository.findByStudentCode(studentCode)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        String.format(ErrorMessage.User.ERR_NOT_FOUND_STUDENT_CODE, studentCode)
+                ));
         return UserPrincipal.create(user);
     }
 
@@ -36,10 +36,10 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService, CustomU
     @Transactional
     public UserDetails loadUserById(String id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() ->
-                        new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID,
-                                new String[]{id})
-                );
+                .orElseThrow(() -> new NotFoundException(
+                        ErrorMessage.User.ERR_NOT_FOUND_ID,
+                        new String[]{id}
+                ));
         return UserPrincipal.create(user);
     }
 }

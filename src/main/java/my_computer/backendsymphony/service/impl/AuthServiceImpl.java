@@ -1,8 +1,6 @@
 package my_computer.backendsymphony.service.impl;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.domain.dto.request.LoginRequest;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;

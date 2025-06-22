@@ -22,15 +22,17 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
+
     @Override
     public UserResponse createUser(UserCreationRequest request) {
+        // Đã sửa lại cách throw DuplicateResourceException
         if (userRepository.existsByStudentCode(request.getStudentCode())) {
-            throw new DuplicateResourceException(ErrorMessage.DUPLICATE_RESOURCE,
-                    new String[]{"Mã sinh viên " + request.getStudentCode()});
+            throw new DuplicateResourceException(ErrorMessage.ERR_DUPLICATE,
+                    new String[]{"Mã sinh viên", request.getStudentCode()});
         }
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new DuplicateResourceException(ErrorMessage.DUPLICATE_RESOURCE,
-                    new String[]{"Email " + request.getEmail()});
+            throw new DuplicateResourceException(ErrorMessage.ERR_DUPLICATE,
+                    new String[]{"Email", request.getEmail()});
         }
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));

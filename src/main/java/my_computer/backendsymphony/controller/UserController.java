@@ -15,10 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RestApiV1
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
 
-    UserService userService;
+    private final UserService userService;
 
     @PostMapping(UrlConstant.User.CREATE_USER)
     public ResponseEntity<?> createUser(@Valid @RequestBody UserCreationRequest request) {

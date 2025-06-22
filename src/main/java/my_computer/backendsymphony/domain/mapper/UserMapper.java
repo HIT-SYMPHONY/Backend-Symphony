@@ -21,7 +21,7 @@ public interface UserMapper {
             @Mapping(target = "imageUrl", ignore = true),
             @Mapping(target = "chatRoomUsers", ignore = true),
             @Mapping(target = "classRooms", ignore = true),
-            @Mapping(target = "fullName", expression = "java(request.getFirstName() + \" \" + request.getLastName())")
+            @Mapping(target = "fullName", expression = "java(request.getLastName() + \" \" + request.getFirstName())")
     })
     User toUser(UserCreationRequest request);
 

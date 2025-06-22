@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestApiV1
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthController {
 
     private final AuthService authService;
