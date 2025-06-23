@@ -1,8 +1,10 @@
 package my_computer.backendsymphony.constant;
 
 public class UrlConstant {
+
     public static class Auth {
         private static final String PRE_FIX = "/auth";
+        public static final String LOGIN = PRE_FIX + "/login";
         public static final String FORGOT_PASSWORD = PRE_FIX + "/forgot-password";
 
         private Auth() {
@@ -16,4 +18,5 @@ public class UrlConstant {
         private User() {
         }
     }
+
 }
