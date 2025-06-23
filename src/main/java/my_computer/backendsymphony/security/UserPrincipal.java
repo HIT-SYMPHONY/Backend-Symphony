@@ -31,16 +31,16 @@ public class UserPrincipal implements UserDetails {
 
   private final Collection<? extends GrantedAuthority> authorities;
 
-  public UserPrincipal(String username, String password, Collection<? extends GrantedAuthority> authorities) {
-    this(null, null, null, username, password, authorities);
+  public UserPrincipal(String studentCode, String password, Collection<? extends GrantedAuthority> authorities) {
+    this(null, null, null, studentCode, password, authorities);
   }
 
-  public UserPrincipal(String id, String firstName, String lastName, String username, String password,
+  public UserPrincipal(String id, String firstName, String lastName, String studentCode, String password,
                        Collection<? extends GrantedAuthority> authorities) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
-    this.username = username;
+    this.username = studentCode;
     this.password = password;
 
     if (authorities == null) {
@@ -52,9 +52,9 @@ public class UserPrincipal implements UserDetails {
 
   public static UserPrincipal create(User user) {
     List<GrantedAuthority> authorities = new LinkedList<>();
-    authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+    authorities.add(new SimpleGrantedAuthority(user.getRole().name()));
     return new UserPrincipal(user.getId(), user.getFirstName(), user.getLastName(),
-        user.getUsername(), user.getPassword(), authorities);
+        user.getStudentCode(), user.getPassword(), authorities);
   }
 
   @Override
