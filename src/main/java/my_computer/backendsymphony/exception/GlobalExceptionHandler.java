@@ -13,7 +13,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<RestData<?>> handleUploadImageException(NotFoundException ex) {
-        log.error(ex.getMessage(), ex);
         return VsResponseUtil.error(ex.getStatus(), ex.getMessage());
     }
 
