@@ -40,6 +40,12 @@ public class GlobalExceptionHandler {
         return VsResponseUtil.error(HttpStatus.BAD_REQUEST, errors);
     }
 
+    @ExceptionHandler(UploadFileException.class)
+    public ResponseEntity<RestData<?>> handleUploadFileException(UploadFileException ex) {
+        log.error("Error upload: ", ex);
+        return VsResponseUtil.error(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<RestData<?>> handleUncategorizedException(Exception ex) {
         log.error("An unexpected server error occurred: ", ex);
