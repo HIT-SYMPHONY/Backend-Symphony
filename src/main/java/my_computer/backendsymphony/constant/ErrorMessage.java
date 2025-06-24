@@ -1,10 +1,12 @@
 package my_computer.backendsymphony.constant;
 
 public class ErrorMessage {
+
     private ErrorMessage() {}
     public static final String ERR_EXCEPTION_GENERAL = "Có lỗi bất thường đã xảy ra";
-    public static final String UNAUTHORIZED = "Xin lỗi, bạn cần cung cấp thông tin xác thực để truy cập tài nguyên này";
+    public static final String UNAUTHORIZED = "Xin lỗi, bạn cần cung cấp thông tin xác thực để thực hiện hành động này";
     public static final String ERR_DUPLICATE = "%s với giá trị %s đã tồn tại.";
+    public static final String FORBIDDEN = "Xin lỗi, bạn không có quyền để thực hiện hành động này";
     //error validation dto
     public static class Validation {
         public static final String NOT_BLANK = "Trường này không thể trống";
