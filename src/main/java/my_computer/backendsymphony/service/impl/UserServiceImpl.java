@@ -25,7 +25,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse createUser(UserCreationRequest request) {
-        // Đã sửa lại cách throw DuplicateResourceException
         if (userRepository.existsByStudentCode(request.getStudentCode())) {
             throw new DuplicateResourceException(ErrorMessage.ERR_DUPLICATE,
                     new String[]{"Mã sinh viên", request.getStudentCode()});

@@ -6,6 +6,7 @@ import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -44,6 +45,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<RestData<?>> handleUploadFileException(UploadFileException ex) {
         log.error("Error upload: ", ex);
         return VsResponseUtil.error(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<RestData<?>> handleAccessDeniedException(AccessDeniedException ex) {
+        return VsResponseUtil.error(HttpStatus.FORBIDDEN, ErrorMessage.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)
