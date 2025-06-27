@@ -22,13 +22,13 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
 
     private String firstName;
 
     private String lastName;
 
+    @Size(min = 10, max = 10, message = ErrorMessage.Validation.INVALID_STUDENT_CODE)
     private String studentCode;
 
     private String password;
@@ -43,6 +43,7 @@ public class UserUpdateRequest {
 
     private LocalDate dateBirth;
 
+    @Email(message = ErrorMessage.Validation.INVALID_FORMAT_FIELD)
     private String email;
 
     private String intake;
