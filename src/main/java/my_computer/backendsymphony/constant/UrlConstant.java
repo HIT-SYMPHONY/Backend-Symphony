@@ -19,4 +19,11 @@ public class UrlConstant {
         }
     }
 
+    public static class Lesson {
+        private static final String PRE_FIX = "/lesson";
+        public static final String CREATE_LESSON = PRE_FIX + "/create-lesson";
+        private Lesson(){
+        }
+    }
+
 }
