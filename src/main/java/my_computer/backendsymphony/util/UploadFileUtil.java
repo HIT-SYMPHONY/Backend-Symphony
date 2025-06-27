@@ -5,6 +5,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.exception.UploadFileException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -71,6 +72,13 @@ public class UploadFileUtil {
             return publicId.toString();
         } catch (MalformedURLException e) {
             throw new UploadFileException("Invalid Cloudinary image URL");
+        }
+    }
+
+    public static void validateIsImage(MultipartFile file) {
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new UploadFileException(ErrorMessage.INVALID_IMAGE_FILE);
         }
     }
 }
