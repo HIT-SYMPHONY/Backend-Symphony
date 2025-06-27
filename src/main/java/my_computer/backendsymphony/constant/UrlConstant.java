@@ -15,6 +15,9 @@ public class UrlConstant {
         private static final String PRE_FIX = "/users";
         public static final String CREATE_USER = PRE_FIX;
         public static final String GET_USER=PRE_FIX+"/{id}";
+        public static final String GET_CURRENT_USER=PRE_FIX+"/me";
+        public static final String UPDATE_USER = PRE_FIX+"/{id}";
+        public static final String DELETE_USER = PRE_FIX+"/{id}";
         private User() {
         }
     }

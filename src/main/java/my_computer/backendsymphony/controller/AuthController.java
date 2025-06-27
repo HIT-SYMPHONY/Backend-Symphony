@@ -4,20 +4,15 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.RestData;
-import my_computer.backendsymphony.base.RestData;
 import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
-import my_computer.backendsymphony.dto.request.AuthRequest;
-import my_computer.backendsymphony.domain.dto.request.LoginRequest;
+import my_computer.backendsymphony.domain.dto.request.AuthRequest;
 import my_computer.backendsymphony.domain.dto.request.LoginRequest;
 import my_computer.backendsymphony.service.AuthService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.Map;
 
 import java.util.Map;
 

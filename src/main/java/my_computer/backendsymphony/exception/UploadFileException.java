@@ -10,7 +10,7 @@ public class UploadFileException extends RuntimeException {
 
     public UploadFileException(String message) {
         super(message);
-        this.status = HttpStatus.BAD_GATEWAY;
+        this.status = HttpStatus.BAD_REQUEST;
     }
 
     public UploadFileException(HttpStatus status, String message) {

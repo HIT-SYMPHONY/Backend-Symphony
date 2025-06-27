@@ -59,8 +59,6 @@ public class AuthServiceImpl implements AuthService {
 
         user.setTemporaryPassword(passwordEncoder.encode(temporaryPasswordPlainText));
 
-        //user.setTemporaryPassword(temporaryPasswordPlainText);
-
         user.setTemporaryPasswordExpiredAt(LocalDateTime.now().plusMinutes(15));
 
         userRepository.save(user);
