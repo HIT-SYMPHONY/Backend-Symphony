@@ -1,4 +1,4 @@
-package my_computer.backendsymphony.dto.request;
+package my_computer.backendsymphony.domain.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

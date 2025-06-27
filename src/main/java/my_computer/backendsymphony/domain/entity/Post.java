@@ -31,6 +31,8 @@ public class Post {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    private LocalDateTime deadline;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
