@@ -81,7 +81,7 @@ public class AuthServiceImpl implements AuthService {
         if (user.getTemporaryPassword() == null || user.getTemporaryPasswordExpiredAt().isBefore(LocalDateTime.now()))
             throw new UnauthorizedException("Code is invalid or expired!");
 
-        if (!passwordEncoder.matches(request.getCode(), user.getTemporaryPassword()))
+        if (!passwordEncoder.matches(request.getTempPassword(), user.getTemporaryPassword()))
             throw new UnauthorizedException("Code is incorrect!");
 
         UserPrincipal userPrincipal = UserPrincipal.create(user);
