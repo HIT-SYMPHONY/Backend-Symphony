@@ -32,7 +32,6 @@ public class AuthController {
         authService.forgotPassword(request.getEmail());
         return VsResponseUtil.success(Map.of("status", "SUCCESS", "message", "Temporary password has been sent to email"));
     }
-
     @PostMapping(UrlConstant.Auth.VERIFY_TEMPPASSWORD)
     public ResponseEntity<RestData<?>> handleVerifyCodeAndLogin(@Valid @RequestBody VerifyCodeRequest request) {
         LoginResponse loginResponse = authService.verifyCodeAndLogin(request);

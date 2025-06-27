@@ -77,12 +77,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse verifyCodeAndLogin(VerifyCodeRequest request) {
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(()->new UnauthorizedException("Incorrect code!"));
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UnauthorizedException("Incorrect code!"));
 
-        if (user.getTemporaryPassword()==null||user.getTemporaryPasswordExpiredAt().isBefore(LocalDateTime.now()))
+        if (user.getTemporaryPassword() == null || user.getTemporaryPasswordExpiredAt().isBefore(LocalDateTime.now()))
             throw new UnauthorizedException("Code is invalid or expired!");
 
-        if(!passwordEncoder.matches(request.getCode(),user.getTemporaryPassword()))
+        if (!passwordEncoder.matches(request.getCode(), user.getTemporaryPassword()))
             throw new UnauthorizedException("Code is incorrect!");
 
         UserPrincipal userPrincipal = UserPrincipal.create(user);
