@@ -2,6 +2,7 @@ package my_computer.backendsymphony.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.constant.ErrorMessage;
+import my_computer.backendsymphony.domain.dto.request.VerifyCodeRequest;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.repository.UserRepository;
@@ -70,5 +71,29 @@ public class AuthServiceImpl implements AuthService {
 
         emailService.sendEmail(user.getEmail(), "Your Temporary Password", emailBody);
 
+    }
+    @Override
+    public LoginResponse verifyCodeAndLogin(VerifyCodeRequest request) {
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UnauthorizedException("Incorrect code!"));
+
+        if (user.getTemporaryPassword() == null || user.getTemporaryPasswordExpiredAt().isBefore(LocalDateTime.now()))
+            throw new UnauthorizedException("Code is invalid or expired!");
+
+        if (!passwordEncoder.matches(request.getTempPassword(), user.getTemporaryPassword()))
+            throw new UnauthorizedException("Code is incorrect!");
+
+        UserPrincipal userPrincipal = UserPrincipal.create(user);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userPrincipal, null, userPrincipal.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String accessToken = jwtTokenProvider.generateToken(userPrincipal, Boolean.FALSE);
+        String refreshToken = jwtTokenProvider.generateToken(userPrincipal, Boolean.TRUE);
+
+        user.setTemporaryPassword(null);
+        user.setTemporaryPasswordExpiredAt(null);
+        userRepository.save(user);
+
+        return new LoginResponse(accessToken, refreshToken, userPrincipal.getId(), authentication.getAuthorities());
     }
 }
