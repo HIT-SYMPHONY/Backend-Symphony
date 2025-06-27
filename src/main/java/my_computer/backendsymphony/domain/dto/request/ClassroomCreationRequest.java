@@ -5,7 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import my_computer.backendsymphony.constant.ErrorMessage;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class ClassroomCreationRequest {
     @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
     String name;
-    LocalDateTime startTime;
+    LocalDate startTime;
     Integer duration;
     @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
     String leaderId;

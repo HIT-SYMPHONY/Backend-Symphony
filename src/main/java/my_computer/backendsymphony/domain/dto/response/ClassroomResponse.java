@@ -3,6 +3,7 @@ package my_computer.backendsymphony.domain.dto.response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -14,7 +15,7 @@ public class ClassroomResponse {
     String id;
     String name;
     String image;
-    LocalDateTime startTime;
+    LocalDate startTime;
     Integer duration;
     LocalDateTime createdAt;
     String leaderId;

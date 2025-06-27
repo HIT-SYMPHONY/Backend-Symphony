@@ -9,6 +9,6 @@ import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring")
 public interface ClassroomMapper {
-    ClassroomResponse toClassroomResponse(ClassRoom user);
+    ClassroomResponse toClassroomResponse(ClassRoom classroom);
     ClassRoom toClassRoom(ClassroomCreationRequest request);
 }
