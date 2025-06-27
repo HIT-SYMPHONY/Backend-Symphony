@@ -8,6 +8,8 @@ import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.request.AuthRequest;
 import my_computer.backendsymphony.domain.dto.request.LoginRequest;
+import my_computer.backendsymphony.domain.dto.request.VerifyCodeRequest;
+import my_computer.backendsymphony.domain.dto.response.LoginResponse;
 import my_computer.backendsymphony.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,5 +31,10 @@ public class AuthController {
     public ResponseEntity<RestData<?>> forgotPassword(@Valid @RequestBody AuthRequest request){
         authService.forgotPassword(request.getEmail());
         return VsResponseUtil.success(Map.of("status", "SUCCESS", "message", "Temporary password has been sent to email"));
+    }
+    @PostMapping(UrlConstant.Auth.VERIFY_TEMPPASSWORD)
+    public ResponseEntity<RestData<?>> handleVerifyCodeAndLogin(@Valid @RequestBody VerifyCodeRequest request) {
+        LoginResponse loginResponse = authService.verifyCodeAndLogin(request);
+        return VsResponseUtil.success(loginResponse);
     }
 }
