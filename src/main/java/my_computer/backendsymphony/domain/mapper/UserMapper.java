@@ -31,7 +31,6 @@ public interface UserMapper {
             @Mapping(target = "lastLogin", ignore = true),
             @Mapping(target = "chatRoomUsers", ignore = true),
             @Mapping(target = "classRooms", ignore = true),
-            @Mapping(target = "fullName", expression = "java(request.getLastName() + \" \" + request.getFirstName())")
     })
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void toUser(UserUpdateRequest request, @MappingTarget User user);

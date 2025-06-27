@@ -59,10 +59,31 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID,
                         new String[]{id}));
-        userMapper.toUser(request, user);
+
         if(request.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
+
+        if( request.getEmail() != null
+                && userRepository.existsByEmail(request.getEmail())
+                && !user.getEmail().equals(request.getEmail())
+        ) {
+            throw new DuplicateResourceException(ErrorMessage.ERR_DUPLICATE,
+                    new String[]{"Email", request.getEmail()});
+        }
+
+        if( request.getStudentCode() != null
+                && userRepository.existsByStudentCode(request.getStudentCode())
+                && !user.getStudentCode().equals(request.getStudentCode())
+        ) {
+            throw new DuplicateResourceException(ErrorMessage.ERR_DUPLICATE,
+                    new String[]{"StudentCode", request.getStudentCode()});
+        }
+
+        userMapper.toUser(request, user);
+
+        user.setFullName(user.getFirstName().trim()+ " " + user.getLastName().trim());
+
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
