@@ -50,4 +50,22 @@ public class ClassroomServiceImpl implements ClassroomService {
         response.setLeaderName(leader.getFullName());
         return response;
     }
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteClassroom(String id) {
+        ClassRoom classroomToDelete = findClassroomByIdOrElseThrow(id);
+        for (User member : classroomToDelete.getMembers()) {
+            member.getClassRooms().remove(classroomToDelete);
+        }
+        classroomRepository.delete(classroomToDelete);
+    }
+
+    private ClassRoom findClassroomByIdOrElseThrow(String id) {
+        return classroomRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(
+                        ErrorMessage.Classroom.ERR_NOT_FOUND_ID,
+                        new String[]{id}
+                ));
+    }
 }
