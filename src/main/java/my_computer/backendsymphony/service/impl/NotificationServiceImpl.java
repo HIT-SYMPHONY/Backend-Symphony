@@ -3,7 +3,9 @@ package my_computer.backendsymphony.service.impl;
 import my_computer.backendsymphony.domain.dto.request.NotificationRequest;
 import my_computer.backendsymphony.domain.dto.response.NotificationResponse;
 import my_computer.backendsymphony.service.NotificationService;
+import org.springframework.stereotype.Service;
 
+@Service
 public class NotificationServiceImpl implements NotificationService {
 
     @Override
