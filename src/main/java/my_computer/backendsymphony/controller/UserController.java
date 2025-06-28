@@ -6,9 +6,12 @@ import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
+import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
+import my_computer.backendsymphony.security.UserPrincipal;
 import my_computer.backendsymphony.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestApiV1
@@ -24,5 +27,20 @@ public class UserController {
     @GetMapping(UrlConstant.User.GET_USER)
     public ResponseEntity<?> getUser(@PathVariable String id) {
         return VsResponseUtil.success(HttpStatus.OK, userService.getUser(id));
+    }
+
+    @PatchMapping(UrlConstant.User.UPDATE_USER)
+    public ResponseEntity<?> updateUser(@PathVariable String id, @Valid @RequestBody UserUpdateRequest request) {
+        return VsResponseUtil.success(HttpStatus.OK, userService.updateUser(id, request));
+    }
+
+    @GetMapping(UrlConstant.User.GET_CURRENT_USER)
+    public ResponseEntity<?> getCurrentUser() {
+        return VsResponseUtil.success(HttpStatus.OK, userService.getCurrentUser());
+    }
+
+    @DeleteMapping(UrlConstant.User.DELETE_USER)
+    public ResponseEntity<?> deleteUser(@PathVariable String id) {
+        return VsResponseUtil.success(HttpStatus.OK, userService.deleteUser(id));
     }
 }

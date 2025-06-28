@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UploadFileException.class)
     public ResponseEntity<RestData<?>> handleUploadFileException(UploadFileException ex) {
         log.error("Error upload: ", ex);
-        return VsResponseUtil.error(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return VsResponseUtil.error(ex.getStatus(), ex.getMessage());
     }
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<RestData<?>> handleAccessDeniedException(AccessDeniedException ex) {
@@ -65,5 +65,10 @@ public class GlobalExceptionHandler {
         log.error("An unexpected server error occurred: ", ex);
         return VsResponseUtil.error(HttpStatus.INTERNAL_SERVER_ERROR, ErrorMessage.ERR_EXCEPTION_GENERAL);
     }
-  
+
+    @ExceptionHandler(InvalidException.class)
+    public ResponseEntity<RestData<?>> handleInvalidException(InvalidException ex) {
+        return VsResponseUtil.error(ex.getStatus(), ex.getMessage());
+    }
+
 }
