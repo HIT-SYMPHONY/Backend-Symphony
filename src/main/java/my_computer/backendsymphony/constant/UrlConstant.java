@@ -22,4 +22,11 @@ public class UrlConstant {
         }
     }
 
+    public static class Classroom {
+        private static final String PRE_FIX = "/classrooms";
+        public static final String CREATE_CLASSROOM = PRE_FIX;
+
+        private Classroom() {}
+    }
+
 }
