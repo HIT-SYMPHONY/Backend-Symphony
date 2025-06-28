@@ -20,16 +20,16 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping(UrlConstant.User.CREATE_USER)
+    @PostMapping(UrlConstant.User.USER_COMMON)
     public ResponseEntity<?> createUser(@Valid @RequestBody UserCreationRequest request) {
         return VsResponseUtil.success(HttpStatus.CREATED, userService.createUser(request));
     }
-    @GetMapping(UrlConstant.User.GET_USER)
+    @GetMapping(UrlConstant.User.USER_ID)
     public ResponseEntity<?> getUser(@PathVariable String id) {
         return VsResponseUtil.success(HttpStatus.OK, userService.getUser(id));
     }
 
-    @PatchMapping(UrlConstant.User.UPDATE_USER)
+    @PatchMapping(UrlConstant.User.USER_ID)
     public ResponseEntity<?> updateUser(@PathVariable String id, @Valid @RequestBody UserUpdateRequest request) {
         return VsResponseUtil.success(HttpStatus.OK, userService.updateUser(id, request));
     }
@@ -39,12 +39,12 @@ public class UserController {
         return VsResponseUtil.success(HttpStatus.OK, userService.getCurrentUser());
     }
 
-    @DeleteMapping(UrlConstant.User.DELETE_USER)
+    @DeleteMapping(UrlConstant.User.USER_ID)
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
         return VsResponseUtil.success(HttpStatus.OK, userService.deleteUser(id));
     }
 
-    @GetMapping(UrlConstant.User.GET_ALL_USER)
+    @GetMapping(UrlConstant.User.USER_COMMON)
     public ResponseEntity<?> getAllUser() {
         return VsResponseUtil.success(HttpStatus.OK, userService.getAllUsers());
     }
