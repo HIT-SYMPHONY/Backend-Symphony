@@ -5,11 +5,15 @@ import my_computer.backendsymphony.domain.dto.response.NotificationResponse;
 import my_computer.backendsymphony.domain.entity.Notification;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring")
 public interface NotificationMapper {
 
-    @Mapping(source = "classRoom.id", target = "classRoomId")
+    @Mappings({
+        @Mapping(source = "classRoom.id", target = "classRoomId"),
+        @Mapping(source = "classRoom.name", target = "classRoomName"),
+    })
     NotificationResponse toNotificationResponse(Notification notification);
 
     @Mapping(target = "classRoom", ignore = true)
