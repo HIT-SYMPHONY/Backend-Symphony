@@ -43,4 +43,9 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
         return VsResponseUtil.success(HttpStatus.OK, userService.deleteUser(id));
     }
+
+    @GetMapping(UrlConstant.User.GET_ALL_USER)
+    public ResponseEntity<?> getAllUser() {
+        return VsResponseUtil.success(HttpStatus.OK, userService.getAllUsers());
+    }
 }

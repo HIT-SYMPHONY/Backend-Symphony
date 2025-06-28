@@ -14,11 +14,15 @@ import my_computer.backendsymphony.exception.DuplicateResourceException;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.UserService;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +34,7 @@ public class UserServiceImpl implements UserService {
     PasswordEncoder passwordEncoder;
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse createUser(UserCreationRequest request) {
 
         if (userRepository.existsByStudentCode(request.getStudentCode())) {
@@ -88,6 +93,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse deleteUser(String id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID,
@@ -108,6 +114,13 @@ public class UserServiceImpl implements UserService {
                         new String[]{userId})
                 );
         return userMapper.toUserResponse(user);
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<UserResponse> getAllUsers(){
+        List<User> users = userRepository.findAll();
+        return userMapper.toListUserResponse(users);
     }
 
 }

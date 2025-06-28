@@ -7,10 +7,14 @@ import my_computer.backendsymphony.domain.entity.User;
 import org.mapstruct.*;
 import org.springframework.context.annotation.Bean;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
     UserResponse toUserResponse(User user);
+
+    List<UserResponse> toListUserResponse(List<User> users);
 
     @Mappings({
             @Mapping(target = "id", ignore = true),

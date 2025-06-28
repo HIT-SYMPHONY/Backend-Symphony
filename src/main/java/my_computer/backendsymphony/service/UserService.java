@@ -6,6 +6,8 @@ import my_computer.backendsymphony.domain.dto.response.UserResponse;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.security.UserPrincipal;
 
+import java.util.List;
+
 public interface UserService {
 
     UserResponse createUser(UserCreationRequest request);
@@ -17,4 +19,6 @@ public interface UserService {
     UserResponse deleteUser(String id);
 
     public UserResponse getCurrentUser();
+
+    public List<UserResponse> getAllUsers();
 }
