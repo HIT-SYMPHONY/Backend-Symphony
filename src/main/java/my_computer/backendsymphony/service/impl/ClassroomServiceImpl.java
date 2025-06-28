@@ -52,6 +52,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteClassroom(String id) {
         ClassRoom classroomToDelete = findClassroomByIdOrElseThrow(id);
         for (User member : classroomToDelete.getMembers()) {
