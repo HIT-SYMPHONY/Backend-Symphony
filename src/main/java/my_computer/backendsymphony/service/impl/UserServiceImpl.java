@@ -64,21 +64,21 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
-        if( request.getEmail() != null
-                && userRepository.existsByEmail(request.getEmail())
-                && !user.getEmail().equals(request.getEmail())
-        ) {
-            throw new DuplicateResourceException(ErrorMessage.ERR_DUPLICATE,
-                    new String[]{"Email", request.getEmail()});
+        if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())) {
+            if (userRepository.existsByEmail(request.getEmail())) {
+                throw new DuplicateResourceException(ErrorMessage.ERR_DUPLICATE,
+                        new String[]{"Email", request.getEmail()});
+            }
         }
 
-        if( request.getStudentCode() != null
-                && userRepository.existsByStudentCode(request.getStudentCode())
-                && !user.getStudentCode().equals(request.getStudentCode())
-        ) {
-            throw new DuplicateResourceException(ErrorMessage.ERR_DUPLICATE,
-                    new String[]{"StudentCode", request.getStudentCode()});
+
+        if (request.getStudentCode() != null && !request.getStudentCode().equals(user.getStudentCode())) {
+            if (userRepository.existsByStudentCode(request.getStudentCode())) {
+                throw new DuplicateResourceException(ErrorMessage.ERR_DUPLICATE,
+                        new String[]{"Student Code: ", request.getStudentCode()});
+            }
         }
+
 
         userMapper.toUser(request, user);
 
