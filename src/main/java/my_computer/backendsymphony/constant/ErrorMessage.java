@@ -27,5 +27,9 @@ public class ErrorMessage {
         public static final String ERR_NOT_FOUND_STUDENT_CODE = "Không tìm thấy người dùng nào với mã sinh viên: %s";
     }
 
+    public static class Classroom {
+        public static final String ERR_NOT_FOUND_ID= "Không tìm thấy lớp học nào với id: %s";
+    }
+
     public static final String EmailNotFound = "Email not found!";
 }

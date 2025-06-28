@@ -7,4 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ClassroomService {
     ClassroomResponse createClassroom(ClassroomCreationRequest request, MultipartFile imageFile);
 
+    void deleteClassroom(String id);
 }
