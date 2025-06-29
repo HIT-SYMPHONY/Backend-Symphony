@@ -7,6 +7,8 @@ import lombok.experimental.FieldDefaults;
 import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationRequestDto;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
 import my_computer.backendsymphony.domain.dto.request.ClassroomCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
@@ -52,4 +54,12 @@ public class ClassroomController {
     public ResponseEntity<?> getClassroom(@PathVariable String id) {
         return VsResponseUtil.success(classroomService.getClassroomById(id));
     }
+
+    @GetMapping(UrlConstant.Classroom.GET_CLASSROOMS)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getAllClassrooms(PaginationRequestDto request) {
+        PaginationResponseDto<ClassroomResponse> response = classroomService.getAllClassrooms(request);
+        return VsResponseUtil.success(response);
+    }
+
 }
