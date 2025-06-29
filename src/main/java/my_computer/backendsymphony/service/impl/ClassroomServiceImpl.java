@@ -45,6 +45,8 @@ public class ClassroomServiceImpl implements ClassroomService {
         User leader = userRepository.findById(request.getLeaderId())
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID,
                         new String[]{request.getLeaderId()}));
+        if (leader.getRole() != Role.LEADER)
+            throw new InvalidException(ErrorMessage.Classroom.USER_IS_NOT_LEADER);
         ClassRoom classRoom = classroomMapper.toClassRoom(request);
         if (imageFile != null && !imageFile.isEmpty()) {
             UploadFileUtil.validateIsImage(imageFile);
@@ -70,8 +72,8 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Transactional
     public ClassroomResponse updateClassroom(String id, ClassroomUpdateRequest request, MultipartFile imageFile) {
         ClassRoom existingClassroom = findClassroomByIdOrElseThrow(id);
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        if (!isLeaderOfClassroom(existingClassroom,authentication))
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!isLeaderOfClassroom(existingClassroom, authentication))
             throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
         if (request.getName() != null) {
             if (request.getName().isBlank()) {
@@ -112,12 +114,38 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public boolean isLeaderOfClassroom(ClassRoom classroom, Authentication authentication) {
+    @Transactional(readOnly = true)
+    public ClassroomResponse getClassroomById(String id) {
+        ClassRoom classRoom = findClassroomByIdOrElseThrow(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isValidLeader = isLeaderOfClassroom(classRoom, authentication);
+        boolean isValidMember = isMemberOfClassroom(classRoom, authentication);
+        if (!isValidLeader && !isValidMember)
+            throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
+        User leader=findUserByIdOrElseThrow(classRoom.getLeaderId());
+        ClassroomResponse response=classroomMapper.toClassroomResponse(classRoom);
+        response.setLeaderName(leader.getFullName());
+        return response;
+    }
+
+
+    private boolean isLeaderOfClassroom(ClassRoom classroom, Authentication authentication) {
         Jwt jwt = (Jwt) authentication.getPrincipal();
-        String role=jwt.getClaimAsString("scope");
+        String role = jwt.getClaimAsString("scope");
         if (role.equals(Role.ADMIN.name())) return true;
         String currentUserId = jwt.getSubject();
         return currentUserId.equals(classroom.getLeaderId());
+    }
+
+    private boolean isMemberOfClassroom(ClassRoom classRoom, Authentication authentication) {
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String role = jwt.getClaimAsString("scope");
+        if (role.equals(Role.ADMIN.name())) return true;
+        String currentUserId = jwt.getSubject();
+        for (User member : classRoom.getMembers()) {
+            if (currentUserId.equals(member.getId())) return true;
+        }
+        return false;
     }
 
     private ClassRoom findClassroomByIdOrElseThrow(String id) {
