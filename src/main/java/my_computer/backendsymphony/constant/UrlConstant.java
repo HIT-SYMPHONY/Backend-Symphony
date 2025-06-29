@@ -26,6 +26,7 @@ public class UrlConstant {
         private static final String PRE_FIX = "/lesson";
         public static final String CREATE_LESSON = PRE_FIX;
         public static final String DELETE_LESSON = PRE_FIX+"/{lessonId}";
+        public static final String UPDATE_LESSON = PRE_FIX+"/{lessonId}";
         private Lesson(){
         }
     }
