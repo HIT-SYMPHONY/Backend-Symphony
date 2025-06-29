@@ -10,9 +10,12 @@ import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
 import my_computer.backendsymphony.security.UserPrincipal;
 import my_computer.backendsymphony.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestApiV1
 @RequiredArgsConstructor
@@ -20,18 +23,25 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping(UrlConstant.User.USER_COMMON)
-    public ResponseEntity<?> createUser(@Valid @RequestBody UserCreationRequest request) {
-        return VsResponseUtil.success(HttpStatus.CREATED, userService.createUser(request));
+    @PostMapping(value = UrlConstant.User.USER_COMMON, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> createUser(
+            @Valid @RequestPart("data") UserCreationRequest request,
+            @RequestPart(value = "image", required = false)MultipartFile multipartFile) {
+        return VsResponseUtil.success(HttpStatus.CREATED, userService.createUser(request, multipartFile));
     }
+
     @GetMapping(UrlConstant.User.USER_ID)
     public ResponseEntity<?> getUser(@PathVariable String id) {
         return VsResponseUtil.success(HttpStatus.OK, userService.getUser(id));
     }
 
-    @PatchMapping(UrlConstant.User.USER_ID)
-    public ResponseEntity<?> updateUser(@PathVariable String id, @Valid @RequestBody UserUpdateRequest request) {
-        return VsResponseUtil.success(HttpStatus.OK, userService.updateUser(id, request));
+    @PatchMapping(value= UrlConstant.User.USER_ID, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateUser(
+            @PathVariable String id,
+            @Valid @RequestPart("data") UserUpdateRequest request,
+            @RequestPart(value = "image", required = false) MultipartFile multipartFile) {
+        return VsResponseUtil.success(HttpStatus.OK, userService.updateUser(id, request,multipartFile));
     }
 
     @GetMapping(UrlConstant.User.GET_CURRENT_USER)
@@ -40,11 +50,13 @@ public class UserController {
     }
 
     @DeleteMapping(UrlConstant.User.USER_ID)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
         return VsResponseUtil.success(HttpStatus.OK, userService.deleteUser(id));
     }
 
     @GetMapping(UrlConstant.User.USER_COMMON)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllUser() {
         return VsResponseUtil.success(HttpStatus.OK, userService.getAllUsers());
     }
