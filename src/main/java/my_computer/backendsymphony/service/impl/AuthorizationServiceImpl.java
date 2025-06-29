@@ -2,8 +2,10 @@ package my_computer.backendsymphony.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
+import my_computer.backendsymphony.domain.entity.Lesson;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.repository.ClassroomRepository;
+import my_computer.backendsymphony.repository.LessonRepository;
 import my_computer.backendsymphony.service.AuthorizationService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -14,7 +16,7 @@ import org.springframework.stereotype.Service;
 public class AuthorizationServiceImpl implements AuthorizationService {
 
     private final ClassroomRepository classroomRepository;
-
+    private final LessonRepository lessonRepository;
 
     @Override
     public boolean isClassLeader(Authentication authentication, String classRoomId) {
@@ -30,5 +32,15 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy lớp học với ID: " + classRoomId));
 
         return classRoom.getLeaderId() != null && classRoom.getLeaderId().equals(currentUserId);
+    }
+
+    public boolean canModifyLesson(Authentication authentication, String lessonId) {
+
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy buổi học với ID: " + lessonId));
+
+        String classRoomId = lesson.getClassRoom().getId();
+
+        return isClassLeader(authentication, classRoomId);
     }
 }
