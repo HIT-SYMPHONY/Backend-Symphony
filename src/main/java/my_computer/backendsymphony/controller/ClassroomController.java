@@ -47,4 +47,9 @@ public class ClassroomController {
         ClassroomResponse updatedClassroom = classroomService.updateClassroom(id, request,imageFile);
         return VsResponseUtil.success(HttpStatus.OK, updatedClassroom);
     }
+
+    @GetMapping(UrlConstant.Classroom.GET_CLASSROOM)
+    public ResponseEntity getClassroom(@PathVariable String id) {
+        return VsResponseUtil.success(classroomService.getClassroomById(id));
+    }
 }
