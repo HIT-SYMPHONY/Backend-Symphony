@@ -27,9 +27,7 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public LessonResponse createLesson(LessonCreationRequest request) {
-        ClassRoom classRoom = classroomRepository.findById(request.getClassRoomId())
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy lớp học"));
-
+        ClassRoom classRoom = classroomRepository.findById(request.getClassRoomId()).orElseThrow(() -> new NotFoundException("Không tìm thấy lớp học"));
         Lesson lesson = lessonMapper.toLesson(request);
         lesson.setClassRoom(classRoom);
         Lesson savedLesson = lessonRepository.save(lesson);
@@ -39,18 +37,27 @@ public class LessonServiceImpl implements LessonService {
 
 
     private LessonResponse mapToLessonResponseWithDetails(Lesson lesson) {
-        String lessonCreatorName = userRepository.findByUsername(lesson.getCreatedBy())
-                .map(User::getFullName)
-                .orElse("SYSTEM");
+
+        String leaderName;
+        ClassRoom classRoomOfThisLesson = lesson.getClassRoom();
+
+        if (classRoomOfThisLesson != null && classRoomOfThisLesson.getLeaderId() != null) {
+            leaderName = userRepository.findById(classRoomOfThisLesson.getLeaderId())
+                    .map(User::getFullName)
+                    .orElse("Không tìm thấy leader lớp học");
+        } else {
+            leaderName = "Lớp học chưa có leader";
+        }
 
         LessonResponse finalResponse = new LessonResponse();
         finalResponse.setId(lesson.getId());
-        finalResponse.setLeaderName(lessonCreatorName);
         finalResponse.setContent(lesson.getContent());
         finalResponse.setLocation(lesson.getLocation());
         finalResponse.setTimeSlot(lesson.getTimeSlot());
         finalResponse.setCreatedAt(lesson.getCreatedAt());
-        finalResponse.setClassName(lesson.getClassRoom().getName());
+
+        finalResponse.setLeaderName(leaderName);
+        finalResponse.setClassName(classRoomOfThisLesson.getName());
 
         return finalResponse;
     }

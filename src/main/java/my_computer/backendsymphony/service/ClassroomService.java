@@ -1,11 +1,11 @@
 package my_computer.backendsymphony.service;
 
+import my_computer.backendsymphony.domain.dto.pagination.PaginationRequestDto;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
 import my_computer.backendsymphony.domain.dto.request.ClassroomCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 
-import my_computer.backendsymphony.domain.entity.ClassRoom;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ClassroomService {
@@ -13,7 +13,9 @@ public interface ClassroomService {
 
     void deleteClassroom(String id);
 
-    ClassroomResponse updateClassroom(String id, ClassroomUpdateRequest request,MultipartFile imageFile);
+    ClassroomResponse updateClassroom(String id, ClassroomUpdateRequest request, MultipartFile imageFile);
 
-    boolean isLeaderOfClassroom(ClassRoom classRoom, Authentication authentication);
+    ClassroomResponse getClassroomById(String id);
+
+    PaginationResponseDto<ClassroomResponse> getAllClassrooms(PaginationRequestDto request);
 }

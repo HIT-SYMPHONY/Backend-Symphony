@@ -22,7 +22,7 @@ public class LessonController {
     private final LessonService lessonService;
 
     @PostMapping(UrlConstant.Lesson.CREATE_LESSON)
-    @PreAuthorize("hasRole('ADMIN') or @authorizationService.isClassLeader(authentication, #request.classRoomId)")
+    @PreAuthorize("hasRole('ADMIN') or @authz.isClassLeader(authentication, #request.classRoomId)")
     public ResponseEntity<RestData<?>> createLesson(@Valid @RequestBody LessonCreationRequest request){
         LessonResponse createdLesson = lessonService.createLesson(request);
         return VsResponseUtil.success(HttpStatus.CREATED,createdLesson);

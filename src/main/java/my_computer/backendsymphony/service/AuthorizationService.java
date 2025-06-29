@@ -1,6 +1,6 @@
 package my_computer.backendsymphony.service;
 
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.security.core.Authentication;
 
 public interface AuthorizationService {
     boolean isClassLeader(Authentication authentication, String classRoomId);
