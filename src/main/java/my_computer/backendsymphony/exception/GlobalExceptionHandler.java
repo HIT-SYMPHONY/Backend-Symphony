@@ -6,10 +6,13 @@ import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -44,11 +47,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UploadFileException.class)
     public ResponseEntity<RestData<?>> handleUploadFileException(UploadFileException ex) {
         log.error("Error upload: ", ex);
-        return VsResponseUtil.error(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return VsResponseUtil.error(ex.getStatus(), ex.getMessage());
     }
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<RestData<?>> handleAccessDeniedException(AccessDeniedException ex) {
         return VsResponseUtil.error(HttpStatus.FORBIDDEN, ErrorMessage.FORBIDDEN);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<RestData<?>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        log.warn("Malformed JSON request received: {}", ex.getMessage());
+        return VsResponseUtil.error(HttpStatus.BAD_REQUEST, ErrorMessage.INVALID_JSON_FORMAT);
     }
 
     @ExceptionHandler(Exception.class)
@@ -56,5 +65,10 @@ public class GlobalExceptionHandler {
         log.error("An unexpected server error occurred: ", ex);
         return VsResponseUtil.error(HttpStatus.INTERNAL_SERVER_ERROR, ErrorMessage.ERR_EXCEPTION_GENERAL);
     }
-  
+
+    @ExceptionHandler(InvalidException.class)
+    public ResponseEntity<RestData<?>> handleInvalidException(InvalidException ex) {
+        return VsResponseUtil.error(ex.getStatus(), ex.getMessage());
+    }
+
 }

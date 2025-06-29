@@ -15,15 +15,26 @@ public class UrlConstant {
         private static final String PRE_FIX = "/users";
         public static final String CREATE_USER = PRE_FIX;
         public static final String GET_USER=PRE_FIX+"/{id}";
+        public static final String GET_CURRENT_USER=PRE_FIX+"/me";
+        public static final String UPDATE_USER = PRE_FIX+"/{id}";
+        public static final String DELETE_USER = PRE_FIX+"/{id}";
         private User() {
         }
     }
 
     public static class Lesson {
         private static final String PRE_FIX = "/lesson";
-        public static final String CREATE_LESSON = PRE_FIX + "/create-lesson";
+        public static final String CREATE_LESSON = PRE_FIX;
         private Lesson(){
         }
+    }
+
+    public static class Classroom {
+        private static final String PRE_FIX = "/classrooms";
+        public static final String CREATE_CLASSROOM = PRE_FIX;
+        public static final String DELETE_CLASROOM=PRE_FIX + "/{id}";
+
+        private Classroom() {}
     }
 
 }

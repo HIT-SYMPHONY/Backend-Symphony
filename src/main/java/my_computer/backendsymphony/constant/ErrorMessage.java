@@ -7,6 +7,8 @@ public class ErrorMessage {
     public static final String UNAUTHORIZED = "Xin lỗi, bạn cần cung cấp thông tin xác thực để thực hiện hành động này";
     public static final String ERR_DUPLICATE = "%s với giá trị %s đã tồn tại.";
     public static final String FORBIDDEN = "Xin lỗi, bạn không có quyền để thực hiện hành động này";
+    public static final String INVALID_IMAGE_FILE="Chỉ cho phép hình ảnh PNG, JPG, JPEG, WEBP hoặc GIF";
+    public static final String INVALID_JSON_FORMAT = "Dữ liệu gửi lên có định dạng JSON không hợp lệ. Vui lòng kiểm tra lại.";
     //error validation dto
     public static class Validation {
         public static final String NOT_BLANK = "Trường này không thể trống";
@@ -21,8 +23,12 @@ public class ErrorMessage {
     }
 
     public static class User {
-        public static final String ERR_NOT_FOUND_ID = "Không tìm thấy người dùng nào với mã sinh viên: %s";
-        public static final String ERR_NOT_FOUND_STUDENT_CODE = "Không tìm thấy người dùng nào với id: %s";
+        public static final String ERR_NOT_FOUND_ID = "Không tìm thấy người dùng nào với id: %s";
+        public static final String ERR_NOT_FOUND_STUDENT_CODE = "Không tìm thấy người dùng nào với mã sinh viên: %s";
+    }
+
+    public static class Classroom {
+        public static final String ERR_NOT_FOUND_ID= "Không tìm thấy lớp học nào với id: %s";
     }
 
     public static final String EmailNotFound = "Email not found!";

@@ -17,10 +17,4 @@ public class LessonCreationRequest {
 
     @NotNull(message = "ID lớp học không được trống")
     private String classRoomId;
-
-    @NotBlank(message = "Tên leader không được để trống")
-    private String leaderName;
-
-    @NotBlank(message = "Tên lớp học không được để trống")
-    private String className;
 }

@@ -1,5 +1,7 @@
 package my_computer.backendsymphony.service.impl;
 
+import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
+import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.LessonMapper;
 import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.domain.dto.request.LessonCreationRequest;
@@ -7,7 +9,7 @@ import my_computer.backendsymphony.domain.dto.response.LessonResponse;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.Lesson;
 import my_computer.backendsymphony.exception.NotFoundException;
-import my_computer.backendsymphony.repository.ClassRoomRepository;
+import my_computer.backendsymphony.repository.ClassroomRepository;
 import my_computer.backendsymphony.repository.LessonRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.LessonService;
@@ -19,23 +21,38 @@ import org.springframework.stereotype.Service;
 public class LessonServiceImpl implements LessonService {
 
     private final LessonRepository lessonRepository;
-    private final ClassRoomRepository classRoomRepository;
+    private final ClassroomRepository classroomRepository;
     private final LessonMapper lessonMapper;
+    private final UserRepository userRepository;
 
     @Override
-    //@PreAuthorize("hasAnyRole('LEADER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('LEADER', 'ADMIN')")
     public LessonResponse createLesson(LessonCreationRequest request) {
-        ClassRoom classRoom = classRoomRepository.findById(request.getClassRoomId())
-                .orElseThrow(()-> new NotFoundException("Không tìm thấy lớp học với ID: " + request.getClassRoomId()));
+        ClassRoom classRoom = classroomRepository.findById(request.getClassRoomId())
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy lớp học"));
 
-        Lesson lesson = Lesson.builder()
-                .content(request.getContent())
-                .location(request.getLocation())
-                .timeSlot(request.getTimeSlot())
-                .classRoom(classRoom)
-                .build();
+        Lesson lesson = lessonMapper.toLesson(request);
+        lesson.setClassRoom(classRoom);
+        Lesson savedLesson = lessonRepository.save(lesson);
 
-        Lesson saveLesson = lessonRepository.save(lesson);
-        return lessonMapper.toLessonResponse(saveLesson);
+        return mapToLessonResponseWithDetails(savedLesson);
+    }
+
+
+    private LessonResponse mapToLessonResponseWithDetails(Lesson lesson) {
+        String lessonCreatorName = userRepository.findByUsername(lesson.getCreatedBy())
+                .map(User::getFullName)
+                .orElse("SYSTEM");
+
+        LessonResponse finalResponse = new LessonResponse();
+        finalResponse.setId(lesson.getId());
+        finalResponse.setLeaderName(lessonCreatorName);
+        finalResponse.setContent(lesson.getContent());
+        finalResponse.setLocation(lesson.getLocation());
+        finalResponse.setTimeSlot(lesson.getTimeSlot());
+        finalResponse.setCreatedAt(lesson.getCreatedAt());
+        finalResponse.setClassName(lesson.getClassRoom().getName());
+
+        return finalResponse;
     }
 }
