@@ -18,10 +18,12 @@ import my_computer.backendsymphony.repository.ClassroomRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.ClassroomService;
 import my_computer.backendsymphony.util.UploadFileUtil;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindException;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -68,7 +70,9 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Transactional
     public ClassroomResponse updateClassroom(String id, ClassroomUpdateRequest request, MultipartFile imageFile) {
         ClassRoom existingClassroom = findClassroomByIdOrElseThrow(id);
-
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        if (!isLeaderOfClassroom(existingClassroom,authentication))
+            throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
         if (request.getName() != null) {
             if (request.getName().isBlank()) {
                 throw new InvalidException(ErrorMessage.Classroom.NAME_CANNOT_BE_BLANK);
@@ -87,7 +91,7 @@ public class ClassroomServiceImpl implements ClassroomService {
             finalLeader = newLeader;
         } else {
             // get current leader to get leader name
-            finalLeader= findUserByIdOrElseThrow(existingClassroom.getLeaderId());
+            finalLeader = findUserByIdOrElseThrow(existingClassroom.getLeaderId());
         }
 
         classroomMapper.updateClassroom(request, existingClassroom);
@@ -105,6 +109,15 @@ public class ClassroomServiceImpl implements ClassroomService {
         response.setLeaderName(finalLeader.getFullName());
 
         return response;
+    }
+
+    @Override
+    public boolean isLeaderOfClassroom(ClassRoom classroom, Authentication authentication) {
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String role=jwt.getClaimAsString("scope");
+        if (role.equals(Role.ADMIN.name())) return true;
+        String currentUserId = jwt.getSubject();
+        return currentUserId.equals(classroom.getLeaderId());
     }
 
     private ClassRoom findClassroomByIdOrElseThrow(String id) {
