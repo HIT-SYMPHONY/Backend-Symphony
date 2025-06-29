@@ -21,7 +21,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-
 import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
@@ -35,7 +34,7 @@ public class WebSecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    private final String[] PUBLIC_ENDPOINTS = {"/api/v1/auth/**"};
+    private final String[] PUBLIC_ENDPOINTS={"/api/v1/auth/**","/api/v1/lesson/**"};
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
