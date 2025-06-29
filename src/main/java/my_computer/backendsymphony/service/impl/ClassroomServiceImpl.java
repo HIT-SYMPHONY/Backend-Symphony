@@ -34,7 +34,6 @@ public class ClassroomServiceImpl implements ClassroomService {
     UploadFileUtil uploadFileUtil;
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
     public ClassroomResponse createClassroom(ClassroomCreationRequest request, MultipartFile imageFile) {
         if (classroomRepository.existsByName(request.getName()))
             throw new DuplicateResourceException(
@@ -57,7 +56,6 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
     public void deleteClassroom(String id) {
         ClassRoom classroomToDelete = findClassroomByIdOrElseThrow(id);
         for (User member : classroomToDelete.getMembers()) {
@@ -68,7 +66,6 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
     public ClassroomResponse updateClassroom(String id, ClassroomUpdateRequest request, MultipartFile imageFile) {
         ClassRoom existingClassroom = findClassroomByIdOrElseThrow(id);
 
