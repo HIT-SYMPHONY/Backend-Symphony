@@ -17,5 +17,5 @@ public interface ClassroomService {
 
     ClassroomResponse getClassroomById(String id);
 
-    public PaginationResponseDto<ClassroomResponse> getAllClassrooms(PaginationRequestDto request);
+    PaginationResponseDto<ClassroomResponse> getAllClassrooms(PaginationRequestDto request);
 }
