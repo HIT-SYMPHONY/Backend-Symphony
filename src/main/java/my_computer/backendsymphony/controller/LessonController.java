@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -27,4 +29,12 @@ public class LessonController {
         LessonResponse createdLesson = lessonService.createLesson(request);
         return VsResponseUtil.success(HttpStatus.CREATED,createdLesson);
     }
+
+    @DeleteMapping(UrlConstant.Lesson.DELETE_LESSON)
+    @PreAuthorize("hasRole('ADMIN') or @authz.canModifyLesson(authentication, #lessonId)")
+    public ResponseEntity<RestData<?>> deleteLesson(@PathVariable String lessonId){
+        lessonService.deleteLesson(lessonId);
+        return VsResponseUtil.success("Xóa buổi học thành công!");
+    }
+
 }

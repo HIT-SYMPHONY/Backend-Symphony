@@ -35,6 +35,14 @@ public class LessonServiceImpl implements LessonService {
         return mapToLessonResponseWithDetails(savedLesson);
     }
 
+    @Override
+    public void deleteLesson(String lessonId) {
+        if (!lessonRepository.existsById(lessonId)) {
+            throw new NotFoundException("Không tìm thấy buổi học với ID: " + lessonId);
+        }
+        lessonRepository.deleteById(lessonId);
+    }
+
 
     private LessonResponse mapToLessonResponseWithDetails(Lesson lesson) {
 
