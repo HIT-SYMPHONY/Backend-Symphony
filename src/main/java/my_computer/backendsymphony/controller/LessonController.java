@@ -11,6 +11,7 @@ import my_computer.backendsymphony.domain.dto.response.LessonResponse;
 import my_computer.backendsymphony.service.LessonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +22,7 @@ public class LessonController {
     private final LessonService lessonService;
 
     @PostMapping(UrlConstant.Lesson.CREATE_LESSON)
+    @PreAuthorize("hasAnyRole('LEADER', 'ADMIN')")
     public ResponseEntity<RestData<?>> createLesson(@Valid @RequestBody LessonCreationRequest request){
         LessonResponse createdLesson = lessonService.createLesson(request);
         return VsResponseUtil.success(HttpStatus.CREATED,createdLesson);

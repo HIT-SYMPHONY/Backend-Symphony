@@ -26,7 +26,6 @@ public class LessonServiceImpl implements LessonService {
     private final UserRepository userRepository;
 
     @Override
-    @PreAuthorize("hasAnyRole('LEADER', 'ADMIN')")
     public LessonResponse createLesson(LessonCreationRequest request) {
         ClassRoom classRoom = classroomRepository.findById(request.getClassRoomId())
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy lớp học"));
