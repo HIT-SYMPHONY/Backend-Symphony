@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.constant.Role;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationRequestDto;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
+import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
 import my_computer.backendsymphony.domain.dto.request.ClassroomCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
@@ -17,7 +20,10 @@ import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.repository.ClassroomRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.ClassroomService;
+import my_computer.backendsymphony.util.PaginationUtil;
 import my_computer.backendsymphony.util.UploadFileUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +31,10 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -122,10 +132,39 @@ public class ClassroomServiceImpl implements ClassroomService {
         boolean isValidMember = isMemberOfClassroom(classRoom, authentication);
         if (!isValidLeader && !isValidMember)
             throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
-        User leader=findUserByIdOrElseThrow(classRoom.getLeaderId());
-        ClassroomResponse response=classroomMapper.toClassroomResponse(classRoom);
+        User leader = findUserByIdOrElseThrow(classRoom.getLeaderId());
+        ClassroomResponse response = classroomMapper.toClassroomResponse(classRoom);
         response.setLeaderName(leader.getFullName());
         return response;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PaginationResponseDto<ClassroomResponse> getAllClassrooms(PaginationRequestDto request) {
+        Pageable pageable = PaginationUtil.buildPageable(request);
+        Page<ClassRoom> classroomPage = classroomRepository.findAll(pageable);
+
+        List<ClassroomResponse> classroomResponses = classroomMapper.toClassroomResponseList(classroomPage.getContent());
+
+        if (!classroomResponses.isEmpty()) {
+            List<String> leaderIds = classroomResponses.stream()
+                    .map(ClassroomResponse::getLeaderId)
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            Map<String, User> leaderMap = userRepository.findAllById(leaderIds).stream()
+                    .collect(Collectors.toMap(User::getId, user -> user));
+
+            classroomResponses.forEach(response -> {
+                User leader = leaderMap.get(response.getLeaderId());
+                if (leader != null) {
+                    response.setLeaderName(leader.getFullName());
+                }
+            });
+        }
+
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, classroomPage);
+        return new PaginationResponseDto<>(meta, classroomResponses);
     }
 
 
