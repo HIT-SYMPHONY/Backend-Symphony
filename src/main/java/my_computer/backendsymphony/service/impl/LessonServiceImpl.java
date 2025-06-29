@@ -1,5 +1,6 @@
 package my_computer.backendsymphony.service.impl;
 
+import my_computer.backendsymphony.domain.dto.request.LessonUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.LessonMapper;
@@ -27,7 +28,8 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public LessonResponse createLesson(LessonCreationRequest request) {
-        ClassRoom classRoom = classroomRepository.findById(request.getClassRoomId()).orElseThrow(() -> new NotFoundException("Không tìm thấy lớp học"));
+        ClassRoom classRoom = classroomRepository.findById(request.getClassRoomId())
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy lớp học"));
         Lesson lesson = lessonMapper.toLesson(request);
         lesson.setClassRoom(classRoom);
         Lesson savedLesson = lessonRepository.save(lesson);
@@ -41,6 +43,27 @@ public class LessonServiceImpl implements LessonService {
             throw new NotFoundException("Không tìm thấy buổi học với ID: " + lessonId);
         }
         lessonRepository.deleteById(lessonId);
+    }
+
+    @Override
+    public LessonResponse updateLesson(String lessonId, LessonUpdateRequest request) {
+        Lesson lessonToUpdate = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy buổi học với ID: " + lessonId));
+
+        if (request.getContent() != null) {
+            lessonToUpdate.setContent(request.getContent());
+        }
+        if (request.getLocation() != null) {
+            lessonToUpdate.setLocation(request.getLocation());
+        }
+        if (request.getTimeSlot() != null) {
+            lessonToUpdate.setTimeSlot(request.getTimeSlot());
+        }
+
+        Lesson updatedLesson = lessonRepository.save(lessonToUpdate);
+
+        return mapToLessonResponseWithDetails(updatedLesson);
+
     }
 
 

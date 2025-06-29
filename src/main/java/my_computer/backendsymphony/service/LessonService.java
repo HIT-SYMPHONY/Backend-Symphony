@@ -7,4 +7,5 @@ import my_computer.backendsymphony.domain.dto.response.LessonResponse;
 public interface LessonService {
     LessonResponse createLesson(LessonCreationRequest request);
     void deleteLesson(String lessonId);
+    LessonResponse updateLesson(String lessonId, LessonUpdateRequest request);
 }
