@@ -1,10 +1,19 @@
 package my_computer.backendsymphony.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.domain.dto.request.NotificationRequest;
 import my_computer.backendsymphony.domain.dto.response.NotificationResponse;
+import my_computer.backendsymphony.domain.entity.ClassRoom;
+import my_computer.backendsymphony.domain.entity.Notification;
+import my_computer.backendsymphony.domain.mapper.NotificationMapper;
+import my_computer.backendsymphony.exception.NotFoundException;
+import my_computer.backendsymphony.repository.ClassroomRepository;
 import my_computer.backendsymphony.repository.NotificationRepository;
+import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.NotificationService;
+import my_computer.backendsymphony.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,10 +21,32 @@ import org.springframework.stereotype.Service;
 public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final NotificationMapper notificationMapper;
+    private final ClassroomRepository classroomRepository;
+    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Override
-    public NotificationResponse CreateNotification(NotificationRequest request) {
-        return null;
+    @PreAuthorize("hasRole('LEADER') or hasRole('ADMIN')")
+    public NotificationResponse createNotification(NotificationRequest request) {
+
+
+        ClassRoom classRoom = classroomRepository.findById(request.getClassRoomId())
+                .orElseThrow( ()-> new NotFoundException(
+                    ErrorMessage.Classroom.ERR_NOT_FOUND_ID,
+                    new String[]{
+                            request.getClassRoomId()
+                    }
+            ));
+
+        String currentUserId = userService.getCurrentUser().getId();
+
+        Notification notification = notificationMapper.toNotification(request);
+        notification.setCreatedBy(currentUserId);
+        notification.setClassRoom(classRoom);
+
+        notificationRepository.save(notification);
+        return notificationMapper.toNotificationResponse(notification);
     }
 
     @Override

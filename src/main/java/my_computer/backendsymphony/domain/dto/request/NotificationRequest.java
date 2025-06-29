@@ -18,7 +18,4 @@ public class NotificationRequest {
     @NotNull
     private String classRoomId;
 
-    @NotNull
-    private String createdBy;
-
 }

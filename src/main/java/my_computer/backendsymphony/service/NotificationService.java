@@ -5,7 +5,7 @@ import my_computer.backendsymphony.domain.dto.response.NotificationResponse;
 
 public interface NotificationService {
 
-    NotificationResponse CreateNotification(NotificationRequest request);
+    NotificationResponse createNotification(NotificationRequest request);
 
     NotificationResponse deleteNotification(String id);
 
