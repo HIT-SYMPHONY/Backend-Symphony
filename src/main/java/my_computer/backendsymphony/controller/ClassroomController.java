@@ -49,7 +49,7 @@ public class ClassroomController {
     }
 
     @GetMapping(UrlConstant.Classroom.GET_CLASSROOM)
-    public ResponseEntity getClassroom(@PathVariable String id) {
+    public ResponseEntity<?> getClassroom(@PathVariable String id) {
         return VsResponseUtil.success(classroomService.getClassroomById(id));
     }
 }
