@@ -29,6 +29,8 @@ public class ErrorMessage {
 
     public static class Classroom {
         public static final String ERR_NOT_FOUND_ID= "Không tìm thấy lớp học nào với id: %s";
+        public static final String NAME_CANNOT_BE_BLANK = "Tên lớp học không được để trống.";
+        public static final String USER_IS_NOT_LEADER="Người dùng phải không phải leader";
     }
 
     public static final String EmailNotFound = "Email not found!";
