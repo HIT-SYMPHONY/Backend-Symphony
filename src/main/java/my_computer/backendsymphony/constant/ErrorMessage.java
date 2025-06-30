@@ -14,6 +14,7 @@ public class ErrorMessage {
         public static final String NOT_BLANK = "Trường này không thể trống";
         public static final String INVALID_FORMAT_PASSWORD = "Mật khẩu không đủ mạnh (ít nhất 6 ký tự, bao gồm chữ và số)";
         public static final String NOT_NULL= "Trường này là bắt buộc";
+        public static final String NOT_EMPTY="Trường này không được để rỗng";
         public static final String INVALID_FORMAT_FIELD="Định dạng không hợp lệ";
         public static final String INVALID_DATE_PAST = "Ngày phải ở trong quá khứ";
         public static final String INVALID_STUDENT_CODE="Mã sinh viên phải có 10 ký tự";
@@ -25,12 +26,14 @@ public class ErrorMessage {
     public static class User {
         public static final String ERR_NOT_FOUND_ID = "Không tìm thấy người dùng nào với id: %s";
         public static final String ERR_NOT_FOUND_STUDENT_CODE = "Không tìm thấy người dùng nào với mã sinh viên: %s";
+        public static final String ERR_NOT_FOUND_ONE_OR_MORE_IDS="Không tìm thấy một hoặc nhiều id người dùng được cung cấp";
+        public static final String USER_IS_NOT_LEADER="Người dùng phải không phải leader";
     }
 
     public static class Classroom {
         public static final String ERR_NOT_FOUND_ID= "Không tìm thấy lớp học nào với id: %s";
         public static final String NAME_CANNOT_BE_BLANK = "Tên lớp học không được để trống.";
-        public static final String USER_IS_NOT_LEADER="Người dùng phải không phải leader";
+        public static final String CLASS_LEADER_CANNOT_BE_MEMBER="Leader của lớp học không thể được thêm vào thành viên bình thường";
     }
 
     public static final String EmailNotFound = "Email not found!";

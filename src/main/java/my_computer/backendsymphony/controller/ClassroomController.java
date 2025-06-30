@@ -9,6 +9,7 @@ import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationRequestDto;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
+import my_computer.backendsymphony.domain.dto.request.AddMembersRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
@@ -60,6 +61,14 @@ public class ClassroomController {
     public ResponseEntity<?> getAllClassrooms(PaginationRequestDto request) {
         PaginationResponseDto<ClassroomResponse> response = classroomService.getAllClassrooms(request);
         return VsResponseUtil.success(response);
+    }
+
+    @PostMapping(UrlConstant.Classroom.ADD_MEMBERS)
+    @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
+    public ResponseEntity<?> addMembersToClassroom(
+            @PathVariable  String id,
+            @Valid @RequestBody AddMembersRequest request) {
+        return VsResponseUtil.success(classroomService.addMembersToClassroom(id,request));
     }
 
 }

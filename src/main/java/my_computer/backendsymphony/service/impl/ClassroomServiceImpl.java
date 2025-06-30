@@ -8,8 +8,10 @@ import my_computer.backendsymphony.constant.Role;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationRequestDto;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
 import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
+import my_computer.backendsymphony.domain.dto.request.AddMembersRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomUpdateRequest;
+import my_computer.backendsymphony.domain.dto.response.AddMembersResponse;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.User;
@@ -32,8 +34,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,7 +60,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID,
                         new String[]{request.getLeaderId()}));
         if (leader.getRole() != Role.LEADER)
-            throw new InvalidException(ErrorMessage.Classroom.USER_IS_NOT_LEADER);
+            throw new InvalidException(ErrorMessage.User.USER_IS_NOT_LEADER);
         ClassRoom classRoom = classroomMapper.toClassRoom(request);
         if (imageFile != null && !imageFile.isEmpty()) {
             UploadFileUtil.validateIsImage(imageFile);
@@ -99,7 +103,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         if (request.getLeaderId() != null && !request.getLeaderId().equals(existingClassroom.getLeaderId())) {
             User newLeader = findUserByIdOrElseThrow(request.getLeaderId());
             if (newLeader.getRole() != Role.LEADER)
-                throw new InvalidException(ErrorMessage.Classroom.USER_IS_NOT_LEADER);
+                throw new InvalidException(ErrorMessage.User.USER_IS_NOT_LEADER);
             finalLeader = newLeader;
         } else {
             // get current leader to get leader name
@@ -165,6 +169,42 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         PagingMeta meta = PaginationUtil.buildPagingMeta(request, classroomPage);
         return new PaginationResponseDto<>(meta, classroomResponses);
+    }
+
+    @Override
+    @Transactional
+    public AddMembersResponse addMembersToClassroom(String classroomId, AddMembersRequest request) {
+        ClassRoom classroom = findClassroomByIdOrElseThrow(classroomId);
+        Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
+        if (!isLeaderOfClassroom(classroom,authentication))
+            throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
+        List<User> usersToAdd = userRepository.findAllById(request.getMemberIds());
+        if (usersToAdd.size() != request.getMemberIds().size()) {
+            throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ONE_OR_MORE_IDS);
+        }
+        List<String> newlyAddedIds = new ArrayList<>();
+        List<String> alreadyMemberIds = new ArrayList<>();
+        Set<String> currentMemberIds = classroom.getMembers().stream()
+                .map(User::getId)
+                .collect(Collectors.toSet());
+        for (User user : usersToAdd) {
+            if (user.getId().equals(classroom.getLeaderId())) {
+                throw new InvalidException(ErrorMessage.Classroom.CLASS_LEADER_CANNOT_BE_MEMBER);
+            }
+            if (currentMemberIds.contains(user.getId())) {
+                alreadyMemberIds.add(user.getId());
+            } else {
+                classroom.getMembers().add(user);
+                user.getClassRooms().add(classroom);
+                newlyAddedIds.add(user.getId());
+            }
+        }
+        return AddMembersResponse.builder()
+                .classroomId(classroomId)
+                .newlyAddedCount(newlyAddedIds.size())
+                .addedMemberIds(newlyAddedIds)
+                .alreadyMemberIds(alreadyMemberIds)
+                .build();
     }
 
 
