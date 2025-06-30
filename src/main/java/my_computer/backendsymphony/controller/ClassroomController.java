@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestApiV1
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class ClassroomController {
+public class    ClassroomController {
     ClassroomService classroomService;
 
     @PostMapping(value = UrlConstant.Classroom.CREATE_CLASSROOM, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
