@@ -7,12 +7,13 @@ import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
-import my_computer.backendsymphony.security.UserPrincipal;
+import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 import my_computer.backendsymphony.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestApiV1
 @RequiredArgsConstructor
@@ -42,5 +43,13 @@ public class UserController {
     @DeleteMapping(UrlConstant.User.DELETE_USER)
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
         return VsResponseUtil.success(HttpStatus.OK, userService.deleteUser(id));
+    }
+
+    @GetMapping(UrlConstant.User.GET_MY_CLASSROOMS)
+    public ResponseEntity<?> getMyClasses(
+            @RequestParam(value = "status", required = false) String status) {
+
+        List<ClassroomResponse> classrooms = userService.getMyClasses(status);
+        return VsResponseUtil.success(classrooms);
     }
 }
