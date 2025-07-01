@@ -71,4 +71,10 @@ public class    ClassroomController {
         return VsResponseUtil.success(classroomService.addMembersToClassroom(id,request));
     }
 
+    @GetMapping(UrlConstant.Classroom.GET_MEMBERS)
+    public ResponseEntity<?> getMembersInClassroom(
+            @PathVariable String id, PaginationRequestDto request) {
+        return VsResponseUtil.success(classroomService.getMembersInClassroom(id, request));
+    }
+
 }

@@ -13,9 +13,12 @@ import my_computer.backendsymphony.domain.dto.request.ClassroomCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.AddMembersResponse;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
+import my_computer.backendsymphony.domain.dto.response.UserResponse;
+import my_computer.backendsymphony.domain.dto.response.UserSummaryResponse;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.ClassroomMapper;
+import my_computer.backendsymphony.domain.mapper.UserMapper;
 import my_computer.backendsymphony.exception.DuplicateResourceException;
 import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;
@@ -46,6 +49,7 @@ import java.util.stream.Collectors;
 public class ClassroomServiceImpl implements ClassroomService {
     ClassroomRepository classroomRepository;
     UserRepository userRepository;
+    UserMapper userMapper;
     ClassroomMapper classroomMapper;
     UploadFileUtil uploadFileUtil;
 
@@ -175,8 +179,8 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Transactional
     public AddMembersResponse addMembersToClassroom(String classroomId, AddMembersRequest request) {
         ClassRoom classroom = findClassroomByIdOrElseThrow(classroomId);
-        Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
-        if (!isLeaderOfClassroom(classroom,authentication))
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!isLeaderOfClassroom(classroom, authentication))
             throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
         List<User> usersToAdd = userRepository.findAllById(request.getMemberIds());
         if (usersToAdd.size() != request.getMemberIds().size()) {
@@ -207,6 +211,21 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .build();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public PaginationResponseDto<UserSummaryResponse> getMembersInClassroom(String id, PaginationRequestDto request) {
+        ClassRoom classRoom=findClassroomByIdOrElseThrow(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isValidLeader = isLeaderOfClassroom(classRoom, authentication);
+        boolean isValidMember = isMemberOfClassroom(classRoom, authentication);
+        if (!isValidLeader && !isValidMember)
+            throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
+        Pageable pageable = PaginationUtil.buildPageable(request);
+        Page<User> memberPage = userRepository.findMembersByClassroomId(id, pageable);
+        List<UserSummaryResponse> memberResponses = userMapper.toUserSummaryResponseList(memberPage.getContent());
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, memberPage);
+        return new PaginationResponseDto<>(meta, memberResponses);
+    }
 
     private boolean isLeaderOfClassroom(ClassRoom classroom, Authentication authentication) {
         Jwt jwt = (Jwt) authentication.getPrincipal();
