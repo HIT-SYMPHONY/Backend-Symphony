@@ -19,6 +19,7 @@ import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.repository.ClassroomRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.UserService;
+import my_computer.backendsymphony.util.UploadFileUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.web.multipart.MultipartFile;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -40,9 +43,10 @@ public class UserServiceImpl implements UserService {
     PasswordEncoder passwordEncoder;
     ClassroomRepository classroomRepository;
     ClassroomMapper classroomMapper;
+    UploadFileUtil uploadFileUtil;
 
     @Override
-    public UserResponse createUser(UserCreationRequest request) {
+    public UserResponse createUser(UserCreationRequest request, MultipartFile imageFile) {
 
         if (userRepository.existsByStudentCode(request.getStudentCode())) {
             throw new DuplicateResourceException(ErrorMessage.ERR_DUPLICATE,
@@ -52,7 +56,15 @@ public class UserServiceImpl implements UserService {
             throw new DuplicateResourceException(ErrorMessage.ERR_DUPLICATE,
                     new String[]{"Email", request.getEmail()});
         }
+
         User user = userMapper.toUser(request);
+
+        if (!imageFile.isEmpty()) {
+            UploadFileUtil.validateIsImage(imageFile);
+            String imageUrl = uploadFileUtil.uploadImage(imageFile);
+            user.setImageUrl(imageUrl);
+        }
+
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER);
         User savedUser = userRepository.save(user);
@@ -67,7 +79,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse updateUser(String id, UserUpdateRequest request) {
+    public UserResponse updateUser(String id, UserUpdateRequest request, MultipartFile imageFile) {
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID,
                         new String[]{id}));
@@ -83,7 +96,6 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-
         if (request.getStudentCode() != null && !request.getStudentCode().equals(user.getStudentCode())) {
             if (userRepository.existsByStudentCode(request.getStudentCode())) {
                 throw new DuplicateResourceException(ErrorMessage.ERR_DUPLICATE,
@@ -91,6 +103,11 @@ public class UserServiceImpl implements UserService {
             }
         }
 
+        if (imageFile != null && !imageFile.isEmpty()) {
+            UploadFileUtil.validateIsImage(imageFile);
+            String imageUrl = uploadFileUtil.uploadImage(imageFile);
+            user.setImageUrl(imageUrl);
+        }
 
         userMapper.toUser(request, user);
 
@@ -120,6 +137,12 @@ public class UserServiceImpl implements UserService {
                         new String[]{userId})
                 );
         return userMapper.toUserResponse(user);
+    }
+
+    @Override
+    public List<UserResponse> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return userMapper.toListUserResponse(users);
     }
 
     @Override
