@@ -9,6 +9,7 @@ import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.Notification;
 import my_computer.backendsymphony.domain.mapper.NotificationMapper;
 import my_computer.backendsymphony.exception.NotFoundException;
+import my_computer.backendsymphony.exception.UnauthorizedException;
 import my_computer.backendsymphony.repository.ClassroomRepository;
 import my_computer.backendsymphony.repository.NotificationRepository;
 import my_computer.backendsymphony.repository.UserRepository;
@@ -26,21 +27,21 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
     private final ClassroomRepository classroomRepository;
-    private final UserRepository userRepository;
     private final UserService userService;
 
     @Override
     @Transactional
     public NotificationResponse createNotification(NotificationRequest request) {
 
-
         ClassRoom classRoom = classroomRepository.findById(request.getClassRoomId())
                 .orElseThrow( ()-> new NotFoundException(
                     ErrorMessage.Classroom.ERR_NOT_FOUND_ID,
-                    new String[]{
-                            request.getClassRoomId()
-                    }
-            ));
+                    new String[]{ request.getClassRoomId() }
+                ));
+
+        if(!classRoom.getLeaderId().equals(userService.getCurrentUser().getId())){
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+        }
 
         UserResponse currentUser = userService.getCurrentUser();
         String currentUserId = currentUser.getId();
