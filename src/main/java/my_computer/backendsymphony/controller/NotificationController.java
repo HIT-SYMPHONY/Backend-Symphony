@@ -19,7 +19,7 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @PostMapping(UrlConstant.Notification.NOTIFICATION_COMMON)
-    public ResponseEntity<?> createNotifiation (@RequestBody @Valid NotificationRequest request){
+    public ResponseEntity<?> createNotification (@RequestBody @Valid NotificationRequest request){
         NotificationResponse response = notificationService.createNotification(request);
         return VsResponseUtil.success(response);
     }
