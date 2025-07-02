@@ -30,7 +30,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final UserService userService;
 
     @Override
-    @Transactionalg
+    @Transactional
     public NotificationResponse createNotification(NotificationRequest request) {
 
 
