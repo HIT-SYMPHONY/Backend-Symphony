@@ -32,7 +32,7 @@ public class Lesson {
     @Column(name = "location", length = 255)
     private String location = "806 A1";
 
-    @Column(name = "time_slot", length = 10)
+    @Column(name = "time_slot", length = 50)
     private String timeSlot;
 
     @CreatedDate

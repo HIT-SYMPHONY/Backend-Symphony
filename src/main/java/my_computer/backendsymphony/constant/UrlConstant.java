@@ -13,20 +13,30 @@ public class UrlConstant {
 
     public static class User {
         private static final String PRE_FIX = "/users";
-        public static final String CREATE_USER = PRE_FIX;
-        public static final String GET_USER=PRE_FIX+"/{id}";
+        public static final String USER_COMMON = PRE_FIX;
+        public static final String USER_ID = PRE_FIX+"/{id}";
         public static final String GET_CURRENT_USER=PRE_FIX+"/me";
-        public static final String UPDATE_USER = PRE_FIX+"/{id}";
-        public static final String DELETE_USER = PRE_FIX+"/{id}";
         private User() {
+        }
+    }
+
+    public static class Lesson {
+        private static final String PRE_FIX = "/lesson";
+        public static final String CREATE_LESSON = PRE_FIX;
+        public static final String DELETE_LESSON = PRE_FIX+"/{lessonId}";
+        public static final String UPDATE_LESSON = PRE_FIX+"/{lessonId}";
+        private Lesson(){
         }
     }
 
     public static class Classroom {
         private static final String PRE_FIX = "/classrooms";
         public static final String CREATE_CLASSROOM = PRE_FIX;
-        public static final String DELETE_CLASROOM=PRE_FIX + "/{id}";
-
+        public static final String DELETE_CLASSROOM=PRE_FIX + "/{id}";
+        public static final String UPDATE_CLASSROOM=PRE_FIX + "/{id}";
+        public static final String GET_CLASSROOM= PRE_FIX + "/{id}";
+        public static final String GET_CLASSROOMS=PRE_FIX;
+        public static final String ADD_MEMBERS=PRE_FIX + "/{id}" + "/members";
         private Classroom() {}
     }
 

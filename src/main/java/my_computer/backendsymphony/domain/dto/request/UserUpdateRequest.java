@@ -37,8 +37,6 @@ public class UserUpdateRequest {
 
     private Role role;
 
-    private String imageUrl;
-
     private Gender gender;
 
     private LocalDate dateBirth;

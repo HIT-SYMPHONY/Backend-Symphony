@@ -28,6 +28,7 @@ public class UploadFileUtil {
                     file.getBytes(),
                     ObjectUtils.asMap("resource_type", "image")
             );
+            log.info("Cloudinary config: {}", cloudinary.config);
             return result.get("secure_url").toString();
         } catch (IOException e) {
             throw new UploadFileException("Upload image failed!");

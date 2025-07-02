@@ -5,12 +5,15 @@ import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
 import my_computer.backendsymphony.domain.entity.User;
 import org.mapstruct.*;
-import org.springframework.context.annotation.Bean;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
     UserResponse toUserResponse(User user);
+
+    List<UserResponse> toListUserResponse(List<User> users);
 
     @Mappings({
             @Mapping(target = "id", ignore = true),
@@ -29,6 +32,7 @@ public interface UserMapper {
             @Mapping(target = "createdAt", ignore = true),
             @Mapping(target = "updatedAt", ignore = true),
             @Mapping(target = "lastLogin", ignore = true),
+            @Mapping(target = "imageUrl", ignore = true),
             @Mapping(target = "chatRoomUsers", ignore = true),
             @Mapping(target = "classRooms", ignore = true),
     })
