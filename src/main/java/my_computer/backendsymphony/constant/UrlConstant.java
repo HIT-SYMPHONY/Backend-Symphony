@@ -44,7 +44,6 @@ public class UrlConstant {
 
         private static final String PRE_FIX = "/notifications";
         public static final String NOTIFICATION_COMMON = PRE_FIX;
-        public static final String NOTIFICATION_ID = PRE_FIX + "/{id}";
 
         public Notification() {}
     }

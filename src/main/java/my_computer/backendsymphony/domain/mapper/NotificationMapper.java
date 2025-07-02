@@ -7,8 +7,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring")
 public interface NotificationMapper {
 
@@ -20,6 +18,4 @@ public interface NotificationMapper {
 
     @Mapping(target = "classRoom", ignore = true)
     Notification toNotification(NotificationRequest notificationRequest);
-
-    List<NotificationResponse> toNotificationList(List<Notification> request);
 }
