@@ -36,5 +36,6 @@ public class ErrorMessage {
         public static final String CLASS_LEADER_CANNOT_BE_MEMBER="Leader của lớp học không thể được thêm vào thành viên bình thường";
     }
 
+
     public static final String EmailNotFound = "Email not found!";
 }
