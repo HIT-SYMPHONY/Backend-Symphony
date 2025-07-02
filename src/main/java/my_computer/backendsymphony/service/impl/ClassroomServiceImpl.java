@@ -11,9 +11,9 @@ import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
 import my_computer.backendsymphony.domain.dto.request.AddMembersRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomUpdateRequest;
+import my_computer.backendsymphony.domain.dto.request.RemoveMembersRequest;
 import my_computer.backendsymphony.domain.dto.response.AddMembersResponse;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
-import my_computer.backendsymphony.domain.dto.response.UserResponse;
 import my_computer.backendsymphony.domain.dto.response.UserSummaryResponse;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.User;
@@ -226,6 +226,26 @@ public class ClassroomServiceImpl implements ClassroomService {
         PagingMeta meta = PaginationUtil.buildPagingMeta(request, memberPage);
         return new PaginationResponseDto<>(meta, memberResponses);
     }
+    @Override
+    @Transactional
+    public void removeMembersFromClassroom(String classroomId, RemoveMembersRequest request) {
+        ClassRoom classroom = findClassroomByIdOrElseThrow(classroomId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!isLeaderOfClassroom(classroom, authentication))
+            throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
+        List<User> membersToRemove = userRepository.findAllById(request.getMemberIds());
+        if (membersToRemove.size() != request.getMemberIds().size()) {
+            throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ONE_OR_MORE_IDS);
+        }
+        for (User member : membersToRemove) {
+            if (member.getId().equals(classroom.getLeaderId())) {
+                continue;
+            }
+            classroom.getMembers().remove(member);
+            member.getClassRooms().remove(classroom);
+        }
+    }
+
 
     private boolean isLeaderOfClassroom(ClassRoom classroom, Authentication authentication) {
         Jwt jwt = (Jwt) authentication.getPrincipal();

@@ -18,6 +18,7 @@ public class ErrorMessage {
         public static final String INVALID_FORMAT_FIELD="Định dạng không hợp lệ";
         public static final String INVALID_DATE_PAST = "Ngày phải ở trong quá khứ";
         public static final String INVALID_STUDENT_CODE="Mã sinh viên phải có 10 ký tự";
+        public static final String POSITIVE="Số nhập vào phải là >0";
     }
     public static class Auth {
         public static final String ERR_INCORRECT_CREDENTIALS = "Mã sinh viên hoặc mật khẩu không chính xác";
@@ -35,6 +36,12 @@ public class ErrorMessage {
         public static final String NAME_CANNOT_BE_BLANK = "Tên lớp học không được để trống.";
         public static final String CLASS_LEADER_CANNOT_BE_MEMBER="Leader của lớp học không thể được thêm vào thành viên bình thường";
     }
+
+    public static class Notification {
+        public static final String ERR_NOT_FOUND_ID= "Không tìm thấy thông báo.";
+
+    }
+
 
     public static final String EmailNotFound = "Email not found!";
 }

@@ -16,6 +16,7 @@ public class UrlConstant {
         public static final String USER_COMMON = PRE_FIX;
         public static final String USER_ID = PRE_FIX+"/{id}";
         public static final String GET_CURRENT_USER=PRE_FIX+"/me";
+        public static final String GET_MY_CLASSROOMS=PRE_FIX + "/me" +"/classrooms";
         private User() {
         }
     }
@@ -38,7 +39,16 @@ public class UrlConstant {
         public static final String GET_CLASSROOMS=PRE_FIX;
         public static final String ADD_MEMBERS=PRE_FIX + "/{id}" + "/members";
         public static final String GET_MEMBERS=PRE_FIX + "/{id}" + "/members";
+        public static final String REMOVE_MEMBERS= PRE_FIX + "/{id}" + "/members";
         private Classroom() {}
     }
 
+    public static class Notification {
+
+        private static final String PRE_FIX = "/notifications";
+        public static final String NOTIFICATION_COMMON = PRE_FIX;
+        public static final String NOTIFICATION_ID = PRE_FIX + "/{id}";
+
+        public Notification() {}
+    }
 }
