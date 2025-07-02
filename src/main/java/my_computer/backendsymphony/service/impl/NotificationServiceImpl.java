@@ -2,6 +2,7 @@ package my_computer.backendsymphony.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.constant.ErrorMessage;
+import my_computer.backendsymphony.constant.Role;
 import my_computer.backendsymphony.domain.dto.request.NotificationRequest;
 import my_computer.backendsymphony.domain.dto.response.NotificationResponse;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
@@ -33,17 +34,20 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional
     public NotificationResponse createNotification(NotificationRequest request) {
 
+        UserResponse currentUser = userService.getCurrentUser();
+
         ClassRoom classRoom = classroomRepository.findById(request.getClassRoomId())
                 .orElseThrow( ()-> new NotFoundException(
                     ErrorMessage.Classroom.ERR_NOT_FOUND_ID,
                     new String[]{ request.getClassRoomId() }
                 ));
 
-        if(!classRoom.getLeaderId().equals(userService.getCurrentUser().getId())){
-            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+        if(currentUser.getRole() != Role.ADMIN) {
+            if(!classRoom.getLeaderId().equals(currentUser.getId())){
+                throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+            }
         }
 
-        UserResponse currentUser = userService.getCurrentUser();
         String currentUserId = currentUser.getId();
         String currentUserName = currentUser.getUsername();
 
