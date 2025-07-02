@@ -11,5 +11,5 @@ public interface NotificationService {
 
     NotificationResponse getNotificationOfUser(String userID);
 
-    NotificationResponse getNotificationOClass(String classID);
+    NotificationResponse getNotificationOfClass(String classID);
 }

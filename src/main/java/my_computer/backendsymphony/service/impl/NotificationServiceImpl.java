@@ -66,7 +66,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public NotificationResponse getNotificationOClass(String classID) {
+    public NotificationResponse getNotificationOfClass(String classID) {
         return null;
     }
 }
