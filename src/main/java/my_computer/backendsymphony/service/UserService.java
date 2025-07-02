@@ -8,7 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-
 public interface UserService {
 
     UserResponse createUser(UserCreationRequest request, MultipartFile imageFile);
@@ -19,9 +18,9 @@ public interface UserService {
 
     UserResponse deleteUser(String id);
 
-    List<ClassroomResponse> getMyClasses(String status);
-
     UserResponse getCurrentUser();
+
+    List<ClassroomResponse> getMyClasses(String status);
 
     List<UserResponse> getAllUsers();
 }

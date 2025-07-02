@@ -41,4 +41,11 @@ public class UrlConstant {
         private Classroom() {}
     }
 
+    public static class Notification {
+
+        private static final String PRE_FIX = "/notifications";
+        public static final String NOTIFICATION_COMMON = PRE_FIX;
+
+        public Notification() {}
+    }
 }
