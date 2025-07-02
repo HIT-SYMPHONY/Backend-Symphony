@@ -9,6 +9,7 @@ import my_computer.backendsymphony.domain.dto.request.RemoveMembersRequest;
 import my_computer.backendsymphony.domain.dto.response.AddMembersResponse;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 
+import my_computer.backendsymphony.domain.dto.response.UserSummaryResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ClassroomService {
@@ -23,6 +24,8 @@ public interface ClassroomService {
     PaginationResponseDto<ClassroomResponse> getAllClassrooms(PaginationRequestDto request);
 
     AddMembersResponse addMembersToClassroom(String classroomId, AddMembersRequest request);
+
+    PaginationResponseDto<UserSummaryResponse> getMembersInClassroom(String classroomId, PaginationRequestDto request);
 
     void removeMembersFromClassroom(String classroomId, RemoveMembersRequest request);
 }

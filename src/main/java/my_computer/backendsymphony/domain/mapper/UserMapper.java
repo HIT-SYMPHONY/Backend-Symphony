@@ -3,6 +3,7 @@ package my_computer.backendsymphony.domain.mapper;
 import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
+import my_computer.backendsymphony.domain.dto.response.UserSummaryResponse;
 import my_computer.backendsymphony.domain.entity.User;
 import org.mapstruct.*;
 
@@ -38,5 +39,7 @@ public interface UserMapper {
     })
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void toUser(UserUpdateRequest request, @MappingTarget User user);
+
+    List<UserSummaryResponse> toUserSummaryResponseList(List<User> users);
 
 }
