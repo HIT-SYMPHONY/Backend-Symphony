@@ -3,28 +3,35 @@ package my_computer.backendsymphony.service.impl;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import my_computer.backendsymphony.constant.ClassroomStatus;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.constant.Role;
 import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
+import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
+import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.User;
+import my_computer.backendsymphony.domain.mapper.ClassroomMapper;
 import my_computer.backendsymphony.domain.mapper.UserMapper;
 import my_computer.backendsymphony.exception.DuplicateResourceException;
 import my_computer.backendsymphony.exception.NotFoundException;
+import my_computer.backendsymphony.repository.ClassroomRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.UserService;
 import my_computer.backendsymphony.util.UploadFileUtil;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +41,8 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
+    ClassroomRepository classroomRepository;
+    ClassroomMapper classroomMapper;
     UploadFileUtil uploadFileUtil;
 
     @Override
@@ -50,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.toUser(request);
 
-        if(!imageFile.isEmpty()) {
+        if (!imageFile.isEmpty()) {
             UploadFileUtil.validateIsImage(imageFile);
             String imageUrl = uploadFileUtil.uploadImage(imageFile);
             user.setImageUrl(imageUrl);
@@ -76,7 +85,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID,
                         new String[]{id}));
 
-        if(request.getPassword() != null) {
+        if (request.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
@@ -94,7 +103,7 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        if(imageFile != null && !imageFile.isEmpty()) {
+        if (imageFile != null && !imageFile.isEmpty()) {
             UploadFileUtil.validateIsImage(imageFile);
             String imageUrl = uploadFileUtil.uploadImage(imageFile);
             user.setImageUrl(imageUrl);
@@ -102,7 +111,7 @@ public class UserServiceImpl implements UserService {
 
         userMapper.toUser(request, user);
 
-        user.setFullName(user.getFirstName().trim()+ " " + user.getLastName().trim());
+        user.setFullName(user.getFirstName().trim() + " " + user.getLastName().trim());
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -124,16 +133,47 @@ public class UserServiceImpl implements UserService {
         String userId = jwt.getSubject();
 
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID,
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID,
                         new String[]{userId})
                 );
         return userMapper.toUserResponse(user);
     }
 
     @Override
-    public List<UserResponse> getAllUsers(){
+    public List<UserResponse> getAllUsers() {
         List<User> users = userRepository.findAll();
         return userMapper.toListUserResponse(users);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ClassroomResponse> getMyClasses(String status) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String currentUserId = jwt.getSubject();
+        List<ClassRoom> allUserClasses = classroomRepository.findByLeaderIdOrMembers_Id(currentUserId, currentUserId);
+        List<ClassroomResponse> allClassroomResponses = classroomMapper.toClassroomResponseList(allUserClasses);
+        if (!allClassroomResponses.isEmpty()) {
+            List<String> leaderIds = allClassroomResponses.stream()
+                    .map(ClassroomResponse::getLeaderId).distinct().collect(Collectors.toList());
+            Map<String, String> leaderMap = userRepository.findAllById(leaderIds).stream()
+                    .collect(Collectors.toMap(User::getId, User::getFullName));
+            allClassroomResponses.forEach(response -> {
+                String leaderName = leaderMap.get(response.getLeaderId());
+                response.setLeaderName(leaderName);
+            });
+        }
+        if (status != null && !status.isBlank()) {
+            try {
+                ClassroomStatus filterStatus = ClassroomStatus.valueOf(status.toUpperCase());
+                return allClassroomResponses.stream()
+                        .filter(response -> filterStatus.equals(response.getStatus()))
+                        .collect(Collectors.toList());
+            } catch (IllegalArgumentException e) {
+                return List.of();
+            }
+        }
+        return allClassroomResponses;
     }
 
 }
