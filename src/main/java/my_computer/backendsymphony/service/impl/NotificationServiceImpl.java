@@ -17,6 +17,7 @@ import my_computer.backendsymphony.service.NotificationService;
 import my_computer.backendsymphony.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final UserService userService;
 
     @Override
-    @PreAuthorize("hasRole('LEADER') or hasRole('ADMIN')")
+    @Transactionalg
     public NotificationResponse createNotification(NotificationRequest request) {
 
 
