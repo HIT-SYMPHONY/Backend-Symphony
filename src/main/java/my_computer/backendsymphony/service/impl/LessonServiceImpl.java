@@ -1,5 +1,7 @@
 package my_computer.backendsymphony.service.impl;
 
+import my_computer.backendsymphony.exception.UnauthorizedException;
+import org.springframework.transaction.annotation.Transactional;
 import my_computer.backendsymphony.domain.dto.request.LessonUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 import my_computer.backendsymphony.domain.entity.User;
@@ -15,7 +17,11 @@ import my_computer.backendsymphony.repository.LessonRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.LessonService;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +70,36 @@ public class LessonServiceImpl implements LessonService {
 
         return mapToLessonResponseWithDetails(updatedLesson);
 
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+
+    public List<LessonResponse> getLessonsByClassRoomId(String classRoomId) {
+        if(!classroomRepository.existsById(classRoomId))
+            throw new NotFoundException("Không tìm thấy lớp học!");
+
+        List<Lesson> lessons = lessonRepository.findByClassRoomId(classRoomId);
+
+        return lessons.stream()
+                .map(this::mapToLessonResponseWithDetails)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<LessonResponse> getLessonsForCurrentUser(Authentication authentication) {
+
+        if(authentication == null || !authentication.isAuthenticated())
+            throw new UnauthorizedException("Bạn phải đăng nhập để dùng tính năng này!");
+
+        String currentUserId = authentication.getName();
+
+        List<Lesson> lessons = lessonRepository.findLessonsByUserId(currentUserId);
+
+        return lessons.stream()
+                .map(this::mapToLessonResponseWithDetails)
+                .collect(Collectors.toList());
     }
 
 
