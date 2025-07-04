@@ -94,6 +94,10 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional(readOnly = true)
     public PaginationResponseDto<NotificationResponse> getNotificationOfClass(String classRoomId, PaginationRequestDto request) {
 
+        if(!classroomRepository.existsById(classRoomId)) {
+            throw new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND_ID);
+        }
+
         Pageable pageable = PaginationUtil.buildPageable(request);
         Page<Notification> notificationPage = notificationRepository.findByClassRoom_Id(classRoomId, pageable);
 
