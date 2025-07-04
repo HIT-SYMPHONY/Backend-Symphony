@@ -61,7 +61,6 @@ public class NotificationServiceImpl implements NotificationService {
 
         notificationRepository.save(notification);
         NotificationResponse response = notificationMapper.toNotificationResponse(notification);
-        response.setCreatedByUsername(currentUserName);
         return response;
     }
 

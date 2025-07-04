@@ -25,5 +25,4 @@ public class NotificationResponse {
 
     private String createdBy;
 
-    private String createdByUsername;
 }
