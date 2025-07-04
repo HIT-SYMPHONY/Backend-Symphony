@@ -1,5 +1,7 @@
 package my_computer.backendsymphony.service;
 
+import my_computer.backendsymphony.domain.dto.pagination.PaginationRequestDto;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
 import my_computer.backendsymphony.domain.dto.request.NotificationRequest;
 import my_computer.backendsymphony.domain.dto.response.NotificationResponse;
 
@@ -9,7 +11,7 @@ public interface NotificationService {
 
     NotificationResponse deleteNotification(String id);
 
-    NotificationResponse getNotificationOfUser(String userID);
+    PaginationResponseDto<NotificationResponse> getNotificationOfUser(PaginationRequestDto requestDto);
 
     NotificationResponse getNotificationOfClass(String classID);
 }
