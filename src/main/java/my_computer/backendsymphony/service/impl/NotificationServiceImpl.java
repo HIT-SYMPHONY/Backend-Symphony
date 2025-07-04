@@ -83,7 +83,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         notificationRepository.delete(notification);
         return notificationMapper.toNotificationResponse(notification);
-    }g
+    }
 
     @Override
     public NotificationResponse getNotificationOfUser(String userID) {
