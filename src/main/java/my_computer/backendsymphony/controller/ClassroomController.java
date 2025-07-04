@@ -12,6 +12,7 @@ import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
 import my_computer.backendsymphony.domain.dto.request.AddMembersRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomUpdateRequest;
+import my_computer.backendsymphony.domain.dto.request.RemoveMembersRequest;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 import my_computer.backendsymphony.service.ClassroomService;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestApiV1
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class    ClassroomController {
+public class ClassroomController {
     ClassroomService classroomService;
 
     @PostMapping(value = UrlConstant.Classroom.CREATE_CLASSROOM, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -39,15 +40,16 @@ public class    ClassroomController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteClassroom(@PathVariable String id) {
         classroomService.deleteClassroom(id);
-        return  ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();
     }
-    @PatchMapping(value = UrlConstant.Classroom.UPDATE_CLASSROOM,consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+
+    @PatchMapping(value = UrlConstant.Classroom.UPDATE_CLASSROOM, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     public ResponseEntity<?> updateClassroom(
             @PathVariable String id,
             @RequestPart("data") @Valid ClassroomUpdateRequest request,
             @RequestPart(value = "image", required = false) MultipartFile imageFile) {
-        ClassroomResponse updatedClassroom = classroomService.updateClassroom(id, request,imageFile);
+        ClassroomResponse updatedClassroom = classroomService.updateClassroom(id, request, imageFile);
         return VsResponseUtil.success(HttpStatus.OK, updatedClassroom);
     }
 
@@ -66,9 +68,24 @@ public class    ClassroomController {
     @PostMapping(UrlConstant.Classroom.ADD_MEMBERS)
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     public ResponseEntity<?> addMembersToClassroom(
-            @PathVariable  String id,
+            @PathVariable String id,
             @Valid @RequestBody AddMembersRequest request) {
-        return VsResponseUtil.success(classroomService.addMembersToClassroom(id,request));
+        return VsResponseUtil.success(classroomService.addMembersToClassroom(id, request));
     }
 
+    @GetMapping(UrlConstant.Classroom.GET_MEMBERS)
+    public ResponseEntity<?> getMembersInClassroom(
+            @PathVariable String id, PaginationRequestDto request) {
+        return VsResponseUtil.success(classroomService.getMembersInClassroom(id, request));
+    }
+
+    @DeleteMapping(UrlConstant.Classroom.REMOVE_MEMBERS)
+    @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
+    public ResponseEntity<Void> removeMembersFromClassroom(
+            @PathVariable String id,
+            @Valid @RequestBody RemoveMembersRequest request) {
+
+        classroomService.removeMembersFromClassroom(id, request);
+        return ResponseEntity.noContent().build();
+    }
 }

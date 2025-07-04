@@ -11,11 +11,14 @@ import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
 import my_computer.backendsymphony.domain.dto.request.AddMembersRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomUpdateRequest;
+import my_computer.backendsymphony.domain.dto.request.RemoveMembersRequest;
 import my_computer.backendsymphony.domain.dto.response.AddMembersResponse;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
+import my_computer.backendsymphony.domain.dto.response.UserSummaryResponse;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.ClassroomMapper;
+import my_computer.backendsymphony.domain.mapper.UserMapper;
 import my_computer.backendsymphony.exception.DuplicateResourceException;
 import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;
@@ -46,6 +49,7 @@ import java.util.stream.Collectors;
 public class ClassroomServiceImpl implements ClassroomService {
     ClassroomRepository classroomRepository;
     UserRepository userRepository;
+    UserMapper userMapper;
     ClassroomMapper classroomMapper;
     UploadFileUtil uploadFileUtil;
 
@@ -175,8 +179,8 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Transactional
     public AddMembersResponse addMembersToClassroom(String classroomId, AddMembersRequest request) {
         ClassRoom classroom = findClassroomByIdOrElseThrow(classroomId);
-        Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
-        if (!isLeaderOfClassroom(classroom,authentication))
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!isLeaderOfClassroom(classroom, authentication))
             throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
         List<User> usersToAdd = userRepository.findAllById(request.getMemberIds());
         if (usersToAdd.size() != request.getMemberIds().size()) {
@@ -205,6 +209,41 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .addedMemberIds(newlyAddedIds)
                 .alreadyMemberIds(alreadyMemberIds)
                 .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PaginationResponseDto<UserSummaryResponse> getMembersInClassroom(String id, PaginationRequestDto request) {
+        ClassRoom classRoom=findClassroomByIdOrElseThrow(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isValidLeader = isLeaderOfClassroom(classRoom, authentication);
+        boolean isValidMember = isMemberOfClassroom(classRoom, authentication);
+        if (!isValidLeader && !isValidMember)
+            throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
+        Pageable pageable = PaginationUtil.buildPageable(request);
+        Page<User> memberPage = userRepository.findMembersByClassroomId(id, pageable);
+        List<UserSummaryResponse> memberResponses = userMapper.toUserSummaryResponseList(memberPage.getContent());
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, memberPage);
+        return new PaginationResponseDto<>(meta, memberResponses);
+    }
+    @Override
+    @Transactional
+    public void removeMembersFromClassroom(String classroomId, RemoveMembersRequest request) {
+        ClassRoom classroom = findClassroomByIdOrElseThrow(classroomId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!isLeaderOfClassroom(classroom, authentication))
+            throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
+        List<User> membersToRemove = userRepository.findAllById(request.getMemberIds());
+        if (membersToRemove.size() != request.getMemberIds().size()) {
+            throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ONE_OR_MORE_IDS);
+        }
+        for (User member : membersToRemove) {
+            if (member.getId().equals(classroom.getLeaderId())) {
+                continue;
+            }
+            classroom.getMembers().remove(member);
+            member.getClassRooms().remove(classroom);
+        }
     }
 
 

@@ -54,11 +54,9 @@ public class NotificationServiceImpl implements NotificationService {
             }
         }
 
-        String currentUserId = currentUser.getId();
         String currentUserName = currentUser.getUsername();
 
         Notification notification = notificationMapper.toNotification(request);
-        notification.setCreatedBy(currentUserId);
         notification.setClassRoom(classRoom);
 
         notificationRepository.save(notification);
@@ -68,9 +66,24 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    @Transactional
     public NotificationResponse deleteNotification(String id) {
-        return null;
-    }
+
+        UserResponse currentUser = userService.getCurrentUser();
+
+        Notification notification = notificationRepository.findById(id).orElseThrow(
+                ()-> new NotFoundException(ErrorMessage.Notification.ERR_NOT_FOUND_ID)
+        );
+
+        if(currentUser.getRole() != Role.ADMIN) {
+            if(!notification.getCreatedBy().equals(currentUser.getId())){
+                throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+            }
+        }
+
+        notificationRepository.delete(notification);
+        return notificationMapper.toNotificationResponse(notification);
+    }g
 
     @Override
     public NotificationResponse getNotificationOfUser(String userID) {
