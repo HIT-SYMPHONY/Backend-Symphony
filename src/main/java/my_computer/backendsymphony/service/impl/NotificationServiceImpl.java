@@ -3,6 +3,9 @@ package my_computer.backendsymphony.service.impl;
 import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.constant.Role;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationRequestDto;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
+import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
 import my_computer.backendsymphony.domain.dto.request.NotificationRequest;
 import my_computer.backendsymphony.domain.dto.response.NotificationResponse;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
@@ -13,13 +16,16 @@ import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.exception.UnauthorizedException;
 import my_computer.backendsymphony.repository.ClassroomRepository;
 import my_computer.backendsymphony.repository.NotificationRepository;
-import my_computer.backendsymphony.repository.UserRepository;
-import my_computer.backendsymphony.security.UserPrincipal;
 import my_computer.backendsymphony.service.NotificationService;
 import my_computer.backendsymphony.service.UserService;
-import org.springframework.security.access.prepost.PreAuthorize;
+import my_computer.backendsymphony.util.PaginationUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -72,7 +78,15 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public NotificationResponse getNotificationOfClass(String classID) {
-        return null;
+    @Transactional(readOnly = true)
+    public PaginationResponseDto<NotificationResponse> getNotificationOfClass(String classRoomId, PaginationRequestDto request) {
+
+        Pageable pageable = PaginationUtil.buildPageable(request);
+        Page<Notification> notificationPage = notificationRepository.findByClassRoom_Id(classRoomId, pageable);
+
+        List<NotificationResponse> notificationResponseList = notificationMapper.toNotificationResponseList(notificationPage.getContent());
+
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, notificationPage);
+        return new PaginationResponseDto<>(meta, notificationResponseList);
     }
 }
