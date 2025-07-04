@@ -54,14 +54,12 @@ public class NotificationServiceImpl implements NotificationService {
             }
         }
 
-        String currentUserName = currentUser.getUsername();
 
         Notification notification = notificationMapper.toNotification(request);
         notification.setClassRoom(classRoom);
 
         notificationRepository.save(notification);
         NotificationResponse response = notificationMapper.toNotificationResponse(notification);
-        response.setCreatedByUsername(currentUserName);
         return response;
     }
 
