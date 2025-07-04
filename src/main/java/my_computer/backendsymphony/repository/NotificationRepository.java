@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, String> {
 
+    Page<Notification> findByClassRoom_Id(String classRoomId, Pageable pageable);
+
 
     @Query("""
         SELECT n FROM Notification n

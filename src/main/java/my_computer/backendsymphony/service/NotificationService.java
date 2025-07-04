@@ -13,5 +13,5 @@ public interface NotificationService {
 
     PaginationResponseDto<NotificationResponse> getNotificationOfUser(PaginationRequestDto requestDto);
 
-    NotificationResponse getNotificationOfClass(String classID);
+    PaginationResponseDto<NotificationResponse> getNotificationOfClass(String classRoomId, PaginationRequestDto request);
 }

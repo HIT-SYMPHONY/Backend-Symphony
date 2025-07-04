@@ -99,7 +99,19 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public NotificationResponse getNotificationOfClass(String classID) {
-        return null;
+    @Transactional(readOnly = true)
+    public PaginationResponseDto<NotificationResponse> getNotificationOfClass(String classRoomId, PaginationRequestDto request) {
+
+        if(!classroomRepository.existsById(classRoomId)) {
+            throw new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND_ID);
+        }
+
+        Pageable pageable = PaginationUtil.buildPageable(request);
+        Page<Notification> notificationPage = notificationRepository.findByClassRoom_Id(classRoomId, pageable);
+
+        List<NotificationResponse> notificationResponseList = notificationMapper.toNotificationResponseList(notificationPage.getContent());
+
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, notificationPage);
+        return new PaginationResponseDto<>(meta, notificationResponseList);
     }
 }

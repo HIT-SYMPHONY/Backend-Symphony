@@ -1,7 +1,6 @@
 package my_computer.backendsymphony.controller;
 
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
@@ -14,6 +13,7 @@ import my_computer.backendsymphony.service.NotificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestApiV1
 @RequiredArgsConstructor
@@ -40,5 +40,14 @@ public class NotificationController {
         PaginationResponseDto<NotificationResponse> response = notificationService.getNotificationOfUser(request);
         return VsResponseUtil.success(response);
     }
+
+    @PostMapping(UrlConstant.Notification.NOTIFICATION_ID)
+    public ResponseEntity<?> getNotificationByClassId (
+            @PathVariable String id,
+            @ModelAttribute PaginationRequestDto requestDto){
+        PaginationResponseDto<NotificationResponse> response = notificationService.getNotificationOfClass(id, requestDto);
+        return VsResponseUtil.success(response);
+    }
+
 
 }
