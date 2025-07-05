@@ -34,7 +34,14 @@ public class NotificationController {
         return VsResponseUtil.success(response);
     }
 
-    @PostMapping(UrlConstant.Notification.NOTIFICATION_ID)
+    @GetMapping(UrlConstant.Notification.NOTIFICATION_COMMON)
+    public ResponseEntity<?> getNotificationOfUser (
+            @ModelAttribute PaginationRequestDto request) {
+        PaginationResponseDto<NotificationResponse> response = notificationService.getNotificationOfUser(request);
+        return VsResponseUtil.success(response);
+    }
+
+    @GetMapping(UrlConstant.Notification.NOTIFICATION_ID)
     public ResponseEntity<?> getNotificationByClassId (
             @PathVariable String id,
             @ModelAttribute PaginationRequestDto requestDto){

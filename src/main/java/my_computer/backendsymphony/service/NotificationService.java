@@ -11,7 +11,7 @@ public interface NotificationService {
 
     NotificationResponse deleteNotification(String id);
 
-    NotificationResponse getNotificationOfUser(String userID);
+    PaginationResponseDto<NotificationResponse> getNotificationOfUser(PaginationRequestDto requestDto);
 
     PaginationResponseDto<NotificationResponse> getNotificationOfClass(String classRoomId, PaginationRequestDto request);
 }

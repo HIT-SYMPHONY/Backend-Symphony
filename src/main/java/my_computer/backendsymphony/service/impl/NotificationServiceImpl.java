@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 @Service
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
@@ -54,7 +53,6 @@ public class NotificationServiceImpl implements NotificationService {
             }
         }
 
-        String currentUserName = currentUser.getUsername();
 
         Notification notification = notificationMapper.toNotification(request);
         notification.setClassRoom(classRoom);
@@ -85,8 +83,18 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public NotificationResponse getNotificationOfUser(String userID) {
-        return null;
+    @Transactional(readOnly = true)
+    public PaginationResponseDto<NotificationResponse> getNotificationOfUser(PaginationRequestDto requestDto) {
+
+        String userId = userService.getCurrentUser().getId();
+
+        Pageable pageable = PaginationUtil.buildPageable(requestDto);
+        Page<Notification> notificationPage = notificationRepository.findByUserId(userId,pageable);
+
+        List<NotificationResponse> notificationResponseList = notificationMapper.toNotificationResponseList(notificationPage.getContent());
+
+        PagingMeta meta = PaginationUtil.buildPagingMeta(requestDto, notificationPage);
+        return new PaginationResponseDto<>(meta, notificationResponseList);
     }
 
     @Override
