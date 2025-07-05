@@ -90,4 +90,8 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "class_room_id")
     )
     private List<ClassRoom> classRooms;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<CompetitionUser> competitionUsers;
+
 }
