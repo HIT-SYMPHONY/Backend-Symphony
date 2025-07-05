@@ -16,7 +16,6 @@ import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.exception.UnauthorizedException;
 import my_computer.backendsymphony.repository.ClassroomRepository;
 import my_computer.backendsymphony.repository.NotificationRepository;
-import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.NotificationService;
 import my_computer.backendsymphony.service.UserService;
 import my_computer.backendsymphony.util.PaginationUtil;
