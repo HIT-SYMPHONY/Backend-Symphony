@@ -18,6 +18,7 @@ import my_computer.backendsymphony.repository.ClassroomRepository;
 import my_computer.backendsymphony.repository.NotificationRepository;
 import my_computer.backendsymphony.service.NotificationService;
 import my_computer.backendsymphony.service.UserService;
+import my_computer.backendsymphony.websocket.NotificationWebSocketSender;
 import my_computer.backendsymphony.util.PaginationUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +35,8 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationMapper notificationMapper;
     private final ClassroomRepository classroomRepository;
     private final UserService userService;
+    private final NotificationWebSocketSender notificationWebSocketSender;
+
 
     @Override
     @Transactional
@@ -59,6 +62,10 @@ public class NotificationServiceImpl implements NotificationService {
 
         notificationRepository.save(notification);
         NotificationResponse response = notificationMapper.toNotificationResponse(notification);
+
+        // GỬI WEBSOCKET Ở ĐÂY
+        notificationWebSocketSender.sendToClassroom(response, notification.getClassRoom().getId());
+
         return response;
     }
 
