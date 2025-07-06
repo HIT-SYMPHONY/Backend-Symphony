@@ -52,9 +52,9 @@ public class Competition {
     @Column(name = "created_by")
     private String createdBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "class_room_id", nullable = false)
-    private ClassRoom classRoom;
+    @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<CompetitionUser> competitionUsers;
+
 
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<CommentCompetition> comments;
