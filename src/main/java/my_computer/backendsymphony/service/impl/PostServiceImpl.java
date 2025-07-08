@@ -51,7 +51,6 @@ public class PostServiceImpl implements PostService {
         return null;
     }
 
-
     @Override
     public PostResponse deletePost(String postId) {
 
