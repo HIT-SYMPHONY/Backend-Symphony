@@ -46,6 +46,12 @@ public class UrlConstant {
         public Notification() {}
     }
 
+    public static class Post {
+        private static final String PRE_FIX = "/posts";
+        public static final String POST_COMMON = PRE_FIX;
+
+    }
+
     public static class Competition {
         private static final String PRE_FIX = "/competitions";
         public static final String COMPETITION_COMMON = PRE_FIX;
