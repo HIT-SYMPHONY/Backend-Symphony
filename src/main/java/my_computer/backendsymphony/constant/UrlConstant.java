@@ -49,6 +49,7 @@ public class UrlConstant {
     public static class Post {
         private static final String PRE_FIX = "/posts";
         public static final String POST_COMMON = PRE_FIX;
+        public static final String POST_ID = PRE_FIX + "/{id}";
 
     }
 
