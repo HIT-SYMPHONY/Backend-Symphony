@@ -28,7 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ClassroomController {
     ClassroomService classroomService;
 
-    @PostMapping(value = UrlConstant.Classroom.CREATE_CLASSROOM, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = UrlConstant.Classroom.CLASSROOM_COMMON, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createClassroom(
             @Valid @RequestPart("data") ClassroomCreationRequest request,
@@ -36,14 +36,14 @@ public class ClassroomController {
         return VsResponseUtil.success(classroomService.createClassroom(request, imageFile));
     }
 
-    @DeleteMapping(UrlConstant.Classroom.DELETE_CLASSROOM)
+    @DeleteMapping(UrlConstant.Classroom.CLASSROOM_ID)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteClassroom(@PathVariable String id) {
         classroomService.deleteClassroom(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(value = UrlConstant.Classroom.UPDATE_CLASSROOM, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PatchMapping(value = UrlConstant.Classroom.CLASSROOM_ID, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     public ResponseEntity<?> updateClassroom(
             @PathVariable String id,
@@ -53,19 +53,19 @@ public class ClassroomController {
         return VsResponseUtil.success(HttpStatus.OK, updatedClassroom);
     }
 
-    @GetMapping(UrlConstant.Classroom.GET_CLASSROOM)
+    @GetMapping(UrlConstant.Classroom.CLASSROOM_ID)
     public ResponseEntity<?> getClassroom(@PathVariable String id) {
         return VsResponseUtil.success(classroomService.getClassroomById(id));
     }
 
-    @GetMapping(UrlConstant.Classroom.GET_CLASSROOMS)
+    @GetMapping(UrlConstant.Classroom.CLASSROOM_COMMON)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllClassrooms(PaginationRequestDto request) {
         PaginationResponseDto<ClassroomResponse> response = classroomService.getAllClassrooms(request);
         return VsResponseUtil.success(response);
     }
 
-    @PostMapping(UrlConstant.Classroom.ADD_MEMBERS)
+    @PostMapping(UrlConstant.Classroom.MEMBERS)
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     public ResponseEntity<?> addMembersToClassroom(
             @PathVariable String id,
@@ -73,13 +73,13 @@ public class ClassroomController {
         return VsResponseUtil.success(classroomService.addMembersToClassroom(id, request));
     }
 
-    @GetMapping(UrlConstant.Classroom.GET_MEMBERS)
+    @GetMapping(UrlConstant.Classroom.MEMBERS)
     public ResponseEntity<?> getMembersInClassroom(
             @PathVariable String id, PaginationRequestDto request) {
         return VsResponseUtil.success(classroomService.getMembersInClassroom(id, request));
     }
 
-    @DeleteMapping(UrlConstant.Classroom.REMOVE_MEMBERS)
+    @DeleteMapping(UrlConstant.Classroom.MEMBERS)
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     public ResponseEntity<Void> removeMembersFromClassroom(
             @PathVariable String id,

@@ -32,14 +32,9 @@ public class UrlConstant {
 
     public static class Classroom {
         private static final String PRE_FIX = "/classrooms";
-        public static final String CREATE_CLASSROOM = PRE_FIX;
-        public static final String DELETE_CLASSROOM=PRE_FIX + "/{id}";
-        public static final String UPDATE_CLASSROOM=PRE_FIX + "/{id}";
-        public static final String GET_CLASSROOM= PRE_FIX + "/{id}";
-        public static final String GET_CLASSROOMS=PRE_FIX;
-        public static final String ADD_MEMBERS=PRE_FIX + "/{id}" + "/members";
-        public static final String GET_MEMBERS=PRE_FIX + "/{id}" + "/members";
-        public static final String REMOVE_MEMBERS= PRE_FIX + "/{id}" + "/members";
+        public static final String CLASSROOM_COMMON = PRE_FIX;
+        public static final String CLASSROOM_ID = PRE_FIX + "/{id}";
+        public static final String MEMBERS=PRE_FIX + "/{id}" + "/members";
         private Classroom() {}
     }
 
@@ -49,5 +44,11 @@ public class UrlConstant {
         public static final String NOTIFICATION_COMMON = PRE_FIX;
         public static final String NOTIFICATION_ID = PRE_FIX + "/{id}";
         public Notification() {}
+    }
+
+    public static class Competition {
+        private static final String PRE_FIX = "/competitions";
+        public static final String COMPETITION_COMMON = PRE_FIX;
+        private Competition() {}
     }
 }
