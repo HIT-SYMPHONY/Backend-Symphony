@@ -7,12 +7,15 @@ import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.Mapping;
+
 
 @Mapper(componentModel = "spring")
 public interface PostMapper {
 
     Post toEntity(PostRequest postRequest);
 
+    @Mapping(source = "classRoom.id", target = "classRoomId")
     PostResponse toResponse(Post post);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

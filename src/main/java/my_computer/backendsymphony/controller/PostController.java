@@ -7,6 +7,7 @@ import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.request.PostRequest;
 import my_computer.backendsymphony.service.PostService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -16,6 +17,7 @@ public class PostController {
 
     private final PostService postService;
 
+    @PreAuthorize("hasRole('LEADER') or hasRole('ADMIN')")
     @PostMapping(UrlConstant.Post.POST_COMMON)
     public ResponseEntity<?> createPost(@RequestBody PostRequest request) {
         return VsResponseUtil.success(postService.createPost(request));
