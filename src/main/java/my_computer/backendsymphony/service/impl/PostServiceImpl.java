@@ -51,9 +51,22 @@ public class PostServiceImpl implements PostService {
         return null;
     }
 
+
     @Override
     public PostResponse deletePost(String postId) {
-        return null;
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID));
+
+        UserResponse user = userService.getCurrentUser();
+
+        if(user.getRole()== Role.LEADER) {
+            if(!user.getId().equals(post.getClassRoom().getLeaderId()) ) {
+                throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+            }
+        }
+        postRepository.delete(post);
+        return postMapper.toResponse(post);
     }
 
     @Override
