@@ -34,7 +34,7 @@ public class CompetitionUser {
     @Column(nullable = false)
     private CompetitionUserStatus status;
 
-    private double score;
+    private String submittedAt;
 
     @CreatedDate
     @Column(name = "joined_at", updatable = false)

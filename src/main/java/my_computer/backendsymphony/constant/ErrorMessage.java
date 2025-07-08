@@ -16,9 +16,10 @@ public class ErrorMessage {
         public static final String NOT_NULL= "Trường này là bắt buộc";
         public static final String NOT_EMPTY="Trường này không được để rỗng";
         public static final String INVALID_FORMAT_FIELD="Định dạng không hợp lệ";
-        public static final String INVALID_DATE_PAST = "Ngày phải ở trong quá khứ";
+        public static final String MUST_IN_PAST = "Ngày phải ở trong quá khứ";
+        public static final String MUST_IN_FUTURE = "Ngày phải ở trong tương lai";
         public static final String INVALID_STUDENT_CODE="Mã sinh viên phải có 10 ký tự";
-        public static final String POSITIVE="Số nhập vào phải là >0";
+        public static final String POSITIVE="Số nhập vào phải >0";
     }
     public static class Auth {
         public static final String ERR_INCORRECT_CREDENTIALS = "Mã sinh viên hoặc mật khẩu không chính xác";
@@ -44,6 +45,11 @@ public class ErrorMessage {
 
     public static class Post {
         public static final String ERR_NOT_FOUND_ID = "Không tìm thấy bài tập nào với id: %s";
+    }
+
+    public static class Competition {
+        public static final String ERR_NOT_FOUND_ID= "Không tìm thấy cuộc thi nào với id: %s";
+        public static final String START_TIME_MUST_BEFORE_END_TIME="Thời gian bắt đầu phải trước thời gian kết thúc";
     }
 
 
