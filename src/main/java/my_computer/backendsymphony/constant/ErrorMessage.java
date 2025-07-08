@@ -42,6 +42,10 @@ public class ErrorMessage {
 
     }
 
+    public static class Post {
+        public static final String ERR_NOT_FOUND_ID = "Không tìm thấy bài tập nào với id: %s";
+    }
+
 
     public static final String EmailNotFound = "Email not found!";
 }

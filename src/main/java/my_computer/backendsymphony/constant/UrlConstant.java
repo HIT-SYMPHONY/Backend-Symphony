@@ -50,4 +50,10 @@ public class UrlConstant {
         public static final String NOTIFICATION_ID = PRE_FIX + "/{id}";
         public Notification() {}
     }
+
+    public static class Post {
+        private static final String PRE_FIX = "/posts";
+        public static final String POST_COMMON = PRE_FIX;
+
+    }
 }
