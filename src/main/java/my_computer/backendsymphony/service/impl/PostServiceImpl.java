@@ -48,7 +48,25 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponse updatePost(PostRequest postRequest, String postId) {
-        return null;
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID));
+
+        if (postRequest.getClassRoomId() != null) {
+            ClassRoom classRoom = classroomRepository.findById(postRequest.getClassRoomId())
+                    .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND_ID));
+            post.setClassRoom(classRoom);
+        }
+
+        UserResponse user = userService.getCurrentUser();
+
+        if(user.getRole()== Role.LEADER) {
+            if(!user.getId().equals(post.getClassRoom().getLeaderId()) ) {
+                throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+            }
+        }
+        postMapper.updateEntity(postRequest, post);
+        return postMapper.toResponse(postRepository.save(post));
     }
 
     @Override
