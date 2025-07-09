@@ -11,4 +11,7 @@ public interface ClassroomRepository extends JpaRepository<ClassRoom, String> {
     boolean existsByName(String name);
 
     List<ClassRoom> findByLeaderIdOrMembers_Id(String leaderId, String memberId);
+
+    boolean existsByIdAndMembers_Id(String classRoomId, String userId);
+
 }
