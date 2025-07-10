@@ -42,4 +42,9 @@ public class PostController {
         return VsResponseUtil.success(postService.getPostsOfClass(id, requestDto));
     }
 
+    @GetMapping(UrlConstant.Post.POST_POST_ID)
+    public ResponseEntity<?> getPostOfClass(@PathVariable String postId) {
+        return VsResponseUtil.success(postService.getPostById(postId));
+    }
+
 }
