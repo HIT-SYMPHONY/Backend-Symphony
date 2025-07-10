@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationRequestDto;
 import my_computer.backendsymphony.domain.dto.request.PostRequest;
 import my_computer.backendsymphony.service.PostService;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,11 @@ public class PostController {
     public ResponseEntity<?> updatePost( @RequestBody PostRequest postRequest,
                                          @PathVariable String id) {
         return VsResponseUtil.success(postService.updatePost(postRequest, id));
+    }
+
+    @GetMapping(UrlConstant.Post.POST_ID)
+    public ResponseEntity<?> getPostOfClass(@PathVariable String id, @ModelAttribute PaginationRequestDto requestDto) {
+        return VsResponseUtil.success(postService.getPostsOfClass(id, requestDto));
     }
 
 }
