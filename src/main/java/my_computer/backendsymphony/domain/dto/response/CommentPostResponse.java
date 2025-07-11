@@ -22,5 +22,7 @@ public class CommentPostResponse {
 
     private LocalDateTime updatedAt;
 
+    private String postId;
+
     private String createdBy;
 }
