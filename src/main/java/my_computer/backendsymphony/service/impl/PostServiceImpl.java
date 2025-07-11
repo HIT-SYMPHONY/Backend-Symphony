@@ -124,8 +124,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional(readOnly = true)
-    public PaginationResponseDto<PostResponse> getAllPosts() {
-        return null;
+    public PaginationResponseDto<PostResponse> getAllPosts(PaginationRequestDto requestDto) {
+
+        Pageable pageable = PaginationUtil.buildPageable(requestDto);
+
+        Page<Post> postPage = postRepository.findAll(pageable);
+        List<PostResponse> postResponseList = postMapper.toResponseList(postPage.getContent());
+        PagingMeta meta = PaginationUtil.buildPagingMeta(requestDto, postPage);
+
+        return new PaginationResponseDto<>(meta, postResponseList);
     }
 
 
