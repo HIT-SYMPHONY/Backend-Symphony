@@ -41,8 +41,27 @@ public class CommentPostServiceImpl implements CommentPostService {
 
     @Override
     public CommentPostResponse deleteCommentPost(String commentPostId) {
-        return null;
+
+        CommentPost commentPost = commentPostRepository.findById(commentPostId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.CommentPost.ERR_NOT_FOUND_ID));
+
+        UserResponse currentUser = userService.getCurrentUser();
+
+        Post post = commentPost.getPost();
+        if (post == null) {
+            throw new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID);
+        }
+
+        ClassRoom classRoom = post.getClassRoom();
+
+        if (currentUser.getRole() != Role.ADMIN && !currentUser.getId().equals(classRoom.getLeaderId())) {
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+        }
+
+        commentPostRepository.delete(commentPost);
+        return commentPostMapper.toResponse(commentPost);
     }
+
 
     @Override
     public CommentPostResponse getCommentPostById(String commentPostId) {

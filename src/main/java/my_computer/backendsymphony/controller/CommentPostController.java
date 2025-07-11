@@ -8,6 +8,9 @@ import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.request.CommentPostRequest;
 import my_computer.backendsymphony.service.CommentPostService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -21,4 +24,12 @@ public class CommentPostController {
     public ResponseEntity<?> createCommentPost(@Valid @RequestBody CommentPostRequest request) {
         return VsResponseUtil.success(commentPostService.createCommentPost(request));
     }
+
+    @DeleteMapping(UrlConstant.CommentPost.COMMENT_POST_ID)
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LEADER')")
+    public ResponseEntity<?> deleteCommentPost(@PathVariable String id) {
+        return VsResponseUtil.success(commentPostService.deleteCommentPost(id));
+    }
+
+
 }
