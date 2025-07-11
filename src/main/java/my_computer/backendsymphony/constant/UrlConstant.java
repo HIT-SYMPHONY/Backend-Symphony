@@ -50,12 +50,14 @@ public class UrlConstant {
         private static final String PRE_FIX = "/posts";
         public static final String POST_COMMON = PRE_FIX;
         public static final String POST_ID = PRE_FIX + "/{id}";
+        public static final String POST_POST_ID = PRE_FIX + "/{postId}/get";
 
     }
 
     public static class Competition {
         private static final String PRE_FIX = "/competitions";
         public static final String COMPETITION_COMMON = PRE_FIX;
+        public static final String COMPETITION_ID = PRE_FIX + "/{id}";
         private Competition() {}
     }
 

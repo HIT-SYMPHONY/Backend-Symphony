@@ -6,4 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface CompetitionService {
     CompetitionResponse createCompetition(CompetitionCreationRequest request, MultipartFile imageFile);
+
+    CompetitionResponse getCompetitionById(String id);
 }

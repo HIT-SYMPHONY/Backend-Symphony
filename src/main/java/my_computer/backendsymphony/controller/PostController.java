@@ -42,4 +42,15 @@ public class PostController {
         return VsResponseUtil.success(postService.getPostsOfClass(id, requestDto));
     }
 
+    @GetMapping(UrlConstant.Post.POST_POST_ID)
+    public ResponseEntity<?> getPostById(@PathVariable String postId) {
+        return VsResponseUtil.success(postService.getPostById(postId));
+    }
+
+    @GetMapping(UrlConstant.Post.POST_COMMON)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getAllPost(@ModelAttribute PaginationRequestDto requestDto) {
+        return VsResponseUtil.success(postService.getAllPosts(requestDto));
+    }
+
 }

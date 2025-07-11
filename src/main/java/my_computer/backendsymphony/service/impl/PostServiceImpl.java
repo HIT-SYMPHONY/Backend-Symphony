@@ -123,9 +123,31 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PaginationResponseDto<PostResponse> getAllPosts() {
-        return null;
+    @Transactional(readOnly = true)
+    public PaginationResponseDto<PostResponse> getAllPosts(PaginationRequestDto requestDto) {
+
+        Pageable pageable = PaginationUtil.buildPageable(requestDto);
+
+        Page<Post> postPage = postRepository.findAll(pageable);
+        List<PostResponse> postResponseList = postMapper.toResponseList(postPage.getContent());
+        PagingMeta meta = PaginationUtil.buildPagingMeta(requestDto, postPage);
+
+        return new PaginationResponseDto<>(meta, postResponseList);
     }
 
 
+    @Override
+    @Transactional(readOnly = true)
+    public PostResponse getPostById (String postId){
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID));
+
+        UserResponse currentUser = userService.getCurrentUser();
+        if (currentUser.getRole() != Role.ADMIN) {
+            if ( !classroomRepository.existsByIdAndMembers_Id(post.getClassRoom().getId(), currentUser.getId())) {
+                throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+            }
+        }
+        return postMapper.toResponse(post);
+    }
 }

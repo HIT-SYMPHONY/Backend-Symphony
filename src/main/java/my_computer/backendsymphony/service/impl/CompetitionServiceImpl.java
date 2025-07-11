@@ -9,10 +9,12 @@ import my_computer.backendsymphony.domain.dto.response.CompetitionResponse;
 import my_computer.backendsymphony.domain.entity.Competition;
 import my_computer.backendsymphony.domain.mapper.CompetitionMapper;
 import my_computer.backendsymphony.exception.InvalidException;
+import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.repository.CompetitionRepository;
 import my_computer.backendsymphony.service.CompetitionService;
 import my_computer.backendsymphony.util.UploadFileUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -35,5 +37,17 @@ public class CompetitionServiceImpl implements CompetitionService {
         }
         Competition savedCompetition = competitionRepository.save(competition);
         return competitionMapper.toCompetitionResponse(savedCompetition);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CompetitionResponse getCompetitionById(String id) {
+        Competition competition = findCompetitionByIdOrElseThrow(id);
+        return competitionMapper.toCompetitionResponse(competition);
+    }
+
+    private Competition findCompetitionByIdOrElseThrow(String id) {
+        return competitionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Competition.ERR_NOT_FOUND_ID, new String[]{id}));
     }
 }
