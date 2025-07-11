@@ -15,5 +15,7 @@ public interface PostService {
 
     PaginationResponseDto<PostResponse> getPostsOfClass (String classId, PaginationRequestDto requestDto);
 
+    PostResponse getPostById(String postId);
+
     PaginationResponseDto<PostResponse> getAllPosts();
 }
