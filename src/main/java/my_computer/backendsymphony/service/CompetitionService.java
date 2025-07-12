@@ -10,4 +10,6 @@ public interface CompetitionService {
     CompetitionResponse createCompetition(CompetitionCreationRequest request, MultipartFile imageFile);
 
     PaginationResponseDto<CompetitionResponse> getAllCompetitions(PaginationSortRequestDto request);
+
+    CompetitionResponse getCompetitionById(String id);
 }

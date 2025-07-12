@@ -13,6 +13,7 @@ import my_computer.backendsymphony.service.CompetitionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,5 +35,10 @@ public class CompetitionController {
     @GetMapping(UrlConstant.Competition.COMPETITION_COMMON)
     public ResponseEntity<?> getAllCompetitions (PaginationSortRequestDto request) {
         return VsResponseUtil.success(competitionService.getAllCompetitions(request));
+    }
+
+    @GetMapping(UrlConstant.Competition.COMPETITION_ID)
+    public ResponseEntity<?> getCompetitionById(@PathVariable String id) {
+        return VsResponseUtil.success(competitionService.getCompetitionById(id));
     }
 }
