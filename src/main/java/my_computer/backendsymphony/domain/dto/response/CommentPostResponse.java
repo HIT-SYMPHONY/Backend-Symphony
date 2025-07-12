@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import my_computer.backendsymphony.domain.entity.Post;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-public class NotificationResponse {
+public class CommentPostResponse {
 
     private String id;
 
@@ -19,10 +20,9 @@ public class NotificationResponse {
 
     private LocalDateTime createdAt;
 
-    private String classRoomId;
+    private LocalDateTime updatedAt;
 
-    private String classRoomName;
+    private String postId;
 
     private String createdBy;
-
 }

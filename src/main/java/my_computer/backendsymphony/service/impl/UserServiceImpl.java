@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.toUser(request);
 
-        if (!imageFile.isEmpty()) {
+        if (imageFile != null && !imageFile.isEmpty()) {
             UploadFileUtil.validateIsImage(imageFile);
             String imageUrl = uploadFileUtil.uploadImage(imageFile);
             user.setImageUrl(imageUrl);

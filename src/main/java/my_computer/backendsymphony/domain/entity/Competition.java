@@ -2,7 +2,6 @@ package my_computer.backendsymphony.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -32,6 +31,9 @@ public class Competition {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
     private String image;
 
     @Column(name = "start_time")
@@ -52,9 +54,9 @@ public class Competition {
     @Column(name = "created_by")
     private String createdBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "class_room_id", nullable = false)
-    private ClassRoom classRoom;
+    @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<CompetitionUser> competitionUsers;
+
 
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<CommentCompetition> comments;

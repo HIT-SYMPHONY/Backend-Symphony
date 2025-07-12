@@ -52,7 +52,7 @@ public class LessonController {
     }
 
     @GetMapping(UrlConstant.Lesson.GET_LESSON_BY_CURRENT_USER_ID)
-    public ResponseEntity<RestData<?>> getLessonByCurrentUserId (Authentication authentication){
+    public ResponseEntity<RestData<?>> getMyLessons (Authentication authentication){
         List<LessonResponse> lessons = lessonService.getLessonsForCurrentUser(authentication);
         return VsResponseUtil.success(lessons);
     }

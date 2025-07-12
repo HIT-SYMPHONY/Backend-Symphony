@@ -1,5 +1,6 @@
 package my_computer.backendsymphony.service.impl;
 
+import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.exception.UnauthorizedException;
 import org.springframework.transaction.annotation.Transactional;
 import my_computer.backendsymphony.domain.dto.request.LessonUpdateRequest;
@@ -91,7 +92,7 @@ public class LessonServiceImpl implements LessonService {
     public List<LessonResponse> getLessonsForCurrentUser(Authentication authentication) {
 
         if(authentication == null || !authentication.isAuthenticated())
-            throw new UnauthorizedException("Bạn phải đăng nhập để dùng tính năng này!");
+            throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
 
         String currentUserId = authentication.getName();
 
