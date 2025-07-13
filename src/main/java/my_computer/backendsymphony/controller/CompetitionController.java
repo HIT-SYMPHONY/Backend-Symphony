@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationSortRequestDto;
 import my_computer.backendsymphony.domain.dto.request.CompetitionCreationRequest;
 import my_computer.backendsymphony.service.CompetitionService;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,11 @@ public class CompetitionController {
             @Valid @RequestPart("data") CompetitionCreationRequest request,
             @RequestPart(value = "image", required = false) MultipartFile imageFile) {
         return VsResponseUtil.success(competitionService.createCompetition(request, imageFile));
+    }
+
+    @GetMapping(UrlConstant.Competition.COMPETITION_COMMON)
+    public ResponseEntity<?> getAllCompetitions (PaginationSortRequestDto request) {
+        return VsResponseUtil.success(competitionService.getAllCompetitions(request));
     }
 
     @GetMapping(UrlConstant.Competition.COMPETITION_ID)
