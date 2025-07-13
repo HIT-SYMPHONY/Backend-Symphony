@@ -1,6 +1,7 @@
 package my_computer.backendsymphony.domain.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,7 @@ public class PostRequest {
     @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
     private String content;
 
-    @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
+    @NotNull(message = ErrorMessage.Validation.NOT_NULL)
     private LocalDateTime deadline;
 
     @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)

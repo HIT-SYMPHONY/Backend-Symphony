@@ -14,6 +14,4 @@ public interface CommentPostMapper {
 
     @Mapping(source = "post.id", target = "postId")
     CommentPostResponse toResponse(CommentPost commentPost);
-
-
 }

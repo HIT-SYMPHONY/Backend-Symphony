@@ -14,9 +14,13 @@ import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.exception.UnauthorizedException;
 import my_computer.backendsymphony.repository.CommentPostRepository;
 import my_computer.backendsymphony.repository.PostRepository;
+import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.CommentPostService;
 import my_computer.backendsymphony.service.UserService;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +30,7 @@ public class CommentPostServiceImpl implements CommentPostService {
     private final CommentPostMapper commentPostMapper;
     private final UserService userService;
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
     @Override
     public CommentPostResponse createCommentPost(CommentPostRequest commentPostRequest) {
@@ -68,9 +73,20 @@ public class CommentPostServiceImpl implements CommentPostService {
         return response;
     }
 
-
     @Override
-    public CommentPostResponse getCommentPostById(String commentPostId) {
-        return null;
+    public List<CommentPostResponse> getCommentPostByPostId(String postId) {
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID));
+
+        return post.getComments().stream()
+                .map(comment -> {
+                    UserResponse user = userService.getUser(post.getCreatedBy());
+                    CommentPostResponse response = commentPostMapper.toResponse(comment);
+                    response.setUsername(user.getUsername());
+                    return response;
+                })
+                .toList();
     }
+
 }
