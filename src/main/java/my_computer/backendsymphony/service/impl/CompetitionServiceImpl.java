@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import my_computer.backendsymphony.constant.ErrorMessage;
+import my_computer.backendsymphony.constant.Role;
 import my_computer.backendsymphony.constant.SortByDataConstant;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationSortRequestDto;
@@ -20,6 +21,10 @@ import my_computer.backendsymphony.util.PaginationUtil;
 import my_computer.backendsymphony.util.UploadFileUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -67,6 +72,23 @@ public class CompetitionServiceImpl implements CompetitionService {
     public CompetitionResponse getCompetitionById(String id) {
         Competition competition = findCompetitionByIdOrElseThrow(id);
         return competitionMapper.toCompetitionResponse(competition);
+    }
+
+    @Override
+    public void deleteCompetition(String id) {
+        Competition competition = findCompetitionByIdOrElseThrow(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!isCreatorOrAdmin(competition, authentication))
+            throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
+        competitionRepository.deleteById(id);
+    }
+
+    public boolean isCreatorOrAdmin(Competition competition, Authentication authentication) {
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String role = jwt.getClaimAsString("scope");
+        if (role.equals(Role.ADMIN.name())) return true;
+        String currentUserId = jwt.getSubject();
+        return currentUserId.equals(competition.getCreatedBy());
     }
 
     private Competition findCompetitionByIdOrElseThrow(String id) {

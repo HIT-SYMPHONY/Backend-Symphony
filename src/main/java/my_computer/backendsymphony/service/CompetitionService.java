@@ -12,4 +12,6 @@ public interface CompetitionService {
     PaginationResponseDto<CompetitionResponse> getAllCompetitions(PaginationSortRequestDto request);
 
     CompetitionResponse getCompetitionById(String id);
+
+    void deleteCompetition(String id);
 }
