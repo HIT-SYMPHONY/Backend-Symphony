@@ -9,7 +9,6 @@ import my_computer.backendsymphony.domain.dto.response.UserResponse;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.CommentPost;
 import my_computer.backendsymphony.domain.entity.Post;
-import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.CommentPostMapper;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.exception.UnauthorizedException;
