@@ -6,20 +6,31 @@ import lombok.experimental.FieldDefaults;
 import my_computer.backendsymphony.constant.ClassroomStatus;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.constant.Role;
+import my_computer.backendsymphony.constant.SortByDataConstant;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationSortRequestDto;
+import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
 import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
+import my_computer.backendsymphony.domain.dto.response.CompetitionResponse;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
+import my_computer.backendsymphony.domain.entity.Competition;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.ClassroomMapper;
+import my_computer.backendsymphony.domain.mapper.CompetitionMapper;
 import my_computer.backendsymphony.domain.mapper.UserMapper;
 import my_computer.backendsymphony.exception.DuplicateResourceException;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.repository.ClassroomRepository;
+import my_computer.backendsymphony.repository.CompetitionRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.UserService;
+import my_computer.backendsymphony.util.PaginationUtil;
 import my_computer.backendsymphony.util.UploadFileUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,6 +54,8 @@ public class UserServiceImpl implements UserService {
     PasswordEncoder passwordEncoder;
     ClassroomRepository classroomRepository;
     ClassroomMapper classroomMapper;
+    CompetitionRepository competitionRepository;
+    CompetitionMapper competitionMapper;
     UploadFileUtil uploadFileUtil;
 
     @Override
@@ -143,6 +156,19 @@ public class UserServiceImpl implements UserService {
     public List<UserResponse> getAllUsers() {
         List<User> users = userRepository.findAll();
         return userMapper.toListUserResponse(users);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PaginationResponseDto<CompetitionResponse> getMyCompetitions(PaginationSortRequestDto request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String currentUserId = jwt.getSubject();
+        Pageable pageable = PaginationUtil.buildPageable(request, SortByDataConstant.COMPETITION);
+        Page<Competition> competitionPage = competitionRepository.findByCompetitionUsers_User_Id(currentUserId, pageable);
+        List<CompetitionResponse> competitionResponses = competitionMapper.toCompetitionResponseList(competitionPage.getContent());
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, SortByDataConstant.COMPETITION, competitionPage);
+        return new PaginationResponseDto<>(meta, competitionResponses);
     }
 
     @Override

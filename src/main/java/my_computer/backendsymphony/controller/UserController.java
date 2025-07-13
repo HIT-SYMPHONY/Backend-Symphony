@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationSortRequestDto;
 import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
@@ -68,5 +69,10 @@ public class UserController {
 
         List<ClassroomResponse> classrooms = userService.getMyClasses(status);
         return VsResponseUtil.success(classrooms);
+    }
+
+    @GetMapping(UrlConstant.User.GET_MY_COMPETITIONS)
+    public ResponseEntity<?> getMyCompetitions(PaginationSortRequestDto request) {
+        return VsResponseUtil.success(userService.getMyCompetitions(request));
     }
 }
