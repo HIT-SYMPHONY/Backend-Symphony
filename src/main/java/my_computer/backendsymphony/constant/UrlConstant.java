@@ -66,5 +66,6 @@ public class UrlConstant {
     public static class CommentPost {
         private static final String PRE_FIX = "/comment-posts";
         public static final String COMMENT_POST_COMMON = PRE_FIX;
+        public static final String COMMENT_POST_ID = PRE_FIX + "/{id}";
     }
 }

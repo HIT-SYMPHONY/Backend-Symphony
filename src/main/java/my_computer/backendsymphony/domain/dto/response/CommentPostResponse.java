@@ -24,5 +24,5 @@ public class CommentPostResponse {
 
     private String postId;
 
-    private String createdBy;
+    private String username;
 }
