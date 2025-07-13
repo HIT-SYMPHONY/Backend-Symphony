@@ -9,6 +9,7 @@ import my_computer.backendsymphony.domain.dto.response.UserResponse;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.CommentPost;
 import my_computer.backendsymphony.domain.entity.Post;
+import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.CommentPostMapper;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.exception.UnauthorizedException;
@@ -30,22 +31,26 @@ public class CommentPostServiceImpl implements CommentPostService {
     @Override
     public CommentPostResponse createCommentPost(CommentPostRequest commentPostRequest) {
 
+        UserResponse currentUser = userService.getCurrentUser();
+
         Post post = postRepository.findById(commentPostRequest.getPostId())
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID));
 
         CommentPost commentPost = commentPostMapper.toEntity(commentPostRequest);
         commentPost.setPost(post);
 
-        return commentPostMapper.toResponse(commentPostRepository.save(commentPost));
+        CommentPostResponse response = commentPostMapper.toResponse(commentPostRepository.save(commentPost));
+        response.setUsername(currentUser.getUsername());
+
+        return response;
     }
 
     @Override
     public CommentPostResponse deleteCommentPost(String commentPostId) {
+        UserResponse currentUser = userService.getCurrentUser();
 
         CommentPost commentPost = commentPostRepository.findById(commentPostId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.CommentPost.ERR_NOT_FOUND_ID));
-
-        UserResponse currentUser = userService.getCurrentUser();
 
         Post post = commentPost.getPost();
         if (post == null) {
@@ -59,7 +64,9 @@ public class CommentPostServiceImpl implements CommentPostService {
         }
 
         commentPostRepository.delete(commentPost);
-        return commentPostMapper.toResponse(commentPost);
+        CommentPostResponse response = commentPostMapper.toResponse(commentPost);
+        response.setUsername(currentUser.getUsername());
+        return response;
     }
 
 
