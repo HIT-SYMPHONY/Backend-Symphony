@@ -6,7 +6,8 @@ public class UrlConstant {
         private static final String PRE_FIX = "/auth";
         public static final String LOGIN = PRE_FIX + "/login";
         public static final String FORGOT_PASSWORD = PRE_FIX + "/forgot-password";
-        public static final String VERIFY_TEMPPASSWORD = PRE_FIX + "/verify-temppassword";
+        public static final String VERIFY_TEMPPASSWORD = PRE_FIX + "/temp-password";
+        public static final String REFRESH_TOKEN = PRE_FIX + "/refresh-token";
         private Auth() {
         }
     }

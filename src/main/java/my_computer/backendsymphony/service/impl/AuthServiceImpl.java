@@ -2,6 +2,7 @@ package my_computer.backendsymphony.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.constant.ErrorMessage;
+import my_computer.backendsymphony.domain.dto.request.RefreshTokenRequest;
 import my_computer.backendsymphony.domain.dto.request.VerifyCodeRequest;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.exception.NotFoundException;
@@ -72,6 +73,7 @@ public class AuthServiceImpl implements AuthService {
         emailService.sendEmail(user.getEmail(), "Your Temporary Password", emailBody);
 
     }
+
     @Override
     public LoginResponse verifyCodeAndLogin(VerifyCodeRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UnauthorizedException("Incorrect code!"));
@@ -96,4 +98,24 @@ public class AuthServiceImpl implements AuthService {
 
         return new LoginResponse(accessToken, refreshToken, userPrincipal.getId(), authentication.getAuthorities());
     }
+
+    @Override
+    public LoginResponse refreshToken(RefreshTokenRequest request) {
+        try {
+            String refreshToken = request.getRefreshToken();
+            var signedJWT = jwtTokenProvider.verifyToken(refreshToken);
+
+            String userId = signedJWT.getJWTClaimsSet().getSubject();
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new UnauthorizedException("User not found"));
+            UserPrincipal userPrincipal = UserPrincipal.create(user);
+            String newAccessToken = jwtTokenProvider.generateToken(userPrincipal, false);
+            String newRefreshToken = jwtTokenProvider.generateToken(userPrincipal, true);
+
+            return new LoginResponse(newAccessToken, newRefreshToken, user.getId(), userPrincipal.getAuthorities());
+        } catch (Exception e) {
+            throw new UnauthorizedException(ErrorMessage.Auth.ERR_INVALID_REFRESH_TOKEN);
+        }
+    }
+
 }
