@@ -23,6 +23,8 @@ public class ErrorMessage {
     }
     public static class Auth {
         public static final String ERR_INCORRECT_CREDENTIALS = "Mã sinh viên hoặc mật khẩu không chính xác";
+        public static final String ERR_INVALID_REFRESH_TOKEN = "Mã sinh viên hoặc mật khẩu không chính xác";
+
     }
 
     public static class User {
