@@ -110,9 +110,7 @@ public class AuthServiceImpl implements AuthService {
                     .orElseThrow(() -> new UnauthorizedException("User not found"));
             UserPrincipal userPrincipal = UserPrincipal.create(user);
             String newAccessToken = jwtTokenProvider.generateToken(userPrincipal, false);
-            String newRefreshToken = jwtTokenProvider.generateToken(userPrincipal, true);
-
-            return new LoginResponse(newAccessToken, newRefreshToken, user.getId(), userPrincipal.getAuthorities());
+            return new LoginResponse(newAccessToken, refreshToken, user.getId(), userPrincipal.getAuthorities());
         } catch (Exception e) {
             throw new UnauthorizedException(ErrorMessage.Auth.ERR_INVALID_REFRESH_TOKEN);
         }
