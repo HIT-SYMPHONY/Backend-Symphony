@@ -9,10 +9,7 @@ import my_computer.backendsymphony.domain.dto.request.CommentPostRequest;
 import my_computer.backendsymphony.service.CommentPostService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 @RestApiV1
 @RequiredArgsConstructor
@@ -31,5 +28,9 @@ public class CommentPostController {
         return VsResponseUtil.success(commentPostService.deleteCommentPost(id));
     }
 
+    @GetMapping(UrlConstant.CommentPost.COMMENT_POST_ID)
+    public ResponseEntity<?> getAllCommentPostByPostId(@PathVariable String id) {
+        return VsResponseUtil.success(commentPostService.getCommentPostByPostId(id));
+    }
 
 }
