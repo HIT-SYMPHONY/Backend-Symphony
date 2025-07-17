@@ -147,6 +147,48 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
+    public List<ClassroomResponse> getClassroomsByName(String name) {
+
+        List<ClassRoom> classRooms = classroomRepository.findByNameContainingIgnoreCase(name);
+
+        if (classRooms.isEmpty()) {
+            throw new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND_ID);
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        Role role = Role.valueOf(jwt.getClaimAsString("scope"));
+
+        List<ClassroomResponse> responses = new ArrayList<>();
+
+        for (ClassRoom classRoom : classRooms) {
+            boolean hasAccess = false;
+
+            if (role == Role.ADMIN) {
+                hasAccess = true;
+            } else {
+                boolean isValidLeader = isLeaderOfClassroom(classRoom, authentication);
+                boolean isValidMember = isMemberOfClassroom(classRoom, authentication);
+                hasAccess = isValidLeader || isValidMember;
+            }
+
+            if (hasAccess) {
+                User leader = findUserByIdOrElseThrow(classRoom.getLeaderId());
+                ClassroomResponse response = classroomMapper.toClassroomResponse(classRoom);
+                response.setLeaderName(leader.getFullName());
+                responses.add(response);
+            }
+        }
+
+        if (responses.isEmpty()) {
+            throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
+        }
+
+        return responses;
+    }
+
+
+    @Override
     @Transactional(readOnly = true)
     public PaginationResponseDto<ClassroomResponse> getAllClassrooms(PaginationRequestDto request) {
         Pageable pageable = PaginationUtil.buildPageable(request);

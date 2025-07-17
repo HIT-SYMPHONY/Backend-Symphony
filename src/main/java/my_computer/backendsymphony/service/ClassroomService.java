@@ -12,6 +12,8 @@ import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 import my_computer.backendsymphony.domain.dto.response.UserSummaryResponse;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 public interface ClassroomService {
     ClassroomResponse createClassroom(ClassroomCreationRequest request, MultipartFile imageFile);
 
@@ -20,6 +22,8 @@ public interface ClassroomService {
     ClassroomResponse updateClassroom(String id, ClassroomUpdateRequest request, MultipartFile imageFile);
 
     ClassroomResponse getClassroomById(String id);
+
+    List<ClassroomResponse> getClassroomsByName(String name);
 
     PaginationResponseDto<ClassroomResponse> getAllClassrooms(PaginationRequestDto request);
 

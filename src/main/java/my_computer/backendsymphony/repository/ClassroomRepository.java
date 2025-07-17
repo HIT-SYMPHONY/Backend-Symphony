@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ClassroomRepository extends JpaRepository<ClassRoom, String> {
@@ -14,4 +15,5 @@ public interface ClassroomRepository extends JpaRepository<ClassRoom, String> {
 
     boolean existsByIdAndMembers_Id(String classRoomId, String userId);
 
+    List<ClassRoom> findByNameContainingIgnoreCase(String name);
 }
