@@ -88,4 +88,10 @@ public class ClassroomController {
         classroomService.removeMembersFromClassroom(id, request);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping(UrlConstant.Classroom.CLASSROOM_NAME)
+    public ResponseEntity<?> getClassroomByName(@PathVariable String name) {
+        return VsResponseUtil.success(classroomService.getClassroomsByName(name));
+    }
+
 }
