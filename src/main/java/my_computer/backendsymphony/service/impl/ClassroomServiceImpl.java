@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class ClassroomServiceImpl implements ClassroomService {
+
     ClassRoomRepository classroomRepository;
     UserRepository userRepository;
     UserMapper userMapper;
@@ -78,6 +79,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
+    @Transactional
     public void deleteClassroom(String id) {
         ClassRoom classroomToDelete = findClassroomByIdOrElseThrow(id);
         for (User member : classroomToDelete.getMembers()) {
@@ -91,7 +93,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public ClassroomResponse updateClassroom(String id, ClassroomUpdateRequest request, MultipartFile imageFile) {
         ClassRoom existingClassroom = findClassroomByIdOrElseThrow(id);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!isLeaderOfClassroom(existingClassroom, authentication))
+        if (!isLeaderOfClassroomOrAdmin(existingClassroom, authentication))
             throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
         if (request.getName() != null) {
             if (request.getName().isBlank()) {
@@ -136,7 +138,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public ClassroomResponse getClassroomById(String id) {
         ClassRoom classRoom = findClassroomByIdOrElseThrow(id);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isValidLeader = isLeaderOfClassroom(classRoom, authentication);
+        boolean isValidLeader = isLeaderOfClassroomOrAdmin(classRoom, authentication);
         boolean isValidMember = isMemberOfClassroom(classRoom, authentication);
         if (!isValidLeader && !isValidMember)
             throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
@@ -147,6 +149,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ClassroomResponse> getClassroomsByName(String name) {
 
         List<ClassRoom> classRooms = classroomRepository.findByNameContainingIgnoreCase(name);
@@ -167,7 +170,7 @@ public class ClassroomServiceImpl implements ClassroomService {
             if (role == Role.ADMIN) {
                 hasAccess = true;
             } else {
-                boolean isValidLeader = isLeaderOfClassroom(classRoom, authentication);
+                boolean isValidLeader = isLeaderOfClassroomOrAdmin(classRoom, authentication);
                 boolean isValidMember = isMemberOfClassroom(classRoom, authentication);
                 hasAccess = isValidLeader || isValidMember;
             }
@@ -186,7 +189,6 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         return responses;
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -222,7 +224,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public AddMembersResponse addMembersToClassroom(String classroomId, AddMembersRequest request) {
         ClassRoom classroom = findClassroomByIdOrElseThrow(classroomId);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!isLeaderOfClassroom(classroom, authentication))
+        if (!isLeaderOfClassroomOrAdmin(classroom, authentication))
             throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
         List<User> usersToAdd = userRepository.findAllById(request.getMemberIds());
         if (usersToAdd.size() != request.getMemberIds().size()) {
@@ -258,7 +260,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public PaginationResponseDto<UserSummaryResponse> getMembersInClassroom(String id, PaginationRequestDto request) {
         ClassRoom classRoom=findClassroomByIdOrElseThrow(id);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isValidLeader = isLeaderOfClassroom(classRoom, authentication);
+        boolean isValidLeader = isLeaderOfClassroomOrAdmin(classRoom, authentication);
         boolean isValidMember = isMemberOfClassroom(classRoom, authentication);
         if (!isValidLeader && !isValidMember)
             throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
@@ -273,7 +275,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public void removeMembersFromClassroom(String classroomId, RemoveMembersRequest request) {
         ClassRoom classroom = findClassroomByIdOrElseThrow(classroomId);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!isLeaderOfClassroom(classroom, authentication))
+        if (!isLeaderOfClassroomOrAdmin(classroom, authentication))
             throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
         List<User> membersToRemove = userRepository.findAllById(request.getMemberIds());
         if (membersToRemove.size() != request.getMemberIds().size()) {
@@ -289,7 +291,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
 
-    private boolean isLeaderOfClassroom(ClassRoom classroom, Authentication authentication) {
+    private boolean isLeaderOfClassroomOrAdmin(ClassRoom classroom, Authentication authentication) {
         Jwt jwt = (Jwt) authentication.getPrincipal();
         String role = jwt.getClaimAsString("scope");
         if (role.equals(Role.ADMIN.name())) return true;
