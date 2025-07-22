@@ -1,7 +1,9 @@
 package my_computer.backendsymphony.service.impl;
 
+import my_computer.backendsymphony.constant.ErrorMessage;
+import my_computer.backendsymphony.exception.UnauthorizedException;
+import org.springframework.transaction.annotation.Transactional;
 import my_computer.backendsymphony.domain.dto.request.LessonUpdateRequest;
-import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.LessonMapper;
 import lombok.RequiredArgsConstructor;
@@ -10,19 +12,22 @@ import my_computer.backendsymphony.domain.dto.response.LessonResponse;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.Lesson;
 import my_computer.backendsymphony.exception.NotFoundException;
-import my_computer.backendsymphony.repository.ClassroomRepository;
+import my_computer.backendsymphony.repository.ClassRoomRepository;
 import my_computer.backendsymphony.repository.LessonRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.LessonService;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class LessonServiceImpl implements LessonService {
 
     private final LessonRepository lessonRepository;
-    private final ClassroomRepository classroomRepository;
+    private final ClassRoomRepository classroomRepository;
     private final LessonMapper lessonMapper;
     private final UserRepository userRepository;
 
@@ -64,6 +69,36 @@ public class LessonServiceImpl implements LessonService {
 
         return mapToLessonResponseWithDetails(updatedLesson);
 
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+
+    public List<LessonResponse> getLessonsByClassRoomId(String classRoomId) {
+        if(!classroomRepository.existsById(classRoomId))
+            throw new NotFoundException("Không tìm thấy lớp học!");
+
+        List<Lesson> lessons = lessonRepository.findByClassRoomId(classRoomId);
+
+        return lessons.stream()
+                .map(this::mapToLessonResponseWithDetails)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<LessonResponse> getLessonsForCurrentUser(Authentication authentication) {
+
+        if(authentication == null || !authentication.isAuthenticated())
+            throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
+
+        String currentUserId = authentication.getName();
+
+        List<Lesson> lessons = lessonRepository.findLessonsByUserId(currentUserId);
+
+        return lessons.stream()
+                .map(this::mapToLessonResponseWithDetails)
+                .collect(Collectors.toList());
     }
 
 

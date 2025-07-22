@@ -1,20 +1,31 @@
 package my_computer.backendsymphony.service;
 
+import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationSortRequestDto;
 import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
+import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
+import my_computer.backendsymphony.domain.dto.response.CompetitionResponse;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
-import my_computer.backendsymphony.domain.entity.User;
-import my_computer.backendsymphony.security.UserPrincipal;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface UserService {
 
-    UserResponse createUser(UserCreationRequest request);
+    UserResponse createUser(UserCreationRequest request, MultipartFile imageFile);
 
     UserResponse getUser(String id);
 
-    UserResponse updateUser(String id, UserUpdateRequest request);
+    UserResponse updateUser(String id, UserUpdateRequest request, MultipartFile imageFile);
 
     UserResponse deleteUser(String id);
 
-    public UserResponse getCurrentUser();
+    UserResponse getCurrentUser();
+
+    List<ClassroomResponse> getMyClasses(String status);
+
+    List<UserResponse> getAllUsers();
+
+    PaginationResponseDto<CompetitionResponse> getMyCompetitions(PaginationSortRequestDto request);
 }

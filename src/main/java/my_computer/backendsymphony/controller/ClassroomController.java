@@ -12,6 +12,7 @@ import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
 import my_computer.backendsymphony.domain.dto.request.AddMembersRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomUpdateRequest;
+import my_computer.backendsymphony.domain.dto.request.RemoveMembersRequest;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 import my_computer.backendsymphony.service.ClassroomService;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ClassroomController {
     ClassroomService classroomService;
 
-    @PostMapping(value = UrlConstant.Classroom.CREATE_CLASSROOM, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = UrlConstant.Classroom.CLASSROOM_COMMON, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createClassroom(
             @Valid @RequestPart("data") ClassroomCreationRequest request,
@@ -35,40 +36,62 @@ public class ClassroomController {
         return VsResponseUtil.success(classroomService.createClassroom(request, imageFile));
     }
 
-    @DeleteMapping(UrlConstant.Classroom.DELETE_CLASSROOM)
+    @DeleteMapping(UrlConstant.Classroom.CLASSROOM_ID)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteClassroom(@PathVariable String id) {
         classroomService.deleteClassroom(id);
-        return  ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();
     }
-    @PatchMapping(value = UrlConstant.Classroom.UPDATE_CLASSROOM,consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+
+    @PatchMapping(value = UrlConstant.Classroom.CLASSROOM_ID, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     public ResponseEntity<?> updateClassroom(
             @PathVariable String id,
             @RequestPart("data") @Valid ClassroomUpdateRequest request,
             @RequestPart(value = "image", required = false) MultipartFile imageFile) {
-        ClassroomResponse updatedClassroom = classroomService.updateClassroom(id, request,imageFile);
+        ClassroomResponse updatedClassroom = classroomService.updateClassroom(id, request, imageFile);
         return VsResponseUtil.success(HttpStatus.OK, updatedClassroom);
     }
 
-    @GetMapping(UrlConstant.Classroom.GET_CLASSROOM)
+    @GetMapping(UrlConstant.Classroom.CLASSROOM_ID)
     public ResponseEntity<?> getClassroom(@PathVariable String id) {
         return VsResponseUtil.success(classroomService.getClassroomById(id));
     }
 
-    @GetMapping(UrlConstant.Classroom.GET_CLASSROOMS)
+    @GetMapping(UrlConstant.Classroom.CLASSROOM_COMMON)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllClassrooms(PaginationRequestDto request) {
         PaginationResponseDto<ClassroomResponse> response = classroomService.getAllClassrooms(request);
         return VsResponseUtil.success(response);
     }
 
-    @PostMapping(UrlConstant.Classroom.ADD_MEMBERS)
+    @PostMapping(UrlConstant.Classroom.MEMBERS)
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     public ResponseEntity<?> addMembersToClassroom(
-            @PathVariable  String id,
+            @PathVariable String id,
             @Valid @RequestBody AddMembersRequest request) {
-        return VsResponseUtil.success(classroomService.addMembersToClassroom(id,request));
+        return VsResponseUtil.success(classroomService.addMembersToClassroom(id, request));
+    }
+
+    @GetMapping(UrlConstant.Classroom.MEMBERS)
+    public ResponseEntity<?> getMembersInClassroom(
+            @PathVariable String id, PaginationRequestDto request) {
+        return VsResponseUtil.success(classroomService.getMembersInClassroom(id, request));
+    }
+
+    @DeleteMapping(UrlConstant.Classroom.MEMBERS)
+    @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
+    public ResponseEntity<Void> removeMembersFromClassroom(
+            @PathVariable String id,
+            @Valid @RequestBody RemoveMembersRequest request) {
+
+        classroomService.removeMembersFromClassroom(id, request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(UrlConstant.Classroom.CLASSROOM_NAME)
+    public ResponseEntity<?> getClassroomByName(@PathVariable String name) {
+        return VsResponseUtil.success(classroomService.getClassroomsByName(name));
     }
 
 }

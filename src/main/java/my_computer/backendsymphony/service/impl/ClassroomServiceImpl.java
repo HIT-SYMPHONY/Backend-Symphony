@@ -11,15 +11,18 @@ import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
 import my_computer.backendsymphony.domain.dto.request.AddMembersRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.ClassroomUpdateRequest;
+import my_computer.backendsymphony.domain.dto.request.RemoveMembersRequest;
 import my_computer.backendsymphony.domain.dto.response.AddMembersResponse;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
+import my_computer.backendsymphony.domain.dto.response.UserSummaryResponse;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.ClassroomMapper;
+import my_computer.backendsymphony.domain.mapper.UserMapper;
 import my_computer.backendsymphony.exception.DuplicateResourceException;
 import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;
-import my_computer.backendsymphony.repository.ClassroomRepository;
+import my_computer.backendsymphony.repository.ClassRoomRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.ClassroomService;
 import my_computer.backendsymphony.util.PaginationUtil;
@@ -44,8 +47,9 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class ClassroomServiceImpl implements ClassroomService {
-    ClassroomRepository classroomRepository;
+    ClassRoomRepository classroomRepository;
     UserRepository userRepository;
+    UserMapper userMapper;
     ClassroomMapper classroomMapper;
     UploadFileUtil uploadFileUtil;
 
@@ -143,6 +147,48 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
+    public List<ClassroomResponse> getClassroomsByName(String name) {
+
+        List<ClassRoom> classRooms = classroomRepository.findByNameContainingIgnoreCase(name);
+
+        if (classRooms.isEmpty()) {
+            throw new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND_ID);
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        Role role = Role.valueOf(jwt.getClaimAsString("scope"));
+
+        List<ClassroomResponse> responses = new ArrayList<>();
+
+        for (ClassRoom classRoom : classRooms) {
+            boolean hasAccess = false;
+
+            if (role == Role.ADMIN) {
+                hasAccess = true;
+            } else {
+                boolean isValidLeader = isLeaderOfClassroom(classRoom, authentication);
+                boolean isValidMember = isMemberOfClassroom(classRoom, authentication);
+                hasAccess = isValidLeader || isValidMember;
+            }
+
+            if (hasAccess) {
+                User leader = findUserByIdOrElseThrow(classRoom.getLeaderId());
+                ClassroomResponse response = classroomMapper.toClassroomResponse(classRoom);
+                response.setLeaderName(leader.getFullName());
+                responses.add(response);
+            }
+        }
+
+        if (responses.isEmpty()) {
+            throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
+        }
+
+        return responses;
+    }
+
+
+    @Override
     @Transactional(readOnly = true)
     public PaginationResponseDto<ClassroomResponse> getAllClassrooms(PaginationRequestDto request) {
         Pageable pageable = PaginationUtil.buildPageable(request);
@@ -175,8 +221,8 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Transactional
     public AddMembersResponse addMembersToClassroom(String classroomId, AddMembersRequest request) {
         ClassRoom classroom = findClassroomByIdOrElseThrow(classroomId);
-        Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
-        if (!isLeaderOfClassroom(classroom,authentication))
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!isLeaderOfClassroom(classroom, authentication))
             throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
         List<User> usersToAdd = userRepository.findAllById(request.getMemberIds());
         if (usersToAdd.size() != request.getMemberIds().size()) {
@@ -205,6 +251,41 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .addedMemberIds(newlyAddedIds)
                 .alreadyMemberIds(alreadyMemberIds)
                 .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PaginationResponseDto<UserSummaryResponse> getMembersInClassroom(String id, PaginationRequestDto request) {
+        ClassRoom classRoom=findClassroomByIdOrElseThrow(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isValidLeader = isLeaderOfClassroom(classRoom, authentication);
+        boolean isValidMember = isMemberOfClassroom(classRoom, authentication);
+        if (!isValidLeader && !isValidMember)
+            throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
+        Pageable pageable = PaginationUtil.buildPageable(request);
+        Page<User> memberPage = userRepository.findMembersByClassroomId(id, pageable);
+        List<UserSummaryResponse> memberResponses = userMapper.toUserSummaryResponseList(memberPage.getContent());
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, memberPage);
+        return new PaginationResponseDto<>(meta, memberResponses);
+    }
+    @Override
+    @Transactional
+    public void removeMembersFromClassroom(String classroomId, RemoveMembersRequest request) {
+        ClassRoom classroom = findClassroomByIdOrElseThrow(classroomId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!isLeaderOfClassroom(classroom, authentication))
+            throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
+        List<User> membersToRemove = userRepository.findAllById(request.getMemberIds());
+        if (membersToRemove.size() != request.getMemberIds().size()) {
+            throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ONE_OR_MORE_IDS);
+        }
+        for (User member : membersToRemove) {
+            if (member.getId().equals(classroom.getLeaderId())) {
+                continue;
+            }
+            classroom.getMembers().remove(member);
+            member.getClassRooms().remove(classroom);
+        }
     }
 
 

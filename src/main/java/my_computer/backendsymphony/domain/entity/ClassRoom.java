@@ -49,9 +49,6 @@ public class ClassRoom {
     private List<Notification> notifications;
 
     @OneToMany(mappedBy = "classRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Competition> competitions;
-
-    @OneToMany(mappedBy = "classRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Lesson> lessons;
 
     @OneToOne(mappedBy = "classRoom", cascade = CascadeType.ALL, orphanRemoval = true)

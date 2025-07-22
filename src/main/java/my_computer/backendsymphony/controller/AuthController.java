@@ -8,6 +8,7 @@ import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.request.AuthRequest;
 import my_computer.backendsymphony.domain.dto.request.LoginRequest;
+import my_computer.backendsymphony.domain.dto.request.RefreshTokenRequest;
 import my_computer.backendsymphony.domain.dto.request.VerifyCodeRequest;
 import my_computer.backendsymphony.domain.dto.response.LoginResponse;
 import my_computer.backendsymphony.service.AuthService;
@@ -37,4 +38,12 @@ public class AuthController {
         LoginResponse loginResponse = authService.verifyCodeAndLogin(request);
         return VsResponseUtil.success(loginResponse);
     }
+
+    @PostMapping(UrlConstant.Auth.REFRESH_TOKEN)
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+        LoginResponse response = authService.refreshToken(request);
+        return VsResponseUtil.success(response);
+    }
+
+
 }
