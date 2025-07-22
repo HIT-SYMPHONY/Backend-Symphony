@@ -17,27 +17,16 @@ import java.time.LocalDate;
 public class UserCreationRequest {
 
     @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
-    String username;
-
-    @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
     @Email(message = ErrorMessage.Validation.INVALID_FORMAT_FIELD)
     String email;
 
-    String password;
-
+    @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
     String firstName;
 
+    @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
     String lastName;
 
     @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
     @Size(min = 10, max = 10, message = ErrorMessage.Validation.INVALID_STUDENT_CODE)
     String studentCode;
-
-    String phoneNumber;
-
-    LocalDate dateBirth;
-
-    Gender gender;
-
-    String intake;
 }
