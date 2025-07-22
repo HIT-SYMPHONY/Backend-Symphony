@@ -58,6 +58,11 @@ public class ErrorMessage {
         public static final String START_TIME_MUST_BEFORE_END_TIME="Thời gian bắt đầu phải trước thời gian kết thúc";
     }
 
+    public static class CommentCompetition {
+        public static final String ERR_NOT_FOUND_ID= "Không tìm thấy bài dự thi nào với id: %s";
+
+    }
+
 
     public static final String EmailNotFound = "Email not found!";
 }
