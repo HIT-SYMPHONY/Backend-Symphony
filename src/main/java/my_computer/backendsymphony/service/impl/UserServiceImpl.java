@@ -25,7 +25,7 @@ import my_computer.backendsymphony.exception.DuplicateResourceException;
 import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.exception.UnauthorizedException;
-import my_computer.backendsymphony.repository.ClassroomRepository;
+import my_computer.backendsymphony.repository.ClassRoomRepository;
 import my_computer.backendsymphony.repository.CompetitionRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.UserService;
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
-    ClassroomRepository classroomRepository;
+    ClassRoomRepository classroomRepository;
     ClassroomMapper classroomMapper;
     CompetitionRepository competitionRepository;
     CompetitionMapper competitionMapper;
@@ -112,6 +112,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponse updateUser(String id, UserUpdateRequest request, MultipartFile imageFile) {
+
+        UserResponse currentUser = this.getCurrentUser();
+
+        if (currentUser.getRole() != Role.ADMIN && !currentUser.getId().equals(id)) {
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+        }
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID,

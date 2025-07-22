@@ -14,7 +14,7 @@ import my_computer.backendsymphony.domain.entity.Notification;
 import my_computer.backendsymphony.domain.mapper.NotificationMapper;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.exception.UnauthorizedException;
-import my_computer.backendsymphony.repository.ClassroomRepository;
+import my_computer.backendsymphony.repository.ClassRoomRepository;
 import my_computer.backendsymphony.repository.NotificationRepository;
 import my_computer.backendsymphony.service.NotificationService;
 import my_computer.backendsymphony.service.UserService;
@@ -33,7 +33,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
-    private final ClassroomRepository classroomRepository;
+    private final ClassRoomRepository classroomRepository;
     private final UserService userService;
     private final NotificationWebSocketSender notificationWebSocketSender;
 
