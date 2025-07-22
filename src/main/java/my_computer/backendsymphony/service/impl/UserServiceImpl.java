@@ -24,6 +24,7 @@ import my_computer.backendsymphony.domain.mapper.UserMapper;
 import my_computer.backendsymphony.exception.DuplicateResourceException;
 import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;
+import my_computer.backendsymphony.exception.UnauthorizedException;
 import my_computer.backendsymphony.repository.ClassroomRepository;
 import my_computer.backendsymphony.repository.CompetitionRepository;
 import my_computer.backendsymphony.repository.UserRepository;
@@ -61,6 +62,7 @@ public class UserServiceImpl implements UserService {
     UploadFileUtil uploadFileUtil;
 
     @Override
+    @Transactional
     public UserResponse createUser(UserCreationRequest request, MultipartFile imageFile) {
 
         if (userRepository.existsByStudentCode(request.getStudentCode())) {
@@ -91,13 +93,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserResponse getUser(String id) {
-        return userMapper.toUserResponse(userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID,
-                        new String[]{id})));
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID, new String[]{id}));
+
+        UserResponse currentUser = this.getCurrentUser();
+
+        if (currentUser.getRole() != Role.ADMIN && !currentUser.getId().equals(id)) {
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+        }
+
+        return userMapper.toUserResponse(user);
     }
 
+
     @Override
+    @Transactional
     public UserResponse updateUser(String id, UserUpdateRequest request, MultipartFile imageFile) {
 
         User user = userRepository.findById(id)
@@ -143,6 +156,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserResponse deleteUser(String id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID,
@@ -152,6 +166,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserResponse getCurrentUser() {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -166,6 +181,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserResponse> getAllUsers() {
         List<User> users = userRepository.findAll();
         return userMapper.toListUserResponse(users);
