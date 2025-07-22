@@ -11,7 +11,7 @@ public class ErrorMessage {
     public static final String INVALID_JSON_FORMAT = "Dữ liệu gửi lên có định dạng JSON không hợp lệ. Vui lòng kiểm tra lại.";
     //error validation dto
     public static class Validation {
-        public static final String NOT_BLANK = "Trường này không thể trống";
+        public static final String NOT_BLANK = "Không thể trống";
         public static final String INVALID_FORMAT_PASSWORD = "Mật khẩu không đủ mạnh (ít nhất 6 ký tự, bao gồm chữ và số)";
         public static final String NOT_NULL= "Trường này là bắt buộc";
         public static final String NOT_EMPTY="Trường này không được để rỗng";

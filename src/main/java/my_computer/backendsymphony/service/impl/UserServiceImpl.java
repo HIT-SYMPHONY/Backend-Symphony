@@ -22,6 +22,7 @@ import my_computer.backendsymphony.domain.mapper.ClassroomMapper;
 import my_computer.backendsymphony.domain.mapper.CompetitionMapper;
 import my_computer.backendsymphony.domain.mapper.UserMapper;
 import my_computer.backendsymphony.exception.DuplicateResourceException;
+import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.repository.ClassroomRepository;
 import my_computer.backendsymphony.repository.CompetitionRepository;
@@ -38,6 +39,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -78,8 +80,12 @@ public class UserServiceImpl implements UserService {
             user.setImageUrl(imageUrl);
         }
 
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setUsername(generateUsername(request.getStudentCode()));
+        String rawPassword = generatePassword(request.getStudentCode());
+        user.setImageUrl("https://res.cloudinary.com/dh6qzqf73/image/upload/v1753189854/lhqcxppwnnm0l4ixrjwz.jpg");
+        user.setPassword(passwordEncoder.encode(rawPassword));
         user.setRole(Role.USER);
+
         User savedUser = userRepository.save(user);
         return userMapper.toUserResponse(savedUser);
     }
@@ -99,6 +105,9 @@ public class UserServiceImpl implements UserService {
                         new String[]{id}));
 
         if (request.getPassword() != null) {
+            if (!isStrongPassword(request.getPassword())) {
+                throw new InvalidException(ErrorMessage.Validation.INVALID_FORMAT_PASSWORD);
+            }
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
@@ -120,6 +129,10 @@ public class UserServiceImpl implements UserService {
             UploadFileUtil.validateIsImage(imageFile);
             String imageUrl = uploadFileUtil.uploadImage(imageFile);
             user.setImageUrl(imageUrl);
+        }
+
+        if (request.getDateBirth() != null && request.getDateBirth().isAfter(LocalDate.now())) {
+            throw new InvalidException(ErrorMessage.Validation.MUST_IN_PAST);
         }
 
         userMapper.toUser(request, user);
@@ -201,5 +214,22 @@ public class UserServiceImpl implements UserService {
         }
         return allClassroomResponses;
     }
+
+    private boolean isStrongPassword(String password) {
+        if (password == null) return false;
+        return password.length() >= 6 &&
+                password.matches(".*[A-Za-z].*") &&
+                password.matches(".*\\d.*");
+    }
+
+    private String generateUsername (String studentCode) {
+        return "sv" + studentCode;  // vd: sv2301012345
+    }
+
+    private String generatePassword(String studentCode) {
+        // "svHAUI" + 4 số cuối mã SV
+        return "svHAUI" + studentCode.substring(studentCode.length() - 4);
+    }
+
 
 }
