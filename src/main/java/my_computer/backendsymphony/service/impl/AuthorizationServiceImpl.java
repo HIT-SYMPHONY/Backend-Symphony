@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.Lesson;
 import my_computer.backendsymphony.exception.NotFoundException;
-import my_computer.backendsymphony.repository.ClassroomRepository;
+import my_computer.backendsymphony.repository.ClassRoomRepository;
 import my_computer.backendsymphony.repository.LessonRepository;
 import my_computer.backendsymphony.service.AuthorizationService;
 import org.springframework.security.core.Authentication;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthorizationServiceImpl implements AuthorizationService {
 
-    private final ClassroomRepository classroomRepository;
+    private final ClassRoomRepository classroomRepository;
     private final LessonRepository lessonRepository;
 
     @Override

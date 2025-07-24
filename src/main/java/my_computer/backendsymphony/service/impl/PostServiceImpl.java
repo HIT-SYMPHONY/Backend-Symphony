@@ -14,7 +14,7 @@ import my_computer.backendsymphony.domain.entity.Post;
 import my_computer.backendsymphony.domain.mapper.PostMapper;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.exception.UnauthorizedException;
-import my_computer.backendsymphony.repository.ClassroomRepository;
+import my_computer.backendsymphony.repository.ClassRoomRepository;
 import my_computer.backendsymphony.repository.PostRepository;
 import my_computer.backendsymphony.service.PostService;
 import my_computer.backendsymphony.service.UserService;
@@ -33,7 +33,7 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final PostMapper postMapper;
-    private final ClassroomRepository classroomRepository;
+    private final ClassRoomRepository classroomRepository;
     private final UserService userService;
 
     @Override

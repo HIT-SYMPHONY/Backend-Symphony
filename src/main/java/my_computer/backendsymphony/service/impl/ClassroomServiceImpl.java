@@ -22,7 +22,7 @@ import my_computer.backendsymphony.domain.mapper.UserMapper;
 import my_computer.backendsymphony.exception.DuplicateResourceException;
 import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;
-import my_computer.backendsymphony.repository.ClassroomRepository;
+import my_computer.backendsymphony.repository.ClassRoomRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.ClassroomService;
 import my_computer.backendsymphony.util.PaginationUtil;
@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class ClassroomServiceImpl implements ClassroomService {
-    ClassroomRepository classroomRepository;
+    ClassRoomRepository classroomRepository;
     UserRepository userRepository;
     UserMapper userMapper;
     ClassroomMapper classroomMapper;
