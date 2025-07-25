@@ -93,7 +93,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public ClassroomResponse updateClassroom(String id, ClassroomUpdateRequest request, MultipartFile imageFile) {
         ClassRoom existingClassroom = findClassroomByIdOrElseThrow(id);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!isLeaderOfClassroom(existingClassroom, authentication))
+        if (!isLeaderOfClassroomOrAdmin(existingClassroom, authentication))
             throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
         if (request.getName() != null) {
             if (request.getName().isBlank()) {
