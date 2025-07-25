@@ -25,8 +25,9 @@ public class Competition {
     @Column(insertable = false, updatable = false, nullable = false, columnDefinition = "CHAR(36)")
     private String id;
 
-
     private String name;
+
+    private String rule;
 
     @Column(columnDefinition = "TEXT")
     private String content;
