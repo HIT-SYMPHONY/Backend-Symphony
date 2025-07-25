@@ -22,7 +22,7 @@ public class CompetitionController {
     CompetitionService competitionService;
 
     @PostMapping(UrlConstant.Competition.COMPETITION_COMMON)
-    @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createCompetition(
             @Valid @RequestPart("data") CompetitionCreationRequest request,
             @RequestPart(value = "image", required = false) MultipartFile imageFile) {
