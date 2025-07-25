@@ -18,6 +18,7 @@ public class ClassroomResponse {
     String image;
     LocalDate startTime;
     Integer duration;
+    String description;
     LocalDateTime createdAt;
     String leaderId;
     String leaderName;

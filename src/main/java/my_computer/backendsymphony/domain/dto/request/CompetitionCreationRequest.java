@@ -16,6 +16,8 @@ public class CompetitionCreationRequest {
     @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
     String name;
 
+    String rule;
+
     String description;
 
     @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
