@@ -119,6 +119,10 @@ public class UserServiceImpl implements UserService {
             throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
         }
 
+        if(request.getRole() != null && currentUser.getRole() != Role.ADMIN) {
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+        }
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID,
                         new String[]{id}));
