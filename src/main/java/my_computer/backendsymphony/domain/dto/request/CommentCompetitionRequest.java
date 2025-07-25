@@ -15,9 +15,6 @@ import my_computer.backendsymphony.constant.ErrorMessage;
 @NoArgsConstructor
 public class CommentCompetitionRequest {
 
-    @Positive(message = ErrorMessage.Validation.POSITIVE)
-    private Double score;
-
     @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
     private String content;
 
