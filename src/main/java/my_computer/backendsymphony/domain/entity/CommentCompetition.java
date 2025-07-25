@@ -25,7 +25,6 @@ public class CommentCompetition {
     @Column(insertable = false, updatable = false, nullable = false, columnDefinition = "CHAR(36)")
     private String id;
 
-
     private Double score;
 
     @Column(columnDefinition = "TEXT", nullable = false)
