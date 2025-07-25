@@ -8,6 +8,8 @@ import my_computer.backendsymphony.domain.dto.request.CommentCompetitionRequest;
 import my_computer.backendsymphony.service.CommentCompetitionService;
 import my_computer.backendsymphony.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -20,6 +22,11 @@ public class CommentCompetitionController {
     @PostMapping(UrlConstant.CommentCompetition.COMMENT_COMPETITION_COMMON)
     public ResponseEntity<?> createCommentCompetition(@RequestBody CommentCompetitionRequest request) {
         return VsResponseUtil.success(commentCompetitionService.createCommentCompetition(request));
+    }
+
+    @DeleteMapping(UrlConstant.CommentCompetition.COMMENT_COMPETITION_ID)
+    public ResponseEntity<?> deleteCommentCompetition(@PathVariable String id) {
+        return VsResponseUtil.success(commentCompetitionService.deleteCommentCompetition(id));
     }
 
 }

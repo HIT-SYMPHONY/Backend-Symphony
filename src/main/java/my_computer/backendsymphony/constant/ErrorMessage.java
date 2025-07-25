@@ -59,7 +59,7 @@ public class ErrorMessage {
     }
 
     public static class CommentCompetition {
-        public static final String ERR_NOT_FOUND_ID= "Không tìm thấy cuộc thi nào với id: %s";
+        public static final String ERR_NOT_FOUND_ID= "Không tìm phần trả lời nào cuộc thi nào với id: %s";
     }
 
 
