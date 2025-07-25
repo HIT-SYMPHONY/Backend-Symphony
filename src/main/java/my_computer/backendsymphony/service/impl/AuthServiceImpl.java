@@ -43,6 +43,12 @@ public class AuthServiceImpl implements AuthService {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+
+            User user = userRepository.findById(userPrincipal.getId())
+                    .orElseThrow(() -> new NotFoundException("User not found"));
+            user.setLastLogin(LocalDateTime.now());
+            userRepository.save(user);
+
             String accessToken = jwtTokenProvider.generateToken(userPrincipal, Boolean.FALSE);
             String refreshToken = jwtTokenProvider.generateToken(userPrincipal, Boolean.TRUE);
             return new LoginResponse(accessToken, refreshToken, userPrincipal.getId(), authentication.getAuthorities());
