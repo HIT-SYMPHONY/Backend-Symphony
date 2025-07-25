@@ -33,6 +33,8 @@ public class ClassRoom {
 
     private Integer duration;
 
+    private String description;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
