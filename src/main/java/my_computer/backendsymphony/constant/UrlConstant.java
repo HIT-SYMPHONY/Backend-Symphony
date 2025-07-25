@@ -66,6 +66,11 @@ public class UrlConstant {
         private Competition() {}
     }
 
+    public static class CommentCompetition {
+        private static final String PRE_FIX = "/comment-competitions";
+        public static final String COMMENT_COMPETITION_COMMON = PRE_FIX;
+    }
+
     public static class CommentPost {
         private static final String PRE_FIX = "/comment-posts";
         public static final String COMMENT_POST_COMMON = PRE_FIX;
