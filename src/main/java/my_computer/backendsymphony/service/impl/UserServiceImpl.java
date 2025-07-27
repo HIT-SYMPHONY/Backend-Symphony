@@ -208,6 +208,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<UserResponse> getLeaderList() {
+        List<User> userList = userRepository.findByRole(Role.LEADER);
+        return userMapper.toListUserResponse(userList);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<ClassroomResponse> getMyClasses(String status) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Jwt jwt = (Jwt) authentication.getPrincipal();

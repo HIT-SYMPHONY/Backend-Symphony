@@ -28,4 +28,6 @@ public interface UserService {
     List<UserResponse> getAllUsers();
 
     PaginationResponseDto<CompetitionResponse> getMyCompetitions(PaginationSortRequestDto request);
+
+    List<UserResponse> getLeaderList ();
 }

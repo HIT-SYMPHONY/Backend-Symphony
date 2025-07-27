@@ -19,6 +19,7 @@ public class UrlConstant {
         public static final String GET_CURRENT_USER=PRE_FIX+"/me";
         public static final String GET_MY_CLASSROOMS=GET_CURRENT_USER +"/classrooms";
         public static final String GET_MY_COMPETITIONS=GET_CURRENT_USER +"/competitions";
+        public static final String GET_LEADERS= PRE_FIX +"/leaders";
         private User() {
         }
     }
