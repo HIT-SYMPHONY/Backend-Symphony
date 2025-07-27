@@ -38,6 +38,11 @@ public class UserController {
         return VsResponseUtil.success(HttpStatus.OK, userService.getUser(id));
     }
 
+    @GetMapping(UrlConstant.User.GET_BY_USERNAME)
+    public ResponseEntity<?> getUsers(@RequestParam String username) {
+        return VsResponseUtil.success(HttpStatus.OK, userService.getUsersByUsername(username));
+    }
+
     @PatchMapping(value = UrlConstant.User.USER_ID, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateUser(
             @PathVariable String id,
