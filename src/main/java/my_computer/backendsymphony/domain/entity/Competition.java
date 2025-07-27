@@ -1,6 +1,7 @@
 package my_computer.backendsymphony.domain.entity;
 
 import jakarta.persistence.*;
+import jdk.jfr.Frequency;
 import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -25,7 +26,6 @@ public class Competition {
     @Column(insertable = false, updatable = false, nullable = false, columnDefinition = "CHAR(36)")
     private String id;
 
-
     private String name;
 
     @Column(columnDefinition = "TEXT")
@@ -45,6 +45,9 @@ public class Competition {
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private String competitionLeaderId;
 
     @LastModifiedDate
     @Column(name = "updated_at")

@@ -8,6 +8,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface CommentCompetitionMapper {
 
@@ -15,5 +17,7 @@ public interface CommentCompetitionMapper {
 
     @Mapping(source = "competition.name", target = "competitionName")
     CommentCompetitionResponse toResponse(CommentCompetition commentCompetition);
+
+    List<CommentCompetitionResponse> toListResponse(List<CommentCompetition> listCommentCompetition);
 
 }

@@ -69,6 +69,7 @@ public class UrlConstant {
     public static class CommentCompetition {
         private static final String PRE_FIX = "/comment-competitions";
         public static final String COMMENT_COMPETITION_COMMON = PRE_FIX;
+        public static final String BY_COMPETITION_ID = PRE_FIX + "/by-competition/{competitionId}";
         public static final String COMMENT_COMPETITION_ID = PRE_FIX + "/{id}";
     }
 

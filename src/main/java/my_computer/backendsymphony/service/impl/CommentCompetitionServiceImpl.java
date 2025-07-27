@@ -17,6 +17,8 @@ import my_computer.backendsymphony.service.CommentCompetitionService;
 import my_computer.backendsymphony.service.UserService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class CommentCompetitionServiceImpl implements CommentCompetitionService {
@@ -47,8 +49,22 @@ public class CommentCompetitionServiceImpl implements CommentCompetitionService 
 
 
     @Override
-    public CommentCompetitionResponse updateCommentCompetition(String competitionId, CommentCompetitionRequest request) {
-        return null;
+    public List<CommentCompetitionResponse> getAllCommentOfCompetition(String competitionId) {
+
+        Competition competition = competitionRepository.findById(competitionId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Competition.ERR_NOT_FOUND_ID));
+
+        UserResponse currentUser = userService.getCurrentUser();
+        if (currentUser.getRole() != Role.ADMIN) {
+            if(competition.getCompetitionLeaderId().equals(currentUser.getId())){
+                throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+            }
+        }
+
+        List<CommentCompetition> comments = commentCompetitionRepository
+                .findCommentsByCompetitionId(competitionId);
+
+        return commentCompetitionMapper.toListResponse(comments);
     }
 
     @Override
