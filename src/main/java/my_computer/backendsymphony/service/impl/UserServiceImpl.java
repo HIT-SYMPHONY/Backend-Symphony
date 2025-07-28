@@ -198,6 +198,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserResponse> getUsersByUsername(String username) {
+
+        List<User> userList = userRepository.findByUsernameContaining(username);
+
+        if (userList.isEmpty()) {
+            throw new NotFoundException(ErrorMessage.User.USERNAME_NOT_FOUND);
+        }
+
+        return userMapper.toListUserResponse(userList);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public PaginationResponseDto<CompetitionResponse> getMyCompetitions(PaginationSortRequestDto request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
