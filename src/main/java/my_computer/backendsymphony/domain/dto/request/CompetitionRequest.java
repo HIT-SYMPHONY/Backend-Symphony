@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CompetitionCreationRequest {
+public class CompetitionRequest {
     @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
     String name;
 
@@ -22,6 +22,9 @@ public class CompetitionCreationRequest {
 
     @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
     String content;
+
+    @NotNull(message = ErrorMessage.Validation.NOT_NULL)
+    String competitionLeaderId;
 
     @NotNull(message = ErrorMessage.Validation.NOT_NULL)
     @Future(message = ErrorMessage.Validation.MUST_IN_FUTURE)
