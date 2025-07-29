@@ -20,6 +20,7 @@ public class CompetitionResponse {
     String description;
     String content;
     String image;
+    String competitionLeaderId;
     LocalDateTime startTime;
     LocalDateTime endTime;
     CompetitionStatus status;
