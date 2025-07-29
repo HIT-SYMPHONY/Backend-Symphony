@@ -32,6 +32,7 @@ public class ErrorMessage {
         public static final String ERR_NOT_FOUND_STUDENT_CODE = "Không tìm thấy người dùng nào với mã sinh viên: %s";
         public static final String ERR_NOT_FOUND_ONE_OR_MORE_IDS="Không tìm thấy một hoặc nhiều id người dùng được cung cấp";
         public static final String USER_IS_NOT_LEADER="Người dùng phải không phải leader";
+        public static final String USERNAME_NOT_FOUND="Không tìm thấy người dùng nào với username" ;
     }
 
     public static class Classroom {

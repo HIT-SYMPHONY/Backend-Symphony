@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     Optional<User> findByEmail(String email);
 
-    Optional<User> findByUsername(String username);
+    List<User> findByUsernameContaining(String username);
 
     @Query("SELECT u FROM User u JOIN u.classRooms c WHERE c.id = :classroomId")
     Page<User> findMembersByClassroomId(@Param("classroomId") String classroomId, Pageable pageable);

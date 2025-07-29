@@ -28,6 +28,8 @@ public class Competition {
 
     private String name;
 
+    private String rule;
+
     @Column(columnDefinition = "TEXT")
     private String content;
 

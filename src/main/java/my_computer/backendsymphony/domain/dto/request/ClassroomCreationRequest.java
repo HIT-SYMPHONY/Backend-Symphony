@@ -14,11 +14,17 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ClassroomCreationRequest {
+
     @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
     String name;
+
     LocalDate startTime;
+
     @Positive(message = ErrorMessage.Validation.POSITIVE)
     Integer duration;
+
+    private String description;
+
     @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
     String leaderId;
 }

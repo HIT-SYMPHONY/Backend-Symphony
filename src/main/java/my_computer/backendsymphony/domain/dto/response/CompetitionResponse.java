@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public class CompetitionResponse {
     String id;
     String name;
+    String rule;
     String description;
     String content;
     String image;

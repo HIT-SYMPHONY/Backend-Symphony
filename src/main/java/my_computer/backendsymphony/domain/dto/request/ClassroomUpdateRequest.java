@@ -13,9 +13,15 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ClassroomUpdateRequest {
+
     String name;
+
     LocalDate startTime;
+
     @Positive(message = ErrorMessage.Validation.POSITIVE)
     Integer duration;
+
+    String description;
+
     String leaderId;
 }

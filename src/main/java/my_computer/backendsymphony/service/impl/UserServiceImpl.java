@@ -119,6 +119,10 @@ public class UserServiceImpl implements UserService {
             throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
         }
 
+        if(request.getRole() != null && currentUser.getRole() != Role.ADMIN) {
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+        }
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID,
                         new String[]{id}));
@@ -191,6 +195,18 @@ public class UserServiceImpl implements UserService {
     public List<UserResponse> getAllUsers() {
         List<User> users = userRepository.findAll();
         return userMapper.toListUserResponse(users);
+    }
+
+    @Override
+    public List<UserResponse> getUsersByUsername(String username) {
+
+        List<User> userList = userRepository.findByUsernameContaining(username);
+
+        if (userList.isEmpty()) {
+            throw new NotFoundException(ErrorMessage.User.USERNAME_NOT_FOUND);
+        }
+
+        return userMapper.toListUserResponse(userList);
     }
 
     @Override

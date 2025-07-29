@@ -27,6 +27,8 @@ public interface UserService {
 
     List<UserResponse> getAllUsers();
 
+    List<UserResponse> getUsersByUsername(String username);
+
     PaginationResponseDto<CompetitionResponse> getMyCompetitions(PaginationSortRequestDto request);
 
     List<UserResponse> getLeaderList ();
