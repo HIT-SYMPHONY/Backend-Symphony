@@ -8,7 +8,7 @@ import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationSortRequestDto;
-import my_computer.backendsymphony.domain.dto.request.CompetitionCreationRequest;
+import my_computer.backendsymphony.domain.dto.request.CompetitionRequest;
 import my_computer.backendsymphony.service.CompetitionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,7 +24,7 @@ public class CompetitionController {
     @PostMapping(UrlConstant.Competition.COMPETITION_COMMON)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createCompetition(
-            @Valid @RequestPart("data") CompetitionCreationRequest request,
+            @Valid @RequestPart("data") CompetitionRequest request,
             @RequestPart(value = "image", required = false) MultipartFile imageFile) {
         return VsResponseUtil.success(competitionService.createCompetition(request, imageFile));
     }
@@ -43,5 +43,12 @@ public class CompetitionController {
     public ResponseEntity<?> deleteCompetition(@PathVariable String id) {
         competitionService.deleteCompetition(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping(UrlConstant.Competition.COMPETITION_ID)
+    public ResponseEntity<?> updateCompetition(@PathVariable String id,
+                                               @RequestPart("data") CompetitionRequest request,
+                                               @RequestPart(value = "image", required = false) MultipartFile imageFile) {
+        return VsResponseUtil.success(competitionService.updateCompetition(id, request, imageFile));
     }
 }

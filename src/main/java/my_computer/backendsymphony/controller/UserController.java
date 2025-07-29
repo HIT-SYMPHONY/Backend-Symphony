@@ -80,4 +80,10 @@ public class UserController {
     public ResponseEntity<?> getMyCompetitions(PaginationSortRequestDto request) {
         return VsResponseUtil.success(userService.getMyCompetitions(request));
     }
+
+    @GetMapping(UrlConstant.User.GET_LEADERS)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getAllLeaders() {
+        return VsResponseUtil.success(HttpStatus.OK, userService.getLeaderList());
+    }
 }

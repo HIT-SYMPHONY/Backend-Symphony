@@ -3,11 +3,13 @@ package my_computer.backendsymphony.service;
 import my_computer.backendsymphony.domain.dto.request.CommentCompetitionRequest;
 import my_computer.backendsymphony.domain.dto.response.CommentCompetitionResponse;
 
+import java.util.List;
+
 public interface CommentCompetitionService {
 
     CommentCompetitionResponse createCommentCompetition(CommentCompetitionRequest request);
 
-    CommentCompetitionResponse updateCommentCompetition(String competitionId, CommentCompetitionRequest request);
+    List<CommentCompetitionResponse> getAllCommentOfCompetition(String competitionId);
 
     CommentCompetitionResponse deleteCommentCompetition(String competitionId);
 }
