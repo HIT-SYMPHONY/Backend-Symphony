@@ -6,6 +6,7 @@ import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.request.CommentPostRequest;
+import my_computer.backendsymphony.domain.dto.request.MarkRequest;
 import my_computer.backendsymphony.service.CommentPostService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +32,11 @@ public class CommentPostController {
     @GetMapping(UrlConstant.CommentPost.COMMENT_POST_ID)
     public ResponseEntity<?> getAllCommentPostByPostId(@PathVariable String id) {
         return VsResponseUtil.success(commentPostService.getCommentPostByPostId(id));
+    }
+
+    @PatchMapping(UrlConstant.CommentPost.COMMENT_POST_SCORE)
+    public ResponseEntity<?> updateCommentPostScore(@RequestBody MarkRequest request) {
+        return VsResponseUtil.success(commentPostService.markCommentPost(request));
     }
 
 }

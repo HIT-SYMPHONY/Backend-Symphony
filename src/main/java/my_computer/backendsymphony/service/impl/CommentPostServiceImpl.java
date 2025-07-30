@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.constant.Role;
 import my_computer.backendsymphony.domain.dto.request.CommentPostRequest;
+import my_computer.backendsymphony.domain.dto.request.MarkRequest;
 import my_computer.backendsymphony.domain.dto.response.CommentPostResponse;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
@@ -87,6 +88,22 @@ public class CommentPostServiceImpl implements CommentPostService {
                     return response;
                 })
                 .toList();
+    }
+
+    @Override
+    public CommentPostResponse markCommentPost(MarkRequest markRequest) {
+        CommentPost commentPost = commentPostRepository.findById(markRequest.getId())
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.CommentPost.ERR_NOT_FOUND_ID));
+        String leaderId = commentPost.getPost().getClassRoom().getLeaderId();
+        UserResponse currentUser = userService.getCurrentUser();
+        if (!currentUser.getId().equals(leaderId) && currentUser.getRole() != Role.ADMIN) {
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+        }
+        commentPost.setScore(markRequest.getScore());
+        commentPostRepository.save(commentPost);
+        CommentPostResponse response = commentPostMapper.toResponse(commentPost);
+        response.setUsername(currentUser.getUsername());
+        return response;
     }
 
 }

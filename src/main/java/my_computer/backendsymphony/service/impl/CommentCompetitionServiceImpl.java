@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.constant.Role;
 import my_computer.backendsymphony.domain.dto.request.CommentCompetitionRequest;
+import my_computer.backendsymphony.domain.dto.request.MarkRequest;
 import my_computer.backendsymphony.domain.dto.response.CommentCompetitionResponse;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
 import my_computer.backendsymphony.domain.entity.CommentCompetition;
@@ -82,5 +83,10 @@ public class CommentCompetitionServiceImpl implements CommentCompetitionService 
         String username = userService.getUser(commentCompetition.getCreatedBy()).getUsername();
         response.setCreatedByUserName(username);
         return response;
+    }
+
+    @Override
+    public CommentCompetitionResponse markCommentPost(MarkRequest markRequest) {
+        return null;
     }
 }
