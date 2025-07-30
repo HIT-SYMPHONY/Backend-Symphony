@@ -74,11 +74,13 @@ public class UrlConstant {
         public static final String COMMENT_COMPETITION_COMMON = PRE_FIX;
         public static final String BY_COMPETITION_ID = PRE_FIX + "/by-competition/{competitionId}";
         public static final String COMMENT_COMPETITION_ID = PRE_FIX + "/{id}";
+        public static final String COMMENT_COMPETITION_SCORE = PRE_FIX + "/{id}";
     }
 
     public static class CommentPost {
         private static final String PRE_FIX = "/comment-posts";
         public static final String COMMENT_POST_COMMON = PRE_FIX;
         public static final String COMMENT_POST_ID = PRE_FIX + "/{id}";
+        public static final String COMMENT_POST_SCORE = PRE_FIX + "/score";
     }
 }

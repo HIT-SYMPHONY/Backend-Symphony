@@ -137,6 +137,7 @@ public class DataInitializer implements CommandLineRunner {
                 .startTime(LocalDateTime.now())
                 .endTime(LocalDateTime.now().plusWeeks(2))
                 .createdBy(user2.getId())
+                .competitionLeaderId(user2.getId())
                 .build();
 
         competitionRepository.save(competition);
@@ -162,6 +163,7 @@ public class DataInitializer implements CommandLineRunner {
         CommentPost commentPost = CommentPost.builder()
                 .content("Bài viết đầu tiên rất hay! Rất mong chờ khóa học.")
                 .post(post)
+                .score(9.0)
                 .createdBy(user1.getId())
                 .build();
 

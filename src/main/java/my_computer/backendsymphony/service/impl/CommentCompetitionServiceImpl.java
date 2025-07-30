@@ -4,9 +4,12 @@ import lombok.AllArgsConstructor;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.constant.Role;
 import my_computer.backendsymphony.domain.dto.request.CommentCompetitionRequest;
+import my_computer.backendsymphony.domain.dto.request.MarkRequest;
 import my_computer.backendsymphony.domain.dto.response.CommentCompetitionResponse;
+import my_computer.backendsymphony.domain.dto.response.CommentPostResponse;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
 import my_computer.backendsymphony.domain.entity.CommentCompetition;
+import my_computer.backendsymphony.domain.entity.CommentPost;
 import my_computer.backendsymphony.domain.entity.Competition;
 import my_computer.backendsymphony.domain.mapper.CommentCompetitionMapper;
 import my_computer.backendsymphony.exception.NotFoundException;
@@ -81,6 +84,23 @@ public class CommentCompetitionServiceImpl implements CommentCompetitionService 
         CommentCompetitionResponse response = commentCompetitionMapper.toResponse(commentCompetition);
         String username = userService.getUser(commentCompetition.getCreatedBy()).getUsername();
         response.setCreatedByUserName(username);
+        return response;
+    }
+
+    @Override
+    public CommentCompetitionResponse markCommentCompetition(MarkRequest markRequest) {
+        CommentCompetition commentCompetition = commentCompetitionRepository.findById(markRequest.getId())
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.CommentCompetition.ERR_NOT_FOUND_ID));
+
+        String leaderId = commentCompetition.getCompetition().getCompetitionLeaderId();
+        UserResponse currentUser = userService.getCurrentUser();
+        if (!currentUser.getId().equals(leaderId) && currentUser.getRole() != Role.ADMIN) {
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+        }
+        commentCompetition.setScore(markRequest.getScore());
+        commentCompetitionRepository.save(commentCompetition);
+        CommentCompetitionResponse response = commentCompetitionMapper.toResponse(commentCompetition);
+        response.setCreatedByUserName(currentUser.getUsername());
         return response;
     }
 }

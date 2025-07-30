@@ -5,6 +5,7 @@ import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.request.CommentCompetitionRequest;
+import my_computer.backendsymphony.domain.dto.request.MarkRequest;
 import my_computer.backendsymphony.service.CommentCompetitionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,5 +35,9 @@ public class CommentCompetitionController {
         return VsResponseUtil.success(commentCompetitionService.getAllCommentOfCompetition(competitionId));
     }
 
+    @PatchMapping(UrlConstant.CommentCompetition.COMMENT_COMPETITION_SCORE)
+    public ResponseEntity<?> updateCommentCompetition(@RequestBody MarkRequest request) {
+        return VsResponseUtil.success(commentCompetitionService.markCommentCompetition(request));
+    }
 
 }

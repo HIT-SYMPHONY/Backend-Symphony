@@ -20,6 +20,7 @@ public class ErrorMessage {
         public static final String MUST_IN_FUTURE = "Ngày phải ở trong tương lai";
         public static final String INVALID_STUDENT_CODE="Mã sinh viên phải có 10 ký tự";
         public static final String POSITIVE="Số nhập vào phải >0";
+        public static final String INVALID_SCORE="Điểm phải lớn hơn hoặc bằng 0 và nhỏ hơn hoặc bằng 10";
     }
     public static class Auth {
         public static final String ERR_INCORRECT_CREDENTIALS = "Mã sinh viên hoặc mật khẩu không chính xác";
