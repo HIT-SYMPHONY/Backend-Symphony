@@ -1,10 +1,11 @@
 package my_computer.backendsymphony.domain.mapper;
 
-import my_computer.backendsymphony.domain.dto.request.CompetitionUserRequest;
 import my_computer.backendsymphony.domain.dto.response.CompetitionUserResponse;
 import my_computer.backendsymphony.domain.entity.CompetitionUser;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface CompetitionUserMapper {
@@ -13,5 +14,5 @@ public interface CompetitionUserMapper {
     @Mapping(source = "competition.id", target = "competitionId")
     CompetitionUserResponse toResponse(CompetitionUser competitionUser);
 
-//    CompetitionUser toEntity(CompetitionUserRequest request);
+    List<CompetitionUserResponse> toResponseList(List<CompetitionUser> competitionUserList);
 }
