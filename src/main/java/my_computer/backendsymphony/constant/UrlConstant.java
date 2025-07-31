@@ -84,6 +84,7 @@ public class UrlConstant {
 
     public static class CompetitionUser {
         private static final String PRE_FIX = "/competition-users";
-        public static final String COMPETITION_USER_COMMON = PRE_FIX;
+        public static final String JOIN = PRE_FIX + "/join";
+        public static final String ADD_MULTIPLE = PRE_FIX + "/add-multiple";
     }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
+import my_computer.backendsymphony.domain.dto.request.AddMembersToCompetitionRequest;
 import my_computer.backendsymphony.domain.dto.request.JoinCompetitionRequest;
 import my_computer.backendsymphony.service.CompetitionUserService;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +17,14 @@ public class CompetitionUserController {
 
     private final CompetitionUserService competitionUserService;
 
-    @PostMapping(UrlConstant.CompetitionUser.COMPETITION_USER_COMMON)
+    @PostMapping(UrlConstant.CompetitionUser.JOIN)
     public ResponseEntity<?> createCompetitionUser(@RequestBody JoinCompetitionRequest request) {
         return VsResponseUtil.success(competitionUserService.joinCompetition(request));
     }
 
+    @PostMapping(UrlConstant.CompetitionUser.ADD_MULTIPLE)
+    public ResponseEntity<?> addMultipleCompetitionUser(@RequestBody AddMembersToCompetitionRequest request) {
+        return VsResponseUtil.success(competitionUserService.addMembersToCompetition(request));
+    }
 
 }
