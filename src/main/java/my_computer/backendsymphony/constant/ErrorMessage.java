@@ -58,11 +58,18 @@ public class ErrorMessage {
     public static class Competition {
         public static final String ERR_NOT_FOUND_ID= "Không tìm thấy cuộc thi nào với id: %s";
         public static final String START_TIME_MUST_BEFORE_END_TIME="Thời gian bắt đầu phải trước thời gian kết thúc";
+        public static final String INVALID_TIME_PERIOD = "Không phải Thời gian diễn ra";
     }
 
     public static class CommentCompetition {
         public static final String ERR_NOT_FOUND_ID= "Không tìm phần trả lời nào cuộc thi nào với id: %s";
     }
+
+    public static class CompetitionUser {
+        public static final String ALREADY_JOINED = "Người dùng đã tham gia cuộc thi, không thể tham gia lại";
+
+    }
+
 
 
     public static final String EmailNotFound = "Email not found!";

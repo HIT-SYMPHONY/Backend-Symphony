@@ -83,4 +83,10 @@ public class UrlConstant {
         public static final String COMMENT_POST_ID = PRE_FIX + "/{id}";
         public static final String COMMENT_POST_SCORE = PRE_FIX + "/score";
     }
+
+    public static class CompetitionUser {
+        private static final String PRE_FIX = "/competition-users";
+        public static final String JOIN = PRE_FIX + "/join";
+        public static final String ADD_MULTIPLE = PRE_FIX + "/add-multiple";
+    }
 }

@@ -34,7 +34,7 @@ public class CompetitionUser {
     @Column(nullable = false)
     private CompetitionUserStatus status;
 
-    private String submittedAt;
+    private LocalDateTime submittedAt;
 
     @CreatedDate
     @Column(name = "joined_at", updatable = false)

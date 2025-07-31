@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CompetitionUserRepository extends JpaRepository<CompetitionUser, CompetitionUserId> {
+
+    boolean existsByUser_IdAndCompetition_Id(String userId, String competitionId);
 }
