@@ -18,6 +18,8 @@ public class CommentPostResponse {
 
     private String content;
 
+    private Double score;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

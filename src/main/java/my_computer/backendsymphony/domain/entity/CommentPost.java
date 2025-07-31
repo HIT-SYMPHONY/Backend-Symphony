@@ -28,6 +28,8 @@ public class CommentPost {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    private Double score;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
