@@ -21,4 +21,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Stri
     """)
     Page<Notification> findByUserId(String userId, Pageable pageable);
 
+    Page<Notification> findByCompetition_Id(String competitionId, Pageable pageable);
+
 }

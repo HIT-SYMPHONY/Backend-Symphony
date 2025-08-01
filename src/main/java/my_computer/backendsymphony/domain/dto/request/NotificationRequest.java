@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import my_computer.backendsymphony.constant.ErrorMessage;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,10 +13,10 @@ import lombok.Setter;
 @Setter
 public class NotificationRequest {
 
-    @NotNull
+    @NotNull(message = ErrorMessage.Validation.NOT_BLANK)
     private String content;
 
-    @NotNull
     private String classRoomId;
 
+    private String competitionId;
 }

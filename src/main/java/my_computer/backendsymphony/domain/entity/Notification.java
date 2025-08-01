@@ -33,8 +33,12 @@ public class Notification {
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "class_room_id", nullable = false)
+    @JoinColumn(name = "class_room_id")
     private ClassRoom classRoom;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "competition_id")
+    private Competition competition;
 
     @CreatedBy
     @Column(name = "created_by")
