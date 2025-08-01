@@ -15,4 +15,7 @@ public interface CommentPostService {
     List<CommentPostResponse> getCommentPostByPostId (String PostId);
 
     CommentPostResponse markCommentPost (MarkRequest markRequest);
+
+    List<CommentPostResponse> getMyCommentsInPost (String postId);
+
 }
