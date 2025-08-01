@@ -1,5 +1,6 @@
 package my_computer.backendsymphony.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
@@ -19,13 +20,13 @@ public class CompetitionUserController {
     private final CompetitionUserService competitionUserService;
 
     @PostMapping(UrlConstant.CompetitionUser.JOIN)
-    public ResponseEntity<?> createCompetitionUser(@RequestBody JoinCompetitionRequest request) {
+    public ResponseEntity<?> createCompetitionUser(@Valid @RequestBody JoinCompetitionRequest request) {
         return VsResponseUtil.success(competitionUserService.joinCompetition(request));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(UrlConstant.CompetitionUser.ADD_MULTIPLE)
-    public ResponseEntity<?> addMultipleCompetitionUser(@RequestBody AddMembersToCompetitionRequest request) {
+    public ResponseEntity<?> addMultipleCompetitionUser(@Valid @RequestBody AddMembersToCompetitionRequest request) {
         return VsResponseUtil.success(competitionUserService.addMembersToCompetition(request));
     }
 

@@ -35,7 +35,7 @@ public class CommentPostController {
     }
 
     @PatchMapping(UrlConstant.CommentPost.COMMENT_POST_SCORE)
-    public ResponseEntity<?> updateCommentPostScore(@RequestBody MarkRequest request) {
+    public ResponseEntity<?> updateCommentPostScore(@Valid @RequestBody MarkRequest request) {
         return VsResponseUtil.success(commentPostService.markCommentPost(request));
     }
 

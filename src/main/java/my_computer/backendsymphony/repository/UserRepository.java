@@ -30,4 +30,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     List<User> findByRole(Role role);
 
+    @Query("SELECT u FROM User u WHERE u.id NOT IN (SELECT m.id FROM ClassRoom c JOIN c.members m WHERE c.id = :classroomId)")
+    Page<User> findUsersNotInClassroom(@Param("classroomId") String classroomId, Pageable pageable);
+
 }
