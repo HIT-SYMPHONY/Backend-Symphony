@@ -121,7 +121,7 @@ public class CompetitionUserServiceImpl implements CompetitionUserService {
                     CompetitionUser cu = competitionUserRepository
                             .findByUser_IdAndCompetition_Id(userId, competitionId)
                             .orElseThrow(() -> new NotFoundException(ErrorMessage.CompetitionUser.ERR_NOT_FOUND));
-
+                     cu.setStatus(CompetitionUserStatus.NOT_REGISTERED);
                     return cu;
                 })
                 .toList();
