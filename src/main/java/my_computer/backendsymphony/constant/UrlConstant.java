@@ -42,7 +42,7 @@ public class UrlConstant {
         public static final String CLASSROOM_COMMON = PRE_FIX;
         public static final String CLASSROOM_ID = PRE_FIX + "/{id}";
         public static final String MEMBERS=PRE_FIX + "/{id}" + "/members";
-        public static final String NON_MEMBERS = PRE_FIX + "/{id}/non-members"; // 👈 thêm dòng này
+        public static final String NON_MEMBERS = PRE_FIX + "/{id}/non-members";
         public static final String CLASSROOM_NAME=PRE_FIX +"/search" + "/{name}" + "/members";
         private Classroom() {}
     }
@@ -90,6 +90,8 @@ public class UrlConstant {
         public static final String JOIN = PRE_FIX + "/join";
         public static final String ADD_MULTIPLE = PRE_FIX + "/add-multiple";
         public static final String REMOVE_MULTIPLE = PRE_FIX + "/remove-multiple";
+        public static final String MEMBERS = PRE_FIX + "/{id}" + "/members";
+
     }
 
 }
