@@ -6,6 +6,7 @@ import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationSortRequestDto;
+import my_computer.backendsymphony.domain.dto.request.UpdateRoleRequest;
 import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
@@ -49,6 +50,12 @@ public class UserController {
             @Valid @RequestPart("data") UserUpdateRequest request,
             @RequestPart(value = "image", required = false) MultipartFile multipartFile) {
         return VsResponseUtil.success(HttpStatus.OK, userService.updateUser(id, request, multipartFile));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping(UrlConstant.User.UPDATE_ROLE)
+    public ResponseEntity<?> updateRoleUser(@RequestBody UpdateRoleRequest request) {
+        return VsResponseUtil.success(userService.updateRole(request));
     }
 
     @GetMapping(UrlConstant.User.GET_CURRENT_USER)

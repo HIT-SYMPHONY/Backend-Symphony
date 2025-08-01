@@ -2,6 +2,7 @@ package my_computer.backendsymphony.service;
 
 import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationSortRequestDto;
+import my_computer.backendsymphony.domain.dto.request.UpdateRoleRequest;
 import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
@@ -32,4 +33,6 @@ public interface UserService {
     PaginationResponseDto<CompetitionResponse> getMyCompetitions(PaginationSortRequestDto request);
 
     List<UserResponse> getLeaderList ();
+
+    List<UserResponse> updateRole(UpdateRoleRequest request);
 }
