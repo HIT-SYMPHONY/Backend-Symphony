@@ -90,7 +90,8 @@ public class UserController {
 
     @GetMapping(UrlConstant.User.GET_LEADERS)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getAllLeaders() {
-        return VsResponseUtil.success(HttpStatus.OK, userService.getLeaderList());
+    public ResponseEntity<?> getUsersByRole(@RequestParam(value = "role", required = false) String roleStr) {
+        return VsResponseUtil.success(HttpStatus.OK, userService.getUsersByRole(roleStr));
     }
+
 }

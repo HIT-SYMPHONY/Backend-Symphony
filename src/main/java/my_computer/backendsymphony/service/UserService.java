@@ -32,7 +32,7 @@ public interface UserService {
 
     PaginationResponseDto<CompetitionResponse> getMyCompetitions(PaginationSortRequestDto request);
 
-    List<UserResponse> getLeaderList ();
+    List<UserResponse> getUsersByRole (String roleStr);
 
     List<UserResponse> updateRole(UpdateRoleRequest request);
 }
