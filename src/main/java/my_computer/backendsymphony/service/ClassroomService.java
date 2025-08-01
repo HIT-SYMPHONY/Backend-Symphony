@@ -29,7 +29,7 @@ public interface ClassroomService {
 
     AddMembersResponse addMembersToClassroom(String classroomId, AddMembersRequest request);
 
-    PaginationResponseDto<UserSummaryResponse> getMembersInClassroom(String classroomId, PaginationRequestDto request);
+    PaginationResponseDto<UserSummaryResponse>  getMembersInClassroom(String classroomId, PaginationRequestDto request);
 
     void removeMembersFromClassroom(String classroomId, RemoveMembersRequest request);
 }

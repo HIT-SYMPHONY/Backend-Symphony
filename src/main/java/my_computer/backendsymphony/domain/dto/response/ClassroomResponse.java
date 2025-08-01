@@ -17,6 +17,8 @@ public class ClassroomResponse {
     String name;
     String image;
     LocalDate startTime;
+    String timeSlot;
+    LocalDate endTime;
     Integer duration;
     String description;
     LocalDateTime createdAt;
