@@ -10,6 +10,7 @@ import my_computer.backendsymphony.constant.SortByDataConstant;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationSortRequestDto;
 import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
+import my_computer.backendsymphony.domain.dto.request.UpdateRoleRequest;
 import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
@@ -119,10 +120,6 @@ public class UserServiceImpl implements UserService {
             throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
         }
 
-        if(request.getRole() != null && currentUser.getRole() != Role.ADMIN) {
-            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
-        }
-
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID,
                         new String[]{id}));
@@ -228,6 +225,33 @@ public class UserServiceImpl implements UserService {
         List<User> userList = userRepository.findByRole(Role.LEADER);
         return userMapper.toListUserResponse(userList);
     }
+
+    @Override
+    @Transactional
+    public List<UserResponse> updateRole(UpdateRoleRequest request) {
+        Role newRole;
+        try {
+            newRole = Role.valueOf(request.getRoleStr().toUpperCase());
+        } catch (IllegalArgumentException  e) {
+            throw new InvalidException(ErrorMessage.User.INVALID_ROLE);
+        }
+
+        List<User> users = userRepository.findAllById(request.getUsersId());
+        if (users.size() != request.getUsersId().size()) {
+            throw new NotFoundException(ErrorMessage.User.NOT_FOUND_ONE_OR_MORE);
+        }
+        String currentUserId = this.getCurrentUser().getId();
+
+        if (request.getUsersId().contains(currentUserId)) {
+            throw new InvalidException(ErrorMessage.User.ILLEGAL);
+        }
+
+
+        users.forEach(user -> user.setRole(newRole));
+        userRepository.saveAll(users);
+        return userMapper.toListUserResponse(users);
+    }
+
 
     @Override
     @Transactional(readOnly = true)

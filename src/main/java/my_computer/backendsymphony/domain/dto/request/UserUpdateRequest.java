@@ -26,8 +26,6 @@ public class UserUpdateRequest {
 
     private String phoneNumber;
 
-    private Role role;
-
     private Gender gender;
 
     private LocalDate dateBirth;

@@ -30,10 +30,13 @@ public class ErrorMessage {
 
     public static class User {
         public static final String ERR_NOT_FOUND_ID = "Không tìm thấy người dùng nào với id: %s";
+        public static final String NOT_FOUND_ONE_OR_MORE = "Không tìm thấy người dùng nào với id: %s";
         public static final String ERR_NOT_FOUND_STUDENT_CODE = "Không tìm thấy người dùng nào với mã sinh viên: %s";
         public static final String ERR_NOT_FOUND_ONE_OR_MORE_IDS="Không tìm thấy một hoặc nhiều id người dùng được cung cấp";
         public static final String USER_IS_NOT_LEADER="Người dùng phải không phải leader";
         public static final String USERNAME_NOT_FOUND="Không tìm thấy người dùng nào với username" ;
+        public static final String INVALID_ROLE = "Vai trò không hợp lệ";
+        public static final String ILLEGAL = "Bạn không thể tự thay đổi quyền của chính mình xuống thấp hơn";
     }
 
     public static class Classroom {
