@@ -88,6 +88,7 @@ public class UrlConstant {
         private static final String PRE_FIX = "/competition-users";
         public static final String JOIN = PRE_FIX + "/join";
         public static final String ADD_MULTIPLE = PRE_FIX + "/add-multiple";
+        public static final String REMOVE_MULTIPLE = PRE_FIX + "/remove-multiple";
     }
 
 }

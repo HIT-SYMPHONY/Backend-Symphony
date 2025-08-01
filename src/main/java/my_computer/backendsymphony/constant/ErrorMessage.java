@@ -67,7 +67,7 @@ public class ErrorMessage {
 
     public static class CompetitionUser {
         public static final String ALREADY_JOINED = "Người dùng đã tham gia cuộc thi, không thể tham gia lại";
-
+        public static final String ERR_NOT_FOUND = "Không thể tìm thấy người dùng này trong cuộc thi này";
     }
 
 
