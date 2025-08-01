@@ -21,7 +21,7 @@ public class CompetitionUserController {
     private final CompetitionUserService competitionUserService;
 
     @PostMapping(UrlConstant.CompetitionUser.JOIN)
-    public ResponseEntity<?> createCompetitionUser(@Valid @RequestBody JoinCompetitionRequest request) {
+    public ResponseEntity<?> addMemberToCompetition(@Valid @RequestBody JoinCompetitionRequest request) {
         return VsResponseUtil.success(competitionUserService.joinCompetition(request));
     }
 
@@ -42,6 +42,13 @@ public class CompetitionUserController {
     public ResponseEntity<?> getMembersCompetition(@PathVariable String id,
                                                    @Valid @ModelAttribute PaginationRequestDto paginationRequestDto) {
         return VsResponseUtil.success(competitionUserService.getMembersCompetition(id,paginationRequestDto));
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LEADER')")
+    @GetMapping(UrlConstant.CompetitionUser.NON_MEMBERS)
+    public ResponseEntity<?> getNonMembersCompetition(@PathVariable String id,
+                                                   @Valid @ModelAttribute PaginationRequestDto paginationRequestDto) {
+        return VsResponseUtil.success(competitionUserService.getNonMembersCompetition(id,paginationRequestDto));
     }
 
 }

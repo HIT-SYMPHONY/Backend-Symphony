@@ -91,6 +91,7 @@ public class UrlConstant {
         public static final String ADD_MULTIPLE = PRE_FIX + "/add-multiple";
         public static final String REMOVE_MULTIPLE = PRE_FIX + "/remove-multiple";
         public static final String MEMBERS = PRE_FIX + "/{id}" + "/members";
+        public static final String NON_MEMBERS = PRE_FIX + "/{id}" + "/non-members";
 
     }
 

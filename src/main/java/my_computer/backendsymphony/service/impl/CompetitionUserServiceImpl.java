@@ -164,7 +164,24 @@ public class CompetitionUserServiceImpl implements CompetitionUserService {
 
 
     @Override
+    @Transactional(readOnly = true)
     public PaginationResponseDto<UserSummaryResponse> getNonMembersCompetition(String competitionId, PaginationRequestDto request) {
-        return null;
+
+        Competition competition = competitionRepository.findById(competitionId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Competition.ERR_NOT_FOUND_ID));
+
+        UserResponse currentUser = userService.getCurrentUser();
+        if (currentUser.getRole() != Role.ADMIN &&
+                !Objects.equals(competition.getCompetitionLeaderId(), currentUser.getId())) {
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+        }
+
+        Pageable pageable = PaginationUtil.buildPageable(request);
+        Page<User> userPage = userRepository.findNonMembersByCompetitionId(competitionId, pageable);
+        List<UserSummaryResponse> responseList = userMapper.toUserSummaryResponseList(userPage.getContent());
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, userPage);
+
+        return new PaginationResponseDto<>(meta, responseList);
     }
+
 }
