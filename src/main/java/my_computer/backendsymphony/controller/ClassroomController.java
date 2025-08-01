@@ -73,6 +73,15 @@ public class ClassroomController {
         return VsResponseUtil.success(classroomService.addMembersToClassroom(id, request));
     }
 
+    @GetMapping(UrlConstant.Classroom.NON_MEMBERS)
+    @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
+    public ResponseEntity<?> getUsersNotInClassroom(
+            @PathVariable String id,
+            @Valid @ModelAttribute PaginationRequestDto request) {
+        return VsResponseUtil.success(classroomService.getUsersNotInClassroom(id, request));
+    }
+
+
     @GetMapping(UrlConstant.Classroom.MEMBERS)
     public ResponseEntity<?> getMembersInClassroom(
             @PathVariable String id, PaginationRequestDto request) {

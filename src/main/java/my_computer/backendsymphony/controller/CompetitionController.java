@@ -30,7 +30,7 @@ public class CompetitionController {
     }
 
     @GetMapping(UrlConstant.Competition.COMPETITION_COMMON)
-    public ResponseEntity<?> getAllCompetitions(PaginationSortRequestDto request) {
+    public ResponseEntity<?> getAllCompetitions(@ModelAttribute PaginationSortRequestDto request) {
         return VsResponseUtil.success(competitionService.getAllCompetitions(request));
     }
 

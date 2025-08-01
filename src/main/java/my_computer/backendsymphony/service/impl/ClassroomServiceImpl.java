@@ -271,6 +271,27 @@ public class ClassroomServiceImpl implements ClassroomService {
         PagingMeta meta = PaginationUtil.buildPagingMeta(request, memberPage);
         return new PaginationResponseDto<>(meta, memberResponses);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PaginationResponseDto<UserSummaryResponse> getUsersNotInClassroom(String classroomId, PaginationRequestDto request) {
+        ClassRoom classRoom = findClassroomByIdOrElseThrow(classroomId);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!isLeaderOfClassroomOrAdmin(classRoom, authentication)) {
+            throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
+        }
+
+        Pageable pageable = PaginationUtil.buildPageable(request);
+        Page<User> userPage = userRepository.findUsersNotInClassroom(classroomId, pageable);
+
+        List<UserSummaryResponse> responseList = userMapper.toUserSummaryResponseList(userPage.getContent());
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, userPage);
+
+        return new PaginationResponseDto<>(meta, responseList);
+    }
+
+
     @Override
     @Transactional
     public void removeMembersFromClassroom(String classroomId, RemoveMembersRequest request) {
