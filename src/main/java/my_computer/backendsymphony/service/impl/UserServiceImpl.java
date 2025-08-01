@@ -221,10 +221,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserResponse> getLeaderList() {
-        List<User> userList = userRepository.findByRole(Role.LEADER);
+    public List<UserResponse> getUsersByRole(String roleStr) {
+
+        Role role;
+        if (roleStr == null || roleStr.isBlank()) {
+            role = Role.LEADER;
+        } else {
+            try {
+                role = Role.valueOf(roleStr.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new InvalidException(ErrorMessage.User.INVALID_ROLE);
+            }
+        }
+
+        List<User> userList = userRepository.findByRole(role);
         return userMapper.toListUserResponse(userList);
     }
+
 
     @Override
     @Transactional
