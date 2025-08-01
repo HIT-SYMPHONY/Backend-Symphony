@@ -1,5 +1,6 @@
 package my_computer.backendsymphony.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
@@ -20,7 +21,7 @@ public class CommentCompetitionController {
     private final CommentCompetitionService commentCompetitionService;
 
     @PostMapping(UrlConstant.CommentCompetition.COMMENT_COMPETITION_COMMON)
-    public ResponseEntity<?> createCommentCompetition(@RequestBody CommentCompetitionRequest request) {
+    public ResponseEntity<?> createCommentCompetition(@Valid @RequestBody CommentCompetitionRequest request) {
         return VsResponseUtil.success(commentCompetitionService.createCommentCompetition(request));
     }
 

@@ -31,5 +31,7 @@ public interface ClassroomService {
 
     PaginationResponseDto<UserSummaryResponse>  getMembersInClassroom(String classroomId, PaginationRequestDto request);
 
+    PaginationResponseDto<UserSummaryResponse> getUsersNotInClassroom(String classroomId, PaginationRequestDto request);
+
     void removeMembersFromClassroom(String classroomId, RemoveMembersRequest request);
 }
