@@ -19,6 +19,7 @@ import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.CommentPostService;
 import my_computer.backendsymphony.service.UserService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ public class CommentPostServiceImpl implements CommentPostService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public CommentPostResponse createCommentPost(CommentPostRequest commentPostRequest) {
 
         UserResponse currentUser = userService.getCurrentUser();
@@ -51,6 +53,7 @@ public class CommentPostServiceImpl implements CommentPostService {
     }
 
     @Override
+    @Transactional
     public CommentPostResponse deleteCommentPost(String commentPostId) {
         UserResponse currentUser = userService.getCurrentUser();
 
@@ -75,6 +78,7 @@ public class CommentPostServiceImpl implements CommentPostService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CommentPostResponse> getCommentPostByPostId(String postId) {
 
         Post post = postRepository.findById(postId)
@@ -91,6 +95,7 @@ public class CommentPostServiceImpl implements CommentPostService {
     }
 
     @Override
+    @Transactional
     public CommentPostResponse markCommentPost(MarkRequest markRequest) {
         CommentPost commentPost = commentPostRepository.findById(markRequest.getId())
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.CommentPost.ERR_NOT_FOUND_ID));
@@ -105,5 +110,22 @@ public class CommentPostServiceImpl implements CommentPostService {
         response.setUsername(currentUser.getUsername());
         return response;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CommentPostResponse> getMyCommentsInPost(String postId) {
+
+        UserResponse currentUser = userService.getCurrentUser();
+        List<CommentPost> comments = commentPostRepository.findByPostIdAndCreatedBy(postId, currentUser.getId());
+
+        return comments.stream()
+                .map(comment -> {
+                    CommentPostResponse response = commentPostMapper.toResponse(comment);
+                    response.setUsername(currentUser.getUsername());
+                    return response;
+                })
+                .toList();
+    }
+
 
 }

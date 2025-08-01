@@ -39,4 +39,9 @@ public class CommentPostController {
         return VsResponseUtil.success(commentPostService.markCommentPost(request));
     }
 
+    @GetMapping(UrlConstant.CommentPost.MY_COMMENT_IN_POST)
+    public ResponseEntity<?> getMyCommentsInPost(@PathVariable String postId) {
+        return VsResponseUtil.success(commentPostService.getMyCommentsInPost(postId));
+    }
+
 }
