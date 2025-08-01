@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import my_computer.backendsymphony.constant.ErrorMessage;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -17,6 +18,10 @@ public class ClassroomUpdateRequest {
     String name;
 
     LocalDate startTime;
+
+    String timeSlot;
+
+    LocalDate endTime;
 
     @Positive(message = ErrorMessage.Validation.POSITIVE)
     Integer duration;

@@ -33,6 +33,10 @@ public class ClassRoom {
 
     private Integer duration;
 
+    private String timeSlot;
+
+    private LocalDate endTime;
+
     private String description;
 
     @CreatedDate

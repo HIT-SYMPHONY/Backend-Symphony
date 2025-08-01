@@ -60,7 +60,7 @@ public class ClassroomController {
 
     @GetMapping(UrlConstant.Classroom.CLASSROOM_COMMON)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getAllClassrooms(PaginationRequestDto request) {
+    public ResponseEntity<?> getAllClassrooms(@ModelAttribute PaginationRequestDto request) {
         PaginationResponseDto<ClassroomResponse> response = classroomService.getAllClassrooms(request);
         return VsResponseUtil.success(response);
     }
