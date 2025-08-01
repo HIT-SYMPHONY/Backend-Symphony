@@ -41,4 +41,9 @@ public class CommentCompetitionController {
         return VsResponseUtil.success(commentCompetitionService.markCommentCompetition(request));
     }
 
+    @GetMapping(UrlConstant.CommentCompetition.MY_COMMENTS_IN_COMPETITION)
+    public ResponseEntity<?> getMyCommentsInCompetition(@PathVariable String competitionId) {
+        return VsResponseUtil.success(commentCompetitionService.getMyCommentsInCompetition(competitionId));
+    }
+
 }

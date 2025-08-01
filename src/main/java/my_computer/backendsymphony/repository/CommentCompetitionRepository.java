@@ -18,5 +18,9 @@ public interface CommentCompetitionRepository extends JpaRepository<CommentCompe
     """)
     List<CommentCompetition> findCommentsByCompetitionId(@Param("competitionId") String competitionId);
 
+    @Query("SELECT c FROM CommentCompetition c WHERE c.createdBy = :userId AND c.competition.id = :competitionId")
+    List<CommentCompetition> findByUserIdAndCompetitionId(@Param("userId") String userId,
+                                                          @Param("competitionId") String competitionId);
+
 }
 
