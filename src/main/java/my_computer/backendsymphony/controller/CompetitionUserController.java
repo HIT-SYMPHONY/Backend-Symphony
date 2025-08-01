@@ -10,6 +10,7 @@ import my_computer.backendsymphony.domain.dto.request.JoinCompetitionRequest;
 import my_computer.backendsymphony.service.CompetitionUserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -28,6 +29,12 @@ public class CompetitionUserController {
     @PostMapping(UrlConstant.CompetitionUser.ADD_MULTIPLE)
     public ResponseEntity<?> addMultipleCompetitionUser(@Valid @RequestBody AddMembersToCompetitionRequest request) {
         return VsResponseUtil.success(competitionUserService.addMembersToCompetition(request));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping(UrlConstant.CompetitionUser.REMOVE_MULTIPLE)
+    public ResponseEntity<?> removeMultipleCompetitionUser (@RequestBody AddMembersToCompetitionRequest request) {
+        return VsResponseUtil.success(competitionUserService.removeMembersFromCompetition(request));
     }
 
 }

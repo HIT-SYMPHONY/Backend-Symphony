@@ -101,5 +101,33 @@ public class CompetitionUserServiceImpl implements CompetitionUserService {
         return competitionUserMapper.toResponseList(savedList);
     }
 
+    @Override
+    @Transactional
+    public List<CompetitionUserResponse> removeMembersFromCompetition(AddMembersToCompetitionRequest request) {
 
+        String competitionId = request.getCompetitionId();
+        List<String> userIds = request.getUserIds();
+
+        Competition competition = competitionRepository.findById(competitionId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Competition.ERR_NOT_FOUND_ID));
+
+        if (LocalDateTime.now().isBefore(competition.getStartTime()) ||
+                LocalDateTime.now().isAfter(competition.getEndTime())) {
+            throw new InvalidException(ErrorMessage.Competition.INVALID_TIME_PERIOD);
+        }
+
+        List<CompetitionUser> removedUsers = userIds.stream()
+                .map(userId -> {
+                    CompetitionUser cu = competitionUserRepository
+                            .findByUser_IdAndCompetition_Id(userId, competitionId)
+                            .orElseThrow(() -> new NotFoundException(ErrorMessage.CompetitionUser.ERR_NOT_FOUND));
+                     cu.setStatus(CompetitionUserStatus.NOT_REGISTERED);
+                    return cu;
+                })
+                .toList();
+
+        competitionUserRepository.deleteAll(removedUsers);
+
+        return competitionUserMapper.toResponseList(removedUsers);
+    }
 }

@@ -9,5 +9,6 @@ import java.util.List;
 public interface CompetitionUserService {
     CompetitionUserResponse joinCompetition(JoinCompetitionRequest request);
     List<CompetitionUserResponse> addMembersToCompetition(AddMembersToCompetitionRequest request);
+    List<CompetitionUserResponse> removeMembersFromCompetition(AddMembersToCompetitionRequest request);
 
 }
