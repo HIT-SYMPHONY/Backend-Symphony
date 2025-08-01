@@ -1,28 +1,39 @@
 package my_computer.backendsymphony.service.impl;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.constant.CompetitionUserStatus;
 import my_computer.backendsymphony.constant.ErrorMessage;
+import my_computer.backendsymphony.constant.Role;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationRequestDto;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
+import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
 import my_computer.backendsymphony.domain.dto.request.AddMembersToCompetitionRequest;
 import my_computer.backendsymphony.domain.dto.request.JoinCompetitionRequest;
 import my_computer.backendsymphony.domain.dto.response.CompetitionUserResponse;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
+import my_computer.backendsymphony.domain.dto.response.UserSummaryResponse;
 import my_computer.backendsymphony.domain.entity.Competition;
 import my_computer.backendsymphony.domain.entity.CompetitionUser;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.CompetitionUserMapper;
+import my_computer.backendsymphony.domain.mapper.UserMapper;
 import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;
+import my_computer.backendsymphony.exception.UnauthorizedException;
 import my_computer.backendsymphony.repository.CompetitionRepository;
 import my_computer.backendsymphony.repository.CompetitionUserRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.CompetitionUserService;
 import my_computer.backendsymphony.service.UserService;
+import my_computer.backendsymphony.util.PaginationUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +43,7 @@ public class CompetitionUserServiceImpl implements CompetitionUserService {
     private final CompetitionRepository competitionRepository;
     private final UserService userService;
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
     private final CompetitionUserMapper competitionUserMapper;
 
     @Override
@@ -130,4 +142,46 @@ public class CompetitionUserServiceImpl implements CompetitionUserService {
 
         return competitionUserMapper.toResponseList(removedUsers);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PaginationResponseDto<UserSummaryResponse> getMembersCompetition(String competitionId, PaginationRequestDto request) {
+
+        Competition competition = competitionRepository.findById(competitionId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Competition.ERR_NOT_FOUND_ID));
+        UserResponse currentUser = userService.getCurrentUser();
+        if(currentUser.getRole() != Role.ADMIN && !Objects.equals(competition.getCompetitionLeaderId(), currentUser.getId())) {
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+        }
+
+        Pageable pageable = PaginationUtil.buildPageable(request);
+        Page<User> userPage = competitionUserRepository.findUsersByCompetitionId(competitionId, pageable);
+        List<UserSummaryResponse> responseList = userMapper.toUserSummaryResponseList(userPage.getContent());
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, userPage);
+
+        return new PaginationResponseDto<>(meta, responseList);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public PaginationResponseDto<UserSummaryResponse> getNonMembersCompetition(String competitionId, PaginationRequestDto request) {
+
+        Competition competition = competitionRepository.findById(competitionId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Competition.ERR_NOT_FOUND_ID));
+
+        UserResponse currentUser = userService.getCurrentUser();
+        if (currentUser.getRole() != Role.ADMIN &&
+                !Objects.equals(competition.getCompetitionLeaderId(), currentUser.getId())) {
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+        }
+
+        Pageable pageable = PaginationUtil.buildPageable(request);
+        Page<User> userPage = userRepository.findNonMembersByCompetitionId(competitionId, pageable);
+        List<UserSummaryResponse> responseList = userMapper.toUserSummaryResponseList(userPage.getContent());
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, userPage);
+
+        return new PaginationResponseDto<>(meta, responseList);
+    }
+
 }
