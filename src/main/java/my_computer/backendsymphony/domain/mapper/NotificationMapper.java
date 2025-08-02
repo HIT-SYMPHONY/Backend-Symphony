@@ -13,12 +13,15 @@ import java.util.List;
 public interface NotificationMapper {
 
     @Mappings({
-        @Mapping(source = "classRoom.id", target = "classRoomId"),
-        @Mapping(source = "classRoom.name", target = "classRoomName"),
+            @Mapping(source = "classRoom.id", target = "classRoomId"),
+            @Mapping(source = "classRoom.name", target = "classRoomName"),
+            @Mapping(source = "competition.id", target = "competitionId"),
+            @Mapping(source = "competition.name", target = "competitionName"),
     })
     NotificationResponse toNotificationResponse(Notification notification);
 
     @Mapping(target = "classRoom", ignore = true)
+    @Mapping(target = "competition", ignore = true)
     Notification toNotification(NotificationRequest notificationRequest);
 
     List<NotificationResponse> toNotificationResponseList(List<Notification> notifications);
