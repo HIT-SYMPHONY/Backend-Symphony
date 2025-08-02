@@ -89,6 +89,7 @@ public class CompetitionServiceImpl implements CompetitionService {
             competition.setImage(imageUrl);
         }
         competitionMapper.updateCompetition(request, competition);
+        competitionRepository.save(competition);
         return competitionMapper.toCompetitionResponse(competition);
     }
 
