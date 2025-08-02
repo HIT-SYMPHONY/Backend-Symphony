@@ -47,6 +47,7 @@ public class CompetitionServiceImpl implements CompetitionService {
     UserRepository userRepository;
 
     @Override
+    @Transactional
     public CompetitionResponse createCompetition(CompetitionRequest request, MultipartFile imageFile) {
 
         User user = userRepository.findById(request.getCompetitionLeaderId())
@@ -69,6 +70,7 @@ public class CompetitionServiceImpl implements CompetitionService {
     }
 
     @Override
+    @Transactional
     public CompetitionResponse updateCompetition(String id, CompetitionRequest request, MultipartFile imageFile) {
         Competition competition = findCompetitionByIdOrElseThrow(id);
 
@@ -112,6 +114,7 @@ public class CompetitionServiceImpl implements CompetitionService {
     }
 
     @Override
+    @Transactional
     public void deleteCompetition(String id) {
         Competition competition = findCompetitionByIdOrElseThrow(id);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
