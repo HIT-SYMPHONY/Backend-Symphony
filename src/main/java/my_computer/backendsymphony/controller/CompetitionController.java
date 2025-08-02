@@ -47,7 +47,7 @@ public class CompetitionController {
 
     @PatchMapping(UrlConstant.Competition.COMPETITION_ID)
     public ResponseEntity<?> updateCompetition(@PathVariable String id,
-                                               @RequestPart("data") CompetitionRequest request,
+                                               @Valid @RequestPart("data") CompetitionRequest request,
                                                @RequestPart(value = "image", required = false) MultipartFile imageFile) {
         return VsResponseUtil.success(competitionService.updateCompetition(id, request, imageFile));
     }
