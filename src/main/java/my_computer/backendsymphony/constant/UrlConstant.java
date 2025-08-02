@@ -45,6 +45,7 @@ public class UrlConstant {
         public static final String MEMBERS=PRE_FIX + "/{id}" + "/members";
         public static final String NON_MEMBERS = PRE_FIX + "/{id}/non-members";
         public static final String CLASSROOM_NAME=PRE_FIX +"/search" + "/{name}" + "/members";
+        public static final String BY_LEADER = PRE_FIX + "/by-leader";
         private Classroom() {}
     }
 

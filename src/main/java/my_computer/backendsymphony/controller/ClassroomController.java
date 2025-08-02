@@ -103,4 +103,11 @@ public class ClassroomController {
         return VsResponseUtil.success(classroomService.getClassroomsByName(name));
     }
 
+
+    @PreAuthorize("hasRole('LEADER')")
+    @GetMapping(UrlConstant.Classroom.BY_LEADER)
+    public ResponseEntity<?> getClassroomByLeader() {
+        return VsResponseUtil.success(classroomService.getClassroomsOfLeader());
+    }
+
 }
