@@ -41,7 +41,7 @@ public class NotificationController {
         return VsResponseUtil.success(response);
     }
 
-    @GetMapping(UrlConstant.Notification.NOTIFICATION_ID)
+    @GetMapping(UrlConstant.Notification.GET_OF_CLASS)
     public ResponseEntity<?> getNotificationByClassId (
             @PathVariable String id,
             @ModelAttribute PaginationRequestDto requestDto){
@@ -49,5 +49,12 @@ public class NotificationController {
         return VsResponseUtil.success(response);
     }
 
+    @GetMapping(UrlConstant.Notification.GET_OF_COMPETITION)
+    public ResponseEntity<?> getNotificationByCompetitionId (
+            @PathVariable String id,
+            @ModelAttribute PaginationRequestDto requestDto){
+        PaginationResponseDto<NotificationResponse> response = notificationService.getNotificationOfCompetition(id, requestDto);
+        return VsResponseUtil.success(response);
+    }
 
 }

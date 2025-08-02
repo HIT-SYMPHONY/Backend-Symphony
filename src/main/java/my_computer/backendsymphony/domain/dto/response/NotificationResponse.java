@@ -23,6 +23,10 @@ public class NotificationResponse {
 
     private String classRoomName;
 
+    private String competitionId;
+
+    private String competitionName;
+
     private String createdBy;
 
 }

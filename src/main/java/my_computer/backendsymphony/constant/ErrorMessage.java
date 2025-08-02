@@ -47,6 +47,7 @@ public class ErrorMessage {
 
     public static class Notification {
         public static final String ERR_NOT_FOUND_ID= "Không tìm thấy thông báo.";
+        public static final String ILLEGAL= "Notification chỉ gắn với một trong hai: classRoom hoặc competition.";
 
     }
 

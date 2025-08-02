@@ -14,4 +14,10 @@ public class NotificationWebSocketSender {
         System.out.println("Sending to /topic/classroom/ " + classRoomId);
         messagingTemplate.convertAndSend("/topic/classroom/" + classRoomId, notification);
     }
+
+    public void sendToCompetition(NotificationResponse notification, String competitionId) {
+        System.out.println("Sending to /topic/competition/ " + competitionId);
+        messagingTemplate.convertAndSend("/topic/competition/" + competitionId, notification);
+    }
+
 }
