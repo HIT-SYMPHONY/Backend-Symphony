@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.domain.dto.request.RefreshTokenRequest;
 import my_computer.backendsymphony.domain.dto.request.VerifyCodeRequest;
+import my_computer.backendsymphony.domain.dto.response.UserResponse;
 import my_computer.backendsymphony.domain.entity.User;
+import my_computer.backendsymphony.domain.mapper.UserMapper;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.EmailService;
@@ -22,6 +24,7 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,6 +32,8 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+
+    private final UserMapper userMapper;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
@@ -120,6 +125,23 @@ public class AuthServiceImpl implements AuthService {
         } catch (Exception e) {
             throw new UnauthorizedException(ErrorMessage.Auth.ERR_INVALID_REFRESH_TOKEN);
         }
+    }
+
+    @Override
+    public UserResponse changePassword(String oldPassword, String newPassword) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String currentUserId = jwt.getSubject();
+        User user = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID));
+        if(!passwordEncoder.matches(oldPassword, user.getPassword())){
+            throw new UnauthorizedException(ErrorMessage.INCORRECT_PASSWORD);
+        }
+        else{
+            user.setPassword(passwordEncoder.encode(newPassword));
+        }
+        userRepository.save(user);
+        return userMapper.toUserResponse(user);
     }
 
 }

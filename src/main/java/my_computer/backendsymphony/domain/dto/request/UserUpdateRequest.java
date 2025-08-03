@@ -22,8 +22,6 @@ public class UserUpdateRequest {
     @Size(min = 10, max = 10, message = ErrorMessage.Validation.INVALID_STUDENT_CODE)
     private String studentCode;
 
-    private String password;
-
     private String phoneNumber;
 
     private Gender gender;
