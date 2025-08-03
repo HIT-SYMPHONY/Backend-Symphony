@@ -9,6 +9,7 @@ public class ErrorMessage {
     public static final String FORBIDDEN = "Xin lỗi, bạn không có quyền để thực hiện hành động này";
     public static final String INVALID_IMAGE_FILE="Chỉ cho phép hình ảnh PNG, JPG, JPEG, WEBP hoặc GIF";
     public static final String INVALID_JSON_FORMAT = "Dữ liệu gửi lên có định dạng JSON không hợp lệ. Vui lòng kiểm tra lại.";
+    public static final String TO_MANY_REQUEST = "Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau.";
     //error validation dto
     public static class Validation {
         public static final String NOT_BLANK = "Không thể trống";
