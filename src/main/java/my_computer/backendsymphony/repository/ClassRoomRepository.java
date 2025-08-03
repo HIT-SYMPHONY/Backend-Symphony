@@ -15,4 +15,7 @@ public interface ClassRoomRepository extends JpaRepository<ClassRoom, String> {
     boolean existsByIdAndMembers_Id(String classRoomId, String userId);
 
     List<ClassRoom> findByNameContainingIgnoreCase(String name);
+
+    List<ClassRoom> findByLeaderId(String leaderId);
+
 }
