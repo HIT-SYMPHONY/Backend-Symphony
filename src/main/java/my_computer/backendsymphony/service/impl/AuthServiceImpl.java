@@ -137,11 +137,23 @@ public class AuthServiceImpl implements AuthService {
         if(!passwordEncoder.matches(oldPassword, user.getPassword())){
             throw new UnauthorizedException(ErrorMessage.INCORRECT_PASSWORD);
         }
+        else if(!isStrongPassword(newPassword)){
+            throw new UnauthorizedException(ErrorMessage.Validation.INVALID_FORMAT_PASSWORD);
+        }
         else{
             user.setPassword(passwordEncoder.encode(newPassword));
         }
+
+
         userRepository.save(user);
         return userMapper.toUserResponse(user);
+    }
+
+    private boolean isStrongPassword(String password) {
+        if (password == null) return false;
+        return password.length() >= 6 &&
+                password.matches(".*[A-Za-z].*") &&
+                password.matches(".*\\d.*");
     }
 
 }
