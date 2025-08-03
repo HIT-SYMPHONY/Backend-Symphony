@@ -22,6 +22,7 @@ import my_computer.backendsymphony.domain.mapper.UserMapper;
 import my_computer.backendsymphony.exception.DuplicateResourceException;
 import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;
+import my_computer.backendsymphony.exception.UnauthorizedException;
 import my_computer.backendsymphony.repository.ClassRoomRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.ClassroomService;
@@ -311,6 +312,28 @@ public class ClassroomServiceImpl implements ClassroomService {
             member.getClassRooms().remove(classroom);
         }
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ClassroomResponse> getClassroomsOfLeader() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String currentUserId = jwt.getSubject();
+
+        List<ClassRoom> leaderClassrooms = classroomRepository.findByLeaderId(currentUserId);
+
+        List<ClassroomResponse> responses = leaderClassrooms.stream()
+                .map(c -> {
+                    ClassroomResponse response = classroomMapper.toClassroomResponse(c);
+                    response.setLeaderName(findUserByIdOrElseThrow(currentUserId).getFullName());
+                    return response;
+                })
+                .collect(Collectors.toList());
+
+        return responses;
+    }
+
+
 
 
     private boolean isLeaderOfClassroomOrAdmin(ClassRoom classroom, Authentication authentication) {
