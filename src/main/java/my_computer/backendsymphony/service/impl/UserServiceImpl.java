@@ -124,13 +124,6 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID,
                         new String[]{id}));
 
-        if (request.getPassword() != null) {
-            if (!isStrongPassword(request.getPassword())) {
-                throw new InvalidException(ErrorMessage.Validation.INVALID_FORMAT_PASSWORD);
-            }
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
-        }
-
         if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())) {
             if (userRepository.existsByEmail(request.getEmail())) {
                 throw new DuplicateResourceException(ErrorMessage.ERR_DUPLICATE,
@@ -264,7 +257,6 @@ public class UserServiceImpl implements UserService {
         userRepository.saveAll(users);
         return userMapper.toListUserResponse(users);
     }
-
 
     @Override
     @Transactional(readOnly = true)
