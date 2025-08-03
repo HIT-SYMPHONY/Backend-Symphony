@@ -71,4 +71,9 @@ public class GlobalExceptionHandler {
         return VsResponseUtil.error(ex.getStatus(), ex.getMessage());
     }
 
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ResponseEntity<RestData<?>> handleTooManyRequestsException(TooManyRequestsException ex) {
+        return VsResponseUtil.error(ex.getStatus(), ex.getMessage());
+    }
+
 }

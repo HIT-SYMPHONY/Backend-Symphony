@@ -32,7 +32,6 @@ public class CommentPostServiceImpl implements CommentPostService {
     private final CommentPostMapper commentPostMapper;
     private final UserService userService;
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
 
     @Override
     @Transactional
