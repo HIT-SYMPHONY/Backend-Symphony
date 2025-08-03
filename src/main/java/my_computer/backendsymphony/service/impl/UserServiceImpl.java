@@ -289,12 +289,6 @@ public class UserServiceImpl implements UserService {
         return allClassroomResponses;
     }
 
-    private boolean isStrongPassword(String password) {
-        if (password == null) return false;
-        return password.length() >= 6 &&
-                password.matches(".*[A-Za-z].*") &&
-                password.matches(".*\\d.*");
-    }
 
     private String generateUsername (String studentCode) {
         return "sv" + studentCode;  // vd: sv2301012345
