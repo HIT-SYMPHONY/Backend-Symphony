@@ -12,4 +12,5 @@ public interface AuthService {
     LoginResponse verifyCodeAndLogin(VerifyCodeRequest request);
     LoginResponse refreshToken(RefreshTokenRequest request);
     UserResponse changePassword (String oldPassword, String newPassword);
+    UserResponse verifyPassword (String password);
 }
