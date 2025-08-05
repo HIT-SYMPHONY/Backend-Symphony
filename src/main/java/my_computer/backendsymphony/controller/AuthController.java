@@ -47,4 +47,10 @@ public class AuthController {
     public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
         return VsResponseUtil.success(authService.changePassword(request.getOldPassword(), request.getNewPassword()));
     }
+
+    @PostMapping(UrlConstant.Auth.VERIFY_PASSWORD)
+    public ResponseEntity<?> verifyPassword(@RequestBody VerifyPasswordRequest request) {
+        return VsResponseUtil.success(authService.verifyPassword(request.getOldPassword()));
+    }
+
 }

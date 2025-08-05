@@ -149,6 +149,19 @@ public class AuthServiceImpl implements AuthService {
         return userMapper.toUserResponse(user);
     }
 
+    @Override
+    public UserResponse verifyPassword(String password) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String currentUserId = jwt.getSubject();
+        User user = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID));
+        if(!passwordEncoder.matches(password, user.getPassword())){
+            throw new UnauthorizedException(ErrorMessage.INCORRECT_PASSWORD);
+        }
+        return userMapper.toUserResponse(user);
+    }
+
     private boolean isStrongPassword(String password) {
         if (password == null) return false;
         return password.length() >= 6 &&
