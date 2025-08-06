@@ -36,4 +36,6 @@ public interface ClassroomService {
     void removeMembersFromClassroom(String classroomId, RemoveMembersRequest request);
 
     List<ClassroomResponse> getClassroomsOfLeader ();
+
+    List<ClassroomResponse> getClassroomsOfUser (String userId);
 }
