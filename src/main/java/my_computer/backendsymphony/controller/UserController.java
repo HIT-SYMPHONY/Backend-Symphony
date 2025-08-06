@@ -10,6 +10,7 @@ import my_computer.backendsymphony.domain.dto.request.UpdateRoleRequest;
 import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
+import my_computer.backendsymphony.service.ClassroomService;
 import my_computer.backendsymphony.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,6 +26,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final ClassroomService classroomService;
 
     @PostMapping(value = UrlConstant.User.USER_COMMON, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
@@ -92,6 +94,12 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getUsersByRole(@RequestParam(value = "role", required = false) String roleStr) {
         return VsResponseUtil.success(HttpStatus.OK, userService.getUsersByRole(roleStr));
+    }
+
+    @GetMapping(UrlConstant.User.GET_CLASS_USER)
+    @PreAuthorize(("hasRole('ADMIN')"))
+    public ResponseEntity<?> getClassOfUser(@PathVariable String id) {
+        return VsResponseUtil.success(classroomService.getClassroomsOfUser(id));
     }
 
 }

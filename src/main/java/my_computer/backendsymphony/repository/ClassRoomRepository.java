@@ -18,4 +18,5 @@ public interface ClassRoomRepository extends JpaRepository<ClassRoom, String> {
 
     List<ClassRoom> findByLeaderId(String leaderId);
 
+    List<ClassRoom> findByMembers_Id(String memberId);
 }

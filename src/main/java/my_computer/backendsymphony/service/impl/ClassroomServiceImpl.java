@@ -56,6 +56,16 @@ public class ClassroomServiceImpl implements ClassroomService {
     UploadFileUtil uploadFileUtil;
 
     @Override
+    public List<ClassroomResponse> getClassroomsOfUser(String userId) {
+        if(!userRepository.existsById(userId)){
+            throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID);
+        }
+
+        List<ClassRoom> classRoomList = classroomRepository.findByMembers_Id(userId);
+        return classroomMapper.toClassroomResponseList(classRoomList);
+    }
+
+    @Override
     public ClassroomResponse createClassroom(ClassroomCreationRequest request, MultipartFile imageFile) {
         if (classroomRepository.existsByName(request.getName()))
             throw new DuplicateResourceException(
