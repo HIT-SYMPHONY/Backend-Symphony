@@ -8,7 +8,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "lessons")
@@ -25,15 +27,23 @@ public class Lesson {
     @Column(insertable = false, updatable = false, nullable = false, columnDefinition = "CHAR(36)")
     private String id;
 
+    @Column(nullable = false)
+    private String title;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column(name = "location", length = 255)
-    private String location = "806 A1";
+    private String location;
 
-    @Column(name = "time_slot", length = 50)
-    private String timeSlot;
+    @Column(nullable = false)
+    private LocalTime startTime;
+
+    @Column(nullable = false)
+    private LocalTime endTime;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DayOfWeek dayOfWeek;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)

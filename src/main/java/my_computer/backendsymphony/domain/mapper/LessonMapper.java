@@ -1,11 +1,10 @@
 package my_computer.backendsymphony.domain.mapper;
 
 import my_computer.backendsymphony.domain.dto.request.LessonCreationRequest;
+import my_computer.backendsymphony.domain.dto.request.LessonUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.LessonResponse;
 import my_computer.backendsymphony.domain.entity.Lesson;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface LessonMapper {
@@ -19,4 +18,7 @@ public interface LessonMapper {
             @Mapping(target = "classRoom", ignore = true)
     })
     Lesson toLesson(LessonCreationRequest request);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateLesson(LessonUpdateRequest request, @MappingTarget Lesson lesson);
 }
