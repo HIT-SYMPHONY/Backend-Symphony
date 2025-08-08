@@ -24,7 +24,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private Bucket createNewBucket() {
-        Bandwidth limit = Bandwidth.classic(10000, Refill.greedy(10000, Duration.ofMinutes(1)));
+        Bandwidth limit = Bandwidth.classic(10, Refill.greedy(10, Duration.ofMinutes(1)));
         return Bucket4j.builder()
                 .addLimit(limit)
                 .build();
