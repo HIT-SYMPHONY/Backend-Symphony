@@ -11,7 +11,7 @@ public interface PostService {
 
     PostResponse updatePost(PostRequest postRequest, String postId);
 
-    PostResponse deletePost(String postId);
+    void deletePost(String postId);
 
     PaginationResponseDto<PostResponse> getPostsOfClass (String classId, PaginationRequestDto requestDto);
 
