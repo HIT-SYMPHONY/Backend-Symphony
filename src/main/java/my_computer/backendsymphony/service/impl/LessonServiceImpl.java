@@ -1,6 +1,7 @@
 package my_computer.backendsymphony.service.impl;
 
 import my_computer.backendsymphony.constant.ErrorMessage;
+import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.UnauthorizedException;
 import org.springframework.transaction.annotation.Transactional;
 import my_computer.backendsymphony.domain.dto.request.LessonUpdateRequest;
@@ -19,6 +20,7 @@ import my_computer.backendsymphony.service.LessonService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,11 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public LessonResponse createLesson(LessonCreationRequest request) {
+        if (
+                request.getStartTime() != null && request.getEndTime() != null &&
+                        request.getStartTime().isAfter(request.getEndTime())
+        ) throw new InvalidException(ErrorMessage.Lesson.START_TIME_MUST_BEFORE_END_TIME);
+
         ClassRoom classRoom = classroomRepository.findById(request.getClassRoomId())
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy lớp học"));
         Lesson lesson = lessonMapper.toLesson(request);
@@ -54,28 +61,21 @@ public class LessonServiceImpl implements LessonService {
     public LessonResponse updateLesson(String lessonId, LessonUpdateRequest request) {
         Lesson lessonToUpdate = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy buổi học với ID: " + lessonId));
-
-        if (request.getContent() != null) {
-            lessonToUpdate.setContent(request.getContent());
+        LocalTime finalStartTime = (request.getStartTime() != null) ? request.getStartTime() : lessonToUpdate.getStartTime();
+        LocalTime finalEndTime = (request.getEndTime() != null) ? request.getEndTime() : lessonToUpdate.getEndTime();
+        if (!finalEndTime.isAfter(finalStartTime)) {
+            throw new InvalidException(ErrorMessage.Lesson.START_TIME_MUST_BEFORE_END_TIME);
         }
-        if (request.getLocation() != null) {
-            lessonToUpdate.setLocation(request.getLocation());
-        }
-        if (request.getTimeSlot() != null) {
-            lessonToUpdate.setTimeSlot(request.getTimeSlot());
-        }
-
+        lessonMapper.updateLesson(request, lessonToUpdate);
         Lesson updatedLesson = lessonRepository.save(lessonToUpdate);
-
         return mapToLessonResponseWithDetails(updatedLesson);
 
     }
 
     @Override
     @Transactional(readOnly = true)
-
     public List<LessonResponse> getLessonsByClassRoomId(String classRoomId) {
-        if(!classroomRepository.existsById(classRoomId))
+        if (!classroomRepository.existsById(classRoomId))
             throw new NotFoundException("Không tìm thấy lớp học!");
 
         List<Lesson> lessons = lessonRepository.findByClassRoomId(classRoomId);
@@ -89,7 +89,7 @@ public class LessonServiceImpl implements LessonService {
     @Transactional(readOnly = true)
     public List<LessonResponse> getLessonsForCurrentUser(Authentication authentication) {
 
-        if(authentication == null || !authentication.isAuthenticated())
+        if (authentication == null || !authentication.isAuthenticated())
             throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
 
         String currentUserId = authentication.getName();
@@ -99,6 +99,12 @@ public class LessonServiceImpl implements LessonService {
         return lessons.stream()
                 .map(this::mapToLessonResponseWithDetails)
                 .collect(Collectors.toList());
+    }
+
+    public LessonResponse getLessonById(String lessonId) {
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy buổi học với ID: " + lessonId));
+        return mapToLessonResponseWithDetails(lesson);
     }
 
 
@@ -117,11 +123,13 @@ public class LessonServiceImpl implements LessonService {
 
         LessonResponse finalResponse = new LessonResponse();
         finalResponse.setId(lesson.getId());
+        finalResponse.setTitle(lesson.getTitle());
+        finalResponse.setStartTime(lesson.getStartTime());
+        finalResponse.setEndTime(lesson.getEndTime());
+        finalResponse.setDayOfWeek(lesson.getDayOfWeek());
         finalResponse.setContent(lesson.getContent());
         finalResponse.setLocation(lesson.getLocation());
-        finalResponse.setTimeSlot(lesson.getTimeSlot());
         finalResponse.setCreatedAt(lesson.getCreatedAt());
-
         finalResponse.setLeaderName(leaderName);
         finalResponse.setClassName(classRoomOfThisLesson.getName());
 

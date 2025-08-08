@@ -15,12 +15,15 @@ import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 import my_computer.backendsymphony.domain.dto.response.CompetitionResponse;
+import my_computer.backendsymphony.domain.dto.response.PostResponse;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.Competition;
+import my_computer.backendsymphony.domain.entity.Post;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.ClassroomMapper;
 import my_computer.backendsymphony.domain.mapper.CompetitionMapper;
+import my_computer.backendsymphony.domain.mapper.PostMapper;
 import my_computer.backendsymphony.domain.mapper.UserMapper;
 import my_computer.backendsymphony.exception.DuplicateResourceException;
 import my_computer.backendsymphony.exception.InvalidException;
@@ -28,6 +31,7 @@ import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.exception.UnauthorizedException;
 import my_computer.backendsymphony.repository.ClassRoomRepository;
 import my_computer.backendsymphony.repository.CompetitionRepository;
+import my_computer.backendsymphony.repository.PostRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.UserService;
 import my_computer.backendsymphony.util.PaginationUtil;
@@ -61,6 +65,8 @@ public class UserServiceImpl implements UserService {
     CompetitionRepository competitionRepository;
     CompetitionMapper competitionMapper;
     UploadFileUtil uploadFileUtil;
+    PostMapper postMapper;
+    PostRepository postRepository;
 
     @Override
     @Transactional
@@ -85,6 +91,7 @@ public class UserServiceImpl implements UserService {
 
         user.setUsername(generateUsername(request.getStudentCode()));
         String rawPassword = generatePassword(request.getStudentCode());
+        System.out.println(rawPassword);
         user.setImageUrl("https://res.cloudinary.com/dh6qzqf73/image/upload/v1753189854/lhqcxppwnnm0l4ixrjwz.jpg");
         user.setPassword(passwordEncoder.encode(rawPassword));
         user.setRole(Role.USER);
@@ -150,7 +157,7 @@ public class UserServiceImpl implements UserService {
 
         userMapper.toUser(request, user);
 
-        user.setFullName(user.getFirstName().trim() + " " + user.getLastName().trim());
+        user.setFullName(user.getFirstName() + " " + user.getLastName());
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -256,6 +263,23 @@ public class UserServiceImpl implements UserService {
         users.forEach(user -> user.setRole(newRole));
         userRepository.saveAll(users);
         return userMapper.toListUserResponse(users);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PostResponse> getMyPosts() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String currentUserId = jwt.getSubject();
+        List<ClassRoom> myClassrooms = classroomRepository.findByLeaderIdOrMembers_Id(currentUserId, currentUserId);
+        if (myClassrooms.isEmpty()) {
+            return List.of();
+        }
+        List<String> myClassroomIds = myClassrooms.stream()
+                .map(ClassRoom::getId)
+                .collect(Collectors.toList());
+        List<Post> posts = postRepository.findByClassRoom_IdInOrderByCreatedAtDesc(myClassroomIds);
+        return postMapper.toResponseList(posts);
     }
 
     @Override

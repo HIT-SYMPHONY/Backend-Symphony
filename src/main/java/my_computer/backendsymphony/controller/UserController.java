@@ -102,4 +102,9 @@ public class UserController {
         return VsResponseUtil.success(classroomService.getClassroomsOfUser(id));
     }
 
+    @GetMapping(UrlConstant.User.GET_MY_POSTS)
+    public ResponseEntity<?> getMyPosts() {
+        return VsResponseUtil.success(userService.getMyPosts());
+    }
+
 }

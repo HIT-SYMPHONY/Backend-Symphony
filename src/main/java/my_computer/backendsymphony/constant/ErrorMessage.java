@@ -76,6 +76,10 @@ public class ErrorMessage {
         public static final String ERR_NOT_FOUND = "Không thể tìm thấy người dùng này trong cuộc thi này";
     }
 
+    public static class Lesson {
+        public static final String START_TIME_MUST_BEFORE_END_TIME="Thời gian bắt đầu phải trước thời gian kết thúc";
+    }
+
 
 
     public static final String EmailNotFound = "Email not found!";

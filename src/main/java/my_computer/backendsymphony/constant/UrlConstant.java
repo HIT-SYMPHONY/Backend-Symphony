@@ -25,6 +25,8 @@ public class UrlConstant {
         public static final String GET_LEADERS= PRE_FIX +"/leaders";
         public static final String GET_BY_USERNAME = PRE_FIX+"/find";
         public static final String GET_CLASS_USER = USER_ID + "/classrooms";
+        public static final String GET_MY_POSTS = GET_CURRENT_USER + "/posts";
+
 
         private User() {
         }
@@ -33,6 +35,7 @@ public class UrlConstant {
     public static class Lesson {
         private static final String PRE_FIX = "/lesson";
         public static final String CREATE_LESSON = PRE_FIX;
+        public static final String GET_LESSON_BY_ID = PRE_FIX+"/{lessonId}";
         public static final String DELETE_LESSON = PRE_FIX+"/{lessonId}";
         public static final String UPDATE_LESSON = PRE_FIX+"/{lessonId}";
         public static final String GET_LESSON_BY_CLASSROOM_ID = PRE_FIX + "/classroom/{classroomId}";

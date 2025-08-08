@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -61,11 +62,13 @@ public class PostServiceImpl implements PostService {
     public PostResponse updatePost(PostRequest postRequest, String postId) {
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID,
+                        new String[]{postId}));
 
         if (postRequest.getClassRoomId() != null) {
             ClassRoom classRoom = classroomRepository.findById(postRequest.getClassRoomId())
-                    .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND_ID));
+                    .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND_ID,
+                            new String[]{postRequest.getClassRoomId()}));
             post.setClassRoom(classRoom);
         }
 
@@ -85,7 +88,8 @@ public class PostServiceImpl implements PostService {
     public PostResponse deletePost(String postId) {
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID,
+                        new String[]{postId}));
 
         UserResponse user = userService.getCurrentUser();
 
@@ -101,16 +105,15 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = true)
     public PaginationResponseDto<PostResponse> getPostsOfClass(String classId, PaginationRequestDto requestDto) {
-
-        if(!classroomRepository.existsById(classId)){
-                throw new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND_ID);
-        }
-
+        ClassRoom classroom = classroomRepository.findById(classId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND_ID,
+                        new String[]{classId}));
         UserResponse currentUser = userService.getCurrentUser();
-        if (currentUser.getRole() != Role.ADMIN) {
-            if ( !classroomRepository.existsByIdAndMembers_Id(classId, currentUser.getId())) {
-                throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
-            }
+        boolean isValidMember = classroomRepository.existsByIdAndMembers_Id(classId, currentUser.getId());
+        boolean isValidLeader = currentUser.getRole() == Role.LEADER
+                && currentUser.getId().equals(classroom.getLeaderId());
+        if (!isValidMember && !isValidLeader && currentUser.getRole() != Role.ADMIN) {
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
         }
 
         Pageable pageable = PaginationUtil.buildPageable(requestDto);
@@ -140,13 +143,17 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = true)
     public PostResponse getPostById (String postId){
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID,
+                        new String[]{postId}));
 
+        ClassRoom classroom = post.getClassRoom();
+        String classId = classroom.getId();
         UserResponse currentUser = userService.getCurrentUser();
-        if (currentUser.getRole() != Role.ADMIN) {
-            if ( !classroomRepository.existsByIdAndMembers_Id(post.getClassRoom().getId(), currentUser.getId())) {
-                throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
-            }
+        boolean isValidMember = classroomRepository.existsByIdAndMembers_Id(classId, currentUser.getId());
+        boolean isValidLeader = currentUser.getRole() == Role.LEADER
+                && currentUser.getId().equals(classroom.getLeaderId());
+        if (!isValidMember && !isValidLeader && currentUser.getRole() != Role.ADMIN) {
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
         }
         return postMapper.toResponse(post);
     }

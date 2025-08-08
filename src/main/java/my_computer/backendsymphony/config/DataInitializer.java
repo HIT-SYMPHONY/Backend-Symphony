@@ -120,8 +120,6 @@ public class DataInitializer implements CommandLineRunner {
         // Tạo bài học (Lesson)
         Lesson lesson = Lesson.builder()
                 .content("Giới thiệu về Java và Spring Boot")
-                .location("Phòng 806 A1")
-                .timeSlot("Thứ Hai 8:00 - 10:00")
                 .classRoom(classRoom)
                 .createdBy(user2.getId())
                 .build();

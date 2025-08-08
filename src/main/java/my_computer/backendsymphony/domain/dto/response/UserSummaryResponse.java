@@ -14,5 +14,5 @@ public class UserSummaryResponse {
     String fullName;
     String intake;
     String imageUrl;
-    String lastLogin;
+    String studentCode;
 }

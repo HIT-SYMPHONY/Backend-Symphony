@@ -7,6 +7,7 @@ import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 import my_computer.backendsymphony.domain.dto.response.CompetitionResponse;
+import my_computer.backendsymphony.domain.dto.response.PostResponse;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,4 +36,7 @@ public interface UserService {
     List<UserResponse> getUsersByRole (String roleStr);
 
     List<UserResponse> updateRole(UpdateRoleRequest request);
+
+    List<PostResponse> getMyPosts();
+
 }
