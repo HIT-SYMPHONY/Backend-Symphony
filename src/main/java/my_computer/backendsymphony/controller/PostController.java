@@ -27,7 +27,8 @@ public class PostController {
     @PreAuthorize("hasRole('LEADER') or hasRole('ADMIN')")
     @DeleteMapping(UrlConstant.Post.POST_ID)
     public ResponseEntity<?> deletePost(@PathVariable String id) {
-        return VsResponseUtil.success(postService.deletePost(id));
+        postService.deletePost(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasRole('LEADER') or hasRole('ADMIN')")
