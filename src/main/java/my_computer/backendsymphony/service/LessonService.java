@@ -13,4 +13,5 @@ public interface LessonService {
     LessonResponse updateLesson(String lessonId, LessonUpdateRequest request);
     List<LessonResponse> getLessonsByClassRoomId(String classRoomId);
     List<LessonResponse> getLessonsForCurrentUser(Authentication authentication);
+    LessonResponse getLessonById(String lessonId);
 }

@@ -47,6 +47,7 @@ public class PostController {
         return VsResponseUtil.success(postService.getPostById(postId));
     }
 
+
     @GetMapping(UrlConstant.Post.POST_COMMON)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllPost(@ModelAttribute PaginationRequestDto requestDto) {
