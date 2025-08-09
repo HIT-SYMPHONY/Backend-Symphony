@@ -10,4 +10,7 @@ public class AuthRequest {
     @NotBlank(message = "Email cannot blank!")
     @Email(message = "Invalid email format!")
     private String email;
+
+    @NotBlank(message = "new password cannot blank!")
+    private String newPassword;
 }
