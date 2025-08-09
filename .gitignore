@@ -35,6 +35,6 @@ build/
 ### Application Properties ###
 src/main/resources/application.properties
 
-### docker
-docker-compose.yml
-Dockerfile
+## sonar test
+.scannerwork/
+sonar-project.properties

@@ -1,0 +1,110 @@
+package my_computer.backendsymphony.constant;
+
+public class UrlConstant {
+
+    public static class Auth {
+        private static final String PRE_FIX = "/auth";
+        public static final String LOGIN = PRE_FIX + "/login";
+        public static final String FORGOT_PASSWORD = PRE_FIX + "/forgot-password";
+        public static final String VERIFY_TEMPPASSWORD = PRE_FIX + "/temp-password";
+        public static final String REFRESH_TOKEN = PRE_FIX + "/refresh-token";
+        public static final String CHANGE_PASSWORD = PRE_FIX + "/change-password";
+        public static final String VERIFY_PASSWORD = PRE_FIX + "/verify-password";
+        private Auth() {
+        }
+    }
+
+    public static class User {
+        private static final String PRE_FIX = "/users";
+        public static final String USER_COMMON = PRE_FIX;
+        public static final String USER_ID = PRE_FIX+"/{id}";
+        public static final String UPDATE_ROLE = PRE_FIX+"/role";
+        public static final String GET_CURRENT_USER=PRE_FIX+"/me";
+        public static final String GET_MY_CLASSROOMS=GET_CURRENT_USER +"/classrooms";
+        public static final String GET_MY_COMPETITIONS=GET_CURRENT_USER +"/competitions";
+        public static final String GET_LEADERS= PRE_FIX +"/leaders";
+        public static final String GET_BY_USERNAME = PRE_FIX+"/find";
+        public static final String GET_CLASS_USER = USER_ID + "/classrooms";
+        public static final String GET_MY_POSTS = GET_CURRENT_USER + "/posts";
+
+
+        private User() {
+        }
+    }
+
+    public static class Lesson {
+        private static final String PRE_FIX = "/lesson";
+        public static final String CREATE_LESSON = PRE_FIX;
+        public static final String GET_LESSON_BY_ID = PRE_FIX+"/{lessonId}";
+        public static final String DELETE_LESSON = PRE_FIX+"/{lessonId}";
+        public static final String UPDATE_LESSON = PRE_FIX+"/{lessonId}";
+        public static final String GET_LESSON_BY_CLASSROOM_ID = PRE_FIX + "/classroom/{classroomId}";
+        public static final String GET_LESSON_BY_CURRENT_USER_ID = PRE_FIX + "/my-lessons";
+        private Lesson(){
+        }
+    }
+
+    public static class Classroom {
+        private static final String PRE_FIX = "/classrooms";
+        public static final String CLASSROOM_COMMON = PRE_FIX;
+        public static final String CLASSROOM_ID = PRE_FIX + "/{id}";
+        public static final String MEMBERS=PRE_FIX + "/{id}" + "/members";
+        public static final String NON_MEMBERS = PRE_FIX + "/{id}/non-members";
+        public static final String CLASSROOM_NAME=PRE_FIX +"/search" + "/{name}" + "/members";
+        public static final String BY_LEADER = PRE_FIX + "/by-leader";
+        private Classroom() {}
+    }
+
+    public static class Notification {
+
+        private static final String PRE_FIX = "/notifications";
+        public static final String NOTIFICATION_COMMON = PRE_FIX;
+        public static final String NOTIFICATION_ID = PRE_FIX + "/{id}";
+        public static final String GET_OF_CLASS = PRE_FIX + "/classrooms/{id}";
+        public static final String GET_OF_COMPETITION = PRE_FIX + "/competitions/{id}";
+        public Notification() {}
+    }
+
+    public static class Post {
+        private static final String PRE_FIX = "/posts";
+        public static final String POST_COMMON = PRE_FIX;
+        public static final String POST_ID = PRE_FIX + "/{id}";
+        public static final String POST_POST_ID = PRE_FIX + "/{postId}/get";
+
+    }
+
+    public static class Competition {
+        private static final String PRE_FIX = "/competitions";
+        public static final String COMPETITION_COMMON = PRE_FIX;
+        public static final String COMPETITION_ID = PRE_FIX + "/{id}";
+        private Competition() {}
+    }
+
+    public static class CommentCompetition {
+        private static final String PRE_FIX = "/comment-competitions";
+        public static final String COMMENT_COMPETITION_COMMON = PRE_FIX;
+        public static final String BY_COMPETITION_ID = PRE_FIX + "/by-competition/{competitionId}";
+        public static final String COMMENT_COMPETITION_ID = PRE_FIX + "/{id}";
+        public static final String COMMENT_COMPETITION_SCORE = PRE_FIX + "/{id}";
+        public static final String MY_COMMENTS_IN_COMPETITION = PRE_FIX + "/competition/{competitionId}/mine";
+    }
+
+    public static class CommentPost {
+        private static final String PRE_FIX = "/comment-posts";
+        public static final String COMMENT_POST_COMMON = PRE_FIX;
+        public static final String COMMENT_POST_ID = PRE_FIX + "/{id}";
+        public static final String COMMENT_POST_SCORE = PRE_FIX + "/score";
+        public static final String MY_COMMENT_IN_POST = PRE_FIX + "/my/{postId}";
+    }
+
+    public static class CompetitionUser {
+        private static final String PRE_FIX = "/competition-users";
+        public static final String JOIN = PRE_FIX + "/join";
+        public static final String ADD_MULTIPLE = PRE_FIX + "/add-multiple";
+        public static final String REMOVE_MULTIPLE = PRE_FIX + "/remove-multiple";
+        public static final String MEMBERS = PRE_FIX + "/{id}" + "/members";
+        public static final String NON_MEMBERS = PRE_FIX + "/{id}" + "/non-members";
+
+    }
+
+}

@@ -80,6 +80,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <!--   Cloudinary   -->
+    <dependency>
+      <groupId>com.cloudinary</groupId>
+      <artifactId>cloudinary-http44</artifactId>
+      <version>1.29.0</version>
+    </dependency>
+
     <!-- Spring Boot Devtools -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -100,6 +107,39 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
       <version>3.5.0</version>
+    </dependency>
+
+    <!-- send mail -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
+
+    <!-- create temp password -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+    <!-- test -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- WebSocket -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-websocket</artifactId>
+      <version>3.5.0</version>
+    </dependency>
+
+    <!-- Bucket4j -->
+    <dependency>
+      <groupId>com.github.vladimir-bukhtoyarov</groupId>
+      <artifactId>bucket4j-core</artifactId>
+      <version>7.5.0</version>
     </dependency>
 
   </dependencies>
@@ -128,6 +168,8 @@
           </annotationProcessorPaths>
         </configuration>
       </plugin>
+
+
 
       <!-- Plugin dùng để build và chạy Spring Boot -->
       <plugin>
