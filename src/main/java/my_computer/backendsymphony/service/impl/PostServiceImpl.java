@@ -11,11 +11,13 @@ import my_computer.backendsymphony.domain.dto.response.PostResponse;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.Post;
+import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.PostMapper;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.exception.UnauthorizedException;
 import my_computer.backendsymphony.repository.ClassRoomRepository;
 import my_computer.backendsymphony.repository.PostRepository;
+import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.PostService;
 import my_computer.backendsymphony.service.UserService;
 import my_computer.backendsymphony.util.PaginationUtil;
@@ -24,8 +26,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -36,6 +41,7 @@ public class PostServiceImpl implements PostService {
     private final PostMapper postMapper;
     private final ClassRoomRepository classroomRepository;
     private final UserService userService;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -54,7 +60,10 @@ public class PostServiceImpl implements PostService {
 
         Post post = postMapper.toEntity(postRequest);
         post.setClassRoom(classRoom);
-        return postMapper.toResponse(postRepository.save(post));
+        Post savedPost = postRepository.save(post);
+        PostResponse response = postMapper.toResponse(savedPost);
+        enrichPostResponses(Collections.singletonList(response));
+        return response;
     }
 
     @Override
@@ -80,26 +89,21 @@ public class PostServiceImpl implements PostService {
             }
         }
         postMapper.updateEntity(postRequest, post);
-        return postMapper.toResponse(postRepository.save(post));
+        PostResponse response = postMapper.toResponse(post);
+        enrichPostResponses(Collections.singletonList(response));
+        return response;
     }
 
     @Override
     @Transactional
-    public PostResponse deletePost(String postId) {
-
+    public void deletePost(String postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID,
-                        new String[]{postId}));
-
-        UserResponse user = userService.getCurrentUser();
-
-        if(user.getRole()== Role.LEADER) {
-            if(!user.getId().equals(post.getClassRoom().getLeaderId()) ) {
-                throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
-            }
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID, new String[]{postId}));
+        UserResponse currentUser = userService.getCurrentUser();
+        if (currentUser.getRole() != Role.ADMIN && !currentUser.getId().equals(post.getClassRoom().getLeaderId())) {
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
         }
         postRepository.delete(post);
-        return postMapper.toResponse(post);
     }
 
     @Override
@@ -120,7 +124,7 @@ public class PostServiceImpl implements PostService {
 
         Page<Post> postPage = postRepository.findByClassRoomId(classId, pageable);
         List<PostResponse> postResponseList = postMapper.toResponseList(postPage.getContent());
-
+        enrichPostResponses(postResponseList);
         PagingMeta meta = PaginationUtil.buildPagingMeta(requestDto, postPage);
         return new PaginationResponseDto<>(meta, postResponseList);
     }
@@ -133,6 +137,7 @@ public class PostServiceImpl implements PostService {
 
         Page<Post> postPage = postRepository.findAll(pageable);
         List<PostResponse> postResponseList = postMapper.toResponseList(postPage.getContent());
+        enrichPostResponses(postResponseList);
         PagingMeta meta = PaginationUtil.buildPagingMeta(requestDto, postPage);
 
         return new PaginationResponseDto<>(meta, postResponseList);
@@ -155,6 +160,29 @@ public class PostServiceImpl implements PostService {
         if (!isValidMember && !isValidLeader && currentUser.getRole() != Role.ADMIN) {
             throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
         }
-        return postMapper.toResponse(post);
+        PostResponse response = postMapper.toResponse(post);
+        enrichPostResponses(Collections.singletonList(response));
+        return response;
+    }
+
+    private void enrichPostResponses(List<PostResponse> postResponses) {
+        if (postResponses == null || postResponses.isEmpty()) {
+            return;
+        }
+
+        List<String> creatorIds = postResponses.stream()
+                .map(PostResponse::getCreatedBy)
+                .distinct()
+                .collect(Collectors.toList());
+
+        Map<String, User> creatorMap = userRepository.findAllById(creatorIds).stream()
+                .collect(Collectors.toMap(User::getId, user -> user));
+
+        postResponses.forEach(response -> {
+            User creator = creatorMap.get(response.getCreatedBy());
+            if (creator != null) {
+                response.setCreatorName(creator.getFullName());
+            }
+        });
     }
 }

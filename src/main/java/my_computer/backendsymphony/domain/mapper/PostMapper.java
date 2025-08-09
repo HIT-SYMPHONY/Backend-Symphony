@@ -18,6 +18,8 @@ public interface PostMapper {
     Post toEntity(PostRequest postRequest);
 
     @Mapping(source = "classRoom.id", target = "classRoomId")
+    @Mapping(source = "classRoom.name", target = "classRoomName")
+    @Mapping(target = "creatorName", ignore = true)
     PostResponse toResponse(Post post);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

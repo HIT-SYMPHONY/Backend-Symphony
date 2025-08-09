@@ -29,4 +29,8 @@ public class PostResponse {
     private String createdBy;
 
     private String classRoomId;
+
+    private String classRoomName;
+
+    private String creatorName;
 }
