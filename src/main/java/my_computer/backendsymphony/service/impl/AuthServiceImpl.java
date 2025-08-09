@@ -64,7 +64,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void forgotPassword(String email) throws NotFoundException {
+    public void forgotPassword(String email) {
 
         User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(ErrorMessage.EmailNotFound));
 
@@ -105,6 +105,7 @@ public class AuthServiceImpl implements AuthService {
 
         user.setTemporaryPassword(null);
         user.setTemporaryPasswordExpiredAt(null);
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
 
         return new LoginResponse(accessToken, refreshToken, userPrincipal.getId(), authentication.getAuthorities());

@@ -11,4 +11,7 @@ public class VerifyCodeRequest {
 
     @NotBlank
     private String tempPassword;
+
+    @NotBlank
+    private String newPassword;
 }
