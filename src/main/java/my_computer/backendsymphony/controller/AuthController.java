@@ -28,7 +28,7 @@ public class AuthController {
 
     @PostMapping(UrlConstant.Auth.FORGOT_PASSWORD)
     public ResponseEntity<RestData<?>> forgotPassword(@Valid @RequestBody AuthRequest request){
-        authService.forgotPassword(request.getEmail());
+        authService.forgotPassword(request.getEmail(), request.getNewPassword());
         return VsResponseUtil.success(Map.of("status", "SUCCESS", "message", "Temporary password has been sent to email"));
     }
     @PostMapping(UrlConstant.Auth.VERIFY_TEMPPASSWORD)

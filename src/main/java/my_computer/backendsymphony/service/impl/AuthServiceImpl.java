@@ -7,6 +7,7 @@ import my_computer.backendsymphony.domain.dto.request.VerifyCodeRequest;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.UserMapper;
+import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.EmailService;
@@ -64,7 +65,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void forgotPassword(String email) throws NotFoundException {
+    public void forgotPassword(String email, String newPassword) throws NotFoundException {
 
         User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(ErrorMessage.EmailNotFound));
 
@@ -73,7 +74,10 @@ public class AuthServiceImpl implements AuthService {
         user.setTemporaryPassword(passwordEncoder.encode(temporaryPasswordPlainText));
 
         user.setTemporaryPasswordExpiredAt(LocalDateTime.now().plusMinutes(15));
-
+        if(!isStrongPassword(newPassword)){
+            throw new InvalidException(ErrorMessage.Validation.INVALID_FORMAT_PASSWORD);
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
         String emailBody = "Hello " + user.getUsername() + ",\n\n"

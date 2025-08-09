@@ -8,7 +8,7 @@ import my_computer.backendsymphony.domain.dto.response.UserResponse;
 
 public interface AuthService {
     LoginResponse login(LoginRequest request);
-    void forgotPassword(String email);
+    void forgotPassword(String email, String newPassword);
     LoginResponse verifyCodeAndLogin(VerifyCodeRequest request);
     LoginResponse refreshToken(RefreshTokenRequest request);
     UserResponse changePassword (String oldPassword, String newPassword);
