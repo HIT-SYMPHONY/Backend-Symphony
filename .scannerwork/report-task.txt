@@ -2,5 +2,5 @@ projectKey=hit-symphony
 serverUrl=http://localhost:9000
 serverVersion=25.8.0.112029
 dashboardUrl=http://localhost:9000/dashboard?id=hit-symphony
-ceTaskId=ac88fdd2-fd3d-4512-830c-054f220c3ed5
-ceTaskUrl=http://localhost:9000/api/ce/task?id=ac88fdd2-fd3d-4512-830c-054f220c3ed5
+ceTaskId=fe2edc1d-91f8-49f0-9f5d-807a0ffc5c47
+ceTaskUrl=http://localhost:9000/api/ce/task?id=fe2edc1d-91f8-49f0-9f5d-807a0ffc5c47

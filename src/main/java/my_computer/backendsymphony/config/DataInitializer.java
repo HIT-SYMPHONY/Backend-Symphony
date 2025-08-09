@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,6 +40,19 @@ public class DataInitializer implements CommandLineRunner {
                     .role(Role.ADMIN)
                     .studentCode("2023600666")
                     .email("admin@example.com")
+                    .fullName("Quản trị viên")
+                    .build();
+            userRepository.save(admin);
+            System.out.println("✅ Admin user created: admin / Abc123!@#");
+        }
+
+        if (!userRepository.existsByStudentCode("2023601501")) {
+            User admin = User.builder()
+                    .username("admin1")
+                    .password(passwordEncoder.encode("Abc123!@#"))
+                    .role(Role.ADMIN)
+                    .studentCode("2023601501")
+                    .email("admin2@example.com")
                     .fullName("Quản trị viên")
                     .build();
             userRepository.save(admin);
@@ -122,6 +136,7 @@ public class DataInitializer implements CommandLineRunner {
                 .content("Giới thiệu về Java và Spring Boot")
                 .classRoom(classRoom)
                 .createdBy(user2.getId())
+                .dayOfWeek(DayOfWeek.FRIDAY)
                 .build();
 
         lessonRepository.save(lesson);
