@@ -1,8 +1,14 @@
 package my_computer.backendsymphony.service.impl;
 
 import my_computer.backendsymphony.constant.ErrorMessage;
+import my_computer.backendsymphony.constant.Role;
 import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.UnauthorizedException;
+import my_computer.backendsymphony.repository.CompetitionUserRepository;
+import my_computer.backendsymphony.service.AuthorizationService;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
 import my_computer.backendsymphony.domain.dto.request.LessonUpdateRequest;
 import my_computer.backendsymphony.domain.entity.User;
@@ -22,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +39,8 @@ public class LessonServiceImpl implements LessonService {
     private final ClassRoomRepository classroomRepository;
     private final LessonMapper lessonMapper;
     private final UserRepository userRepository;
+    private final AuthorizationService authorizationService;
+    private final CompetitionUserRepository competitionUserRepository;
 
     @Override
     public LessonResponse createLesson(LessonCreationRequest request) {
@@ -103,7 +112,7 @@ public class LessonServiceImpl implements LessonService {
 
     public LessonResponse getLessonById(String lessonId) {
         Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy buổi học với ID: " + lessonId));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Lesson.ERR_NOT_FOUND_ID, new String[]{lessonId}));
         return mapToLessonResponseWithDetails(lesson);
     }
 

@@ -78,6 +78,7 @@ public class ErrorMessage {
 
     public static class Lesson {
         public static final String START_TIME_MUST_BEFORE_END_TIME="Thời gian bắt đầu phải trước thời gian kết thúc";
+        public static final String ERR_NOT_FOUND_ID= "Không tìm thấy buổi học nào với id: %s";
     }
 
 
