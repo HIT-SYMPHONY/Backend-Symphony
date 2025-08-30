@@ -1,6 +1,7 @@
 package my_computer.backendsymphony.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.Lesson;
 import my_computer.backendsymphony.exception.NotFoundException;
@@ -42,5 +43,24 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         String classRoomId = lesson.getClassRoom().getId();
 
         return isClassLeader(authentication, classRoomId);
+    }
+
+    public boolean canViewLesson(Authentication authentication, String lessonId) {
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Lesson.ERR_NOT_FOUND_ID, new String[]{lessonId}));
+        String classRoomId = lesson.getClassRoom().getId();
+        return isMemberOfClassroom(classRoomId, authentication) || isClassLeader(authentication, classRoomId);
+    }
+
+    public boolean isMemberOfClassroom(String classRoomId, Authentication authentication) {
+
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            return false;
+        }
+        String currentUserId = authentication.getName();
+        ClassRoom classRoom = classroomRepository.findById(classRoomId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND_ID, new String[]{classRoomId}));
+        return classRoom.getMembers().stream().anyMatch(member -> member.getId().equals(currentUserId));
+
     }
 }

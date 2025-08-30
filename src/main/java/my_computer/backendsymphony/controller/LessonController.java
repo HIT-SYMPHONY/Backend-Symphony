@@ -56,8 +56,8 @@ public class LessonController {
         return VsResponseUtil.success(lessons);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or @authz.canModifyLesson(authentication, #lessonId)")
     @GetMapping(UrlConstant.Lesson.GET_LESSON_BY_ID)
+    @PreAuthorize("hasRole('ADMIN') or @authz.canViewLesson(authentication, #lessonId)")
     public ResponseEntity<RestData<?>> getLessonById(@PathVariable String lessonId) {
         return VsResponseUtil.success(lessonService.getLessonById(lessonId));
     }
