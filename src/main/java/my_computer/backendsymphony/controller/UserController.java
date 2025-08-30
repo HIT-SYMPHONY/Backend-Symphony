@@ -1,5 +1,6 @@
 package my_computer.backendsymphony.controller;
 
+import com.cloudinary.Url;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.base.RestApiV1;
@@ -105,6 +106,12 @@ public class UserController {
     @GetMapping(UrlConstant.User.GET_MY_POSTS)
     public ResponseEntity<?> getMyPosts() {
         return VsResponseUtil.success(userService.getMyPosts());
+    }
+
+    @PatchMapping(UrlConstant.User.RESET_PASSWORD)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> resetPassword(@PathVariable String id) {
+        return VsResponseUtil.success(userService.adminResetPassword(id));
     }
 
 }

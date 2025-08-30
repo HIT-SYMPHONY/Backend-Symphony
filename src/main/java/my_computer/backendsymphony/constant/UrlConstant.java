@@ -26,6 +26,7 @@ public class UrlConstant {
         public static final String GET_BY_USERNAME = PRE_FIX+"/find";
         public static final String GET_CLASS_USER = USER_ID + "/classrooms";
         public static final String GET_MY_POSTS = GET_CURRENT_USER + "/posts";
+        public static final String RESET_PASSWORD= USER_ID + "/reset-password";
 
 
         private User() {

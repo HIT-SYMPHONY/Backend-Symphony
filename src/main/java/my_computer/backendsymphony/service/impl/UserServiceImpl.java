@@ -13,10 +13,7 @@ import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
 import my_computer.backendsymphony.domain.dto.request.UpdateRoleRequest;
 import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
-import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
-import my_computer.backendsymphony.domain.dto.response.CompetitionResponse;
-import my_computer.backendsymphony.domain.dto.response.PostResponse;
-import my_computer.backendsymphony.domain.dto.response.UserResponse;
+import my_computer.backendsymphony.domain.dto.response.*;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.Competition;
 import my_computer.backendsymphony.domain.entity.Post;
@@ -311,6 +308,23 @@ public class UserServiceImpl implements UserService {
             }
         }
         return allClassroomResponses;
+    }
+
+    @Override
+    public AdminResetPasswordResponse adminResetPassword(String userId) {
+        User userToReset = findUserByIdOrElseThrow(userId);
+        String newRawPassword = generatePassword(userToReset.getStudentCode());
+        String newHashedPassword = passwordEncoder.encode(newRawPassword);
+        userToReset.setPassword(newHashedPassword);
+        userRepository.save(userToReset);
+        return AdminResetPasswordResponse.builder()
+                .newPassword(newRawPassword)
+                .build();
+    }
+
+    private User findUserByIdOrElseThrow(String userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID, new String[]{userId}));
     }
 
 
