@@ -5,10 +5,7 @@ import my_computer.backendsymphony.domain.dto.pagination.PaginationSortRequestDt
 import my_computer.backendsymphony.domain.dto.request.UpdateRoleRequest;
 import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
 import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
-import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
-import my_computer.backendsymphony.domain.dto.response.CompetitionResponse;
-import my_computer.backendsymphony.domain.dto.response.PostResponse;
-import my_computer.backendsymphony.domain.dto.response.UserResponse;
+import my_computer.backendsymphony.domain.dto.response.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -39,4 +36,5 @@ public interface UserService {
 
     List<PostResponse> getMyPosts();
 
+    AdminResetPasswordResponse adminResetPassword(String userId);
 }
