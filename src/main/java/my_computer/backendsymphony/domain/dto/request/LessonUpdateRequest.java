@@ -18,6 +18,4 @@ public class LessonUpdateRequest {
     private LocalTime endTime;
 
     private DayOfWeek dayOfWeek;
-
-    private String leaderName;
 }

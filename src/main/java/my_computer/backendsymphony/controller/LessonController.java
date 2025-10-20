@@ -7,6 +7,7 @@ import my_computer.backendsymphony.base.RestData;
 import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.request.LessonCreationRequest;
+import my_computer.backendsymphony.domain.dto.request.LessonFilterRequest;
 import my_computer.backendsymphony.domain.dto.request.LessonUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.LessonResponse;
 import my_computer.backendsymphony.service.LessonService;
@@ -45,8 +46,8 @@ public class LessonController {
     }
 
     @GetMapping(UrlConstant.Lesson.GET_LESSON_BY_CLASSROOM_ID)
-    public ResponseEntity<RestData<?>> getLessonsByClassroomId (@PathVariable String classroomId){
-        List<LessonResponse> lessons = lessonService.getLessonsByClassRoomId(classroomId);
+    public ResponseEntity<RestData<?>> getLessonsByClassroomId (@PathVariable String classroomId, LessonFilterRequest request){
+        List<LessonResponse> lessons = lessonService.getLessonsByClassRoomId(classroomId, request);
         return VsResponseUtil.success(lessons);
     }
 

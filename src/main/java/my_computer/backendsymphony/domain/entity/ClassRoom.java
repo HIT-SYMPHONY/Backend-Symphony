@@ -37,6 +37,7 @@ public class ClassRoom {
 
     private LocalDate endTime;
 
+    @Lob
     private String description;
 
     @CreatedDate

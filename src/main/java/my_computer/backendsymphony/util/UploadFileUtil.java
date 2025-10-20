@@ -5,6 +5,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import my_computer.backendsymphony.constant.CommonConstant;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.exception.UploadFileException;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ public class UploadFileUtil {
     private final Cloudinary cloudinary;
 
     public String uploadImage(MultipartFile file) {
+        validateFile(file);
         try {
             Map<?, ?> result = cloudinary.uploader().upload(
                     file.getBytes(),
@@ -31,7 +33,7 @@ public class UploadFileUtil {
             log.info("Cloudinary config: {}", cloudinary.config);
             return result.get("secure_url").toString();
         } catch (IOException e) {
-            throw new UploadFileException("Upload image failed!");
+            throw new UploadFileException(ErrorMessage.File.UPLOAD_FAILED);
         }
     }
 
@@ -41,7 +43,7 @@ public class UploadFileUtil {
             Map<?, ?> result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
             log.info("Destroyed image with public_id = {}, result = {}", publicId, result);
         } catch (IOException e) {
-            throw new UploadFileException("Remove image failed!");
+            throw new UploadFileException(ErrorMessage.File.DESTROY_FAILED);
         }
     }
 
@@ -80,6 +82,22 @@ public class UploadFileUtil {
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
             throw new UploadFileException(ErrorMessage.INVALID_IMAGE_FILE);
+        }
+    }
+
+
+    public void validateFile(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new UploadFileException(ErrorMessage.File.FILE_IS_EMPTY);
+        }
+
+        String contentType = file.getContentType();
+        if (contentType == null || !CommonConstant.ALLOWED_IMAGE_TYPES.stream().anyMatch(contentType::equalsIgnoreCase)) {
+            throw new UploadFileException(ErrorMessage.File.INVALID_IMAGE_TYPE);
+        }
+
+        if (file.getSize() > CommonConstant.MAX_IMAGE_SIZE_BYTES) {
+            throw new UploadFileException(ErrorMessage.File.FILE_TOO_LARGE);
         }
     }
 }

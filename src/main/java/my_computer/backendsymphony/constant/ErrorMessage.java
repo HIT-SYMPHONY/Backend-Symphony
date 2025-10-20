@@ -11,6 +11,8 @@ public class ErrorMessage {
     public static final String INVALID_JSON_FORMAT = "Dữ liệu gửi lên có định dạng JSON không hợp lệ. Vui lòng kiểm tra lại.";
     public static final String TO_MANY_REQUEST = "Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau.";
     public static final String INCORRECT_PASSWORD = "Mật khẩu sai";
+    public static final String NOT_FOUND = "Không tìm thấy tài nguyên";
+    public static final String INVALID_SORT_FIELD = "Trường sắp xếp '%s' không hợp lệ. Các trường có thể được sắp xếp là: %s.";
     //error validation dto
     public static class Validation {
         public static final String NOT_BLANK = "Không thể trống";
@@ -23,6 +25,9 @@ public class ErrorMessage {
         public static final String INVALID_STUDENT_CODE="Mã sinh viên phải có 10 ký tự";
         public static final String POSITIVE="Số nhập vào phải >0";
         public static final String INVALID_SCORE="Điểm phải lớn hơn hoặc bằng 0 và nhỏ hơn hoặc bằng 10";
+        public static final String INVALID_ENUM_VALUE = "Giá trị '%s' không hợp lệ. Các giá trị được chấp nhận là: %s";
+        public static final String INVALID_TYPE_VALUE = "Giá trị '%s' không hợp lệ cho trường này.";
+        public static final String MUST_BE_JSON_STRING = "Trường này phải là một chuỗi JSON hợp lệ.";
     }
     public static class Auth {
         public static final String ERR_INCORRECT_CREDENTIALS = "Mã sinh viên hoặc mật khẩu không chính xác";
@@ -64,7 +69,7 @@ public class ErrorMessage {
     public static class Competition {
         public static final String ERR_NOT_FOUND_ID= "Không tìm thấy cuộc thi nào với id: %s";
         public static final String START_TIME_MUST_BEFORE_END_TIME="Thời gian bắt đầu phải trước thời gian kết thúc";
-        public static final String INVALID_TIME_PERIOD = "Không phải Thời gian diễn ra";
+        public static final String INVALID_TIME_PERIOD = "Không phải thời gian diễn ra";
     }
 
     public static class CommentCompetition {
@@ -79,6 +84,15 @@ public class ErrorMessage {
     public static class Lesson {
         public static final String START_TIME_MUST_BEFORE_END_TIME="Thời gian bắt đầu phải trước thời gian kết thúc";
         public static final String ERR_NOT_FOUND_ID= "Không tìm thấy buổi học nào với id: %s";
+    }
+
+    public static class File {
+        public static final String FILE_IS_EMPTY = "Tệp không được để trống hoặc không được cung cấp.";
+        public static final String INVALID_IMAGE_TYPE = "Định dạng tệp không hợp lệ. Chỉ cho phép các tệp hình ảnh (png, jpg, jpeg, gif...).";
+        public static final String FILE_TOO_LARGE = "Tệp quá lớn. Kích thước tối đa cho phép là 5MB.";
+        public static final String UPLOAD_FAILED = "Tải tệp lên không thành công. Vui lòng thử lại.";
+        public static final String DESTROY_FAILED = "Xóa tệp không thành công.";
+        public static final String INVALID_CLOUDINARY_URL = "URL hình ảnh Cloudinary không hợp lệ.";
     }
 
 

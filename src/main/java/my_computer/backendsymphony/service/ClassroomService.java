@@ -1,11 +1,7 @@
 package my_computer.backendsymphony.service;
 
-import my_computer.backendsymphony.domain.dto.pagination.PaginationRequestDto;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
-import my_computer.backendsymphony.domain.dto.request.AddMembersRequest;
-import my_computer.backendsymphony.domain.dto.request.ClassroomCreationRequest;
-import my_computer.backendsymphony.domain.dto.request.ClassroomUpdateRequest;
-import my_computer.backendsymphony.domain.dto.request.RemoveMembersRequest;
+import my_computer.backendsymphony.domain.dto.request.*;
 import my_computer.backendsymphony.domain.dto.response.AddMembersResponse;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 
@@ -25,17 +21,17 @@ public interface ClassroomService {
 
     List<ClassroomResponse> getClassroomsByName(String name);
 
-    PaginationResponseDto<ClassroomResponse> getAllClassrooms(PaginationRequestDto request);
+    PaginationResponseDto<ClassroomResponse> getAllClassrooms(ClassroomFilterRequest request);
 
     AddMembersResponse addMembersToClassroom(String classroomId, AddMembersRequest request);
 
-    PaginationResponseDto<UserSummaryResponse>  getMembersInClassroom(String classroomId, PaginationRequestDto request);
+    PaginationResponseDto<UserSummaryResponse>  getMembersInClassroom(String classroomId, UserFilterRequest request);
 
-    PaginationResponseDto<UserSummaryResponse> getUsersNotInClassroom(String classroomId, PaginationRequestDto request);
+    PaginationResponseDto<UserSummaryResponse> getUsersNotInClassroom(String classroomId, UserFilterRequest request);
 
     void removeMembersFromClassroom(String classroomId, RemoveMembersRequest request);
 
-    List<ClassroomResponse> getClassroomsOfLeader ();
+    List<ClassroomResponse> getClassroomsOfLeader(ClassroomFilterRequest request);
 
     List<ClassroomResponse> getClassroomsOfUser (String userId);
 }

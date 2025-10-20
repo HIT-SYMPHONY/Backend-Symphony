@@ -27,7 +27,8 @@ public class CommentCompetition {
 
     private Double score;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(nullable = false)
+    @Lob
     private String content;
 
     @CreatedDate

@@ -10,6 +10,7 @@ public class UrlConstant {
         public static final String REFRESH_TOKEN = PRE_FIX + "/refresh-token";
         public static final String CHANGE_PASSWORD = PRE_FIX + "/change-password";
         public static final String VERIFY_PASSWORD = PRE_FIX + "/verify-password";
+
         private Auth() {
         }
     }
@@ -17,16 +18,16 @@ public class UrlConstant {
     public static class User {
         private static final String PRE_FIX = "/users";
         public static final String USER_COMMON = PRE_FIX;
-        public static final String USER_ID = PRE_FIX+"/{id}";
-        public static final String UPDATE_ROLE = PRE_FIX+"/role";
-        public static final String GET_CURRENT_USER=PRE_FIX+"/me";
-        public static final String GET_MY_CLASSROOMS=GET_CURRENT_USER +"/classrooms";
-        public static final String GET_MY_COMPETITIONS=GET_CURRENT_USER +"/competitions";
-        public static final String GET_LEADERS= PRE_FIX +"/leaders";
-        public static final String GET_BY_USERNAME = PRE_FIX+"/find";
+        public static final String USER_ID = PRE_FIX + "/{id}";
+        public static final String UPDATE_ROLE = PRE_FIX + "/role";
+        public static final String GET_CURRENT_USER = PRE_FIX + "/me";
+        public static final String GET_MY_CLASSROOMS = GET_CURRENT_USER + "/classrooms";
+        public static final String GET_MY_COMPETITIONS = GET_CURRENT_USER + "/competitions";
+        public static final String GET_LEADERS = PRE_FIX + "/leaders";
+        public static final String GET_BY_USERNAME = PRE_FIX + "/find";
         public static final String GET_CLASS_USER = USER_ID + "/classrooms";
         public static final String GET_MY_POSTS = GET_CURRENT_USER + "/posts";
-        public static final String RESET_PASSWORD= USER_ID + "/reset-password";
+        public static final String RESET_PASSWORD = USER_ID + "/reset-password";
 
 
         private User() {
@@ -36,12 +37,13 @@ public class UrlConstant {
     public static class Lesson {
         private static final String PRE_FIX = "/lesson";
         public static final String CREATE_LESSON = PRE_FIX;
-        public static final String GET_LESSON_BY_ID = PRE_FIX+"/{lessonId}";
-        public static final String DELETE_LESSON = PRE_FIX+"/{lessonId}";
-        public static final String UPDATE_LESSON = PRE_FIX+"/{lessonId}";
+        public static final String GET_LESSON_BY_ID = PRE_FIX + "/{lessonId}";
+        public static final String DELETE_LESSON = PRE_FIX + "/{lessonId}";
+        public static final String UPDATE_LESSON = PRE_FIX + "/{lessonId}";
         public static final String GET_LESSON_BY_CLASSROOM_ID = PRE_FIX + "/classroom/{classroomId}";
         public static final String GET_LESSON_BY_CURRENT_USER_ID = PRE_FIX + "/my-lessons";
-        private Lesson(){
+
+        private Lesson() {
         }
     }
 
@@ -49,11 +51,13 @@ public class UrlConstant {
         private static final String PRE_FIX = "/classrooms";
         public static final String CLASSROOM_COMMON = PRE_FIX;
         public static final String CLASSROOM_ID = PRE_FIX + "/{id}";
-        public static final String MEMBERS=PRE_FIX + "/{id}" + "/members";
+        public static final String MEMBERS = PRE_FIX + "/{id}" + "/members";
         public static final String NON_MEMBERS = PRE_FIX + "/{id}/non-members";
-        public static final String CLASSROOM_NAME=PRE_FIX +"/search" + "/{name}" + "/members";
+        public static final String CLASSROOM_NAME = PRE_FIX + "/search" + "/{name}" + "/members";
         public static final String BY_LEADER = PRE_FIX + "/by-leader";
-        private Classroom() {}
+
+        private Classroom() {
+        }
     }
 
     public static class Notification {
@@ -63,22 +67,25 @@ public class UrlConstant {
         public static final String NOTIFICATION_ID = PRE_FIX + "/{id}";
         public static final String GET_OF_CLASS = PRE_FIX + "/classrooms/{id}";
         public static final String GET_OF_COMPETITION = PRE_FIX + "/competitions/{id}";
-        public Notification() {}
+
+        public Notification() {
+        }
     }
 
     public static class Post {
         private static final String PRE_FIX = "/posts";
         public static final String POST_COMMON = PRE_FIX;
         public static final String POST_ID = PRE_FIX + "/{id}";
-        public static final String POST_POST_ID = PRE_FIX + "/{postId}/get";
-
+        public static final String GET_POSTS_BY_CLASSROOM_ID = Classroom.CLASSROOM_ID + "/posts";
     }
 
     public static class Competition {
         private static final String PRE_FIX = "/competitions";
         public static final String COMPETITION_COMMON = PRE_FIX;
         public static final String COMPETITION_ID = PRE_FIX + "/{id}";
-        private Competition() {}
+
+        private Competition() {
+        }
     }
 
     public static class CommentCompetition {
@@ -106,6 +113,11 @@ public class UrlConstant {
         public static final String MEMBERS = PRE_FIX + "/{id}" + "/members";
         public static final String NON_MEMBERS = PRE_FIX + "/{id}" + "/non-members";
 
+    }
+
+    public static final class Image {
+        public static final String PRE_FIX = "/images";
+        public static final String IMAGE_COMMON=PRE_FIX;
     }
 
 }

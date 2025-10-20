@@ -25,7 +25,8 @@ public class CommentPost {
     @Column(insertable = false, updatable = false, nullable = false, columnDefinition = "CHAR(36)")
     private String id;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(nullable = false)
+    @Lob
     private String content;
 
     private Double score;

@@ -9,12 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RestControllerAdvice
@@ -38,9 +39,25 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BindException.class)
     public ResponseEntity<RestData<?>> handleValidationException(BindException ex) {
         Map<String, String> errors = new LinkedHashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage())
-        );
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            String fieldName = error.getField();
+            String errorMessage;
+            if (isTypeMismatchError(error)) {
+                Class<?> fieldType = ex.getBindingResult().getFieldType(fieldName);
+                if (fieldType != null && fieldType.isEnum()) {
+                    errorMessage = String.format(
+                            ErrorMessage.Validation.INVALID_ENUM_VALUE,
+                            error.getRejectedValue(),
+                            Arrays.toString(fieldType.getEnumConstants())
+                    );
+                } else {
+                    errorMessage = String.format(ErrorMessage.Validation.INVALID_TYPE_VALUE, error.getRejectedValue());
+                }
+            } else {
+                errorMessage = error.getDefaultMessage();
+            }
+            errors.put(fieldName, errorMessage);
+        });
         return VsResponseUtil.error(HttpStatus.BAD_REQUEST, errors);
     }
 
@@ -49,6 +66,7 @@ public class GlobalExceptionHandler {
         log.error("Error upload: ", ex);
         return VsResponseUtil.error(ex.getStatus(), ex.getMessage());
     }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<RestData<?>> handleAccessDeniedException(AccessDeniedException ex) {
         return VsResponseUtil.error(HttpStatus.FORBIDDEN, ErrorMessage.FORBIDDEN);
@@ -74,6 +92,31 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TooManyRequestsException.class)
     public ResponseEntity<RestData<?>> handleTooManyRequestsException(TooManyRequestsException ex) {
         return VsResponseUtil.error(ex.getStatus(), ex.getMessage());
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<RestData<?>> handleNoResourceFoundException(NoResourceFoundException ex) {
+        return VsResponseUtil.error(HttpStatus.NOT_FOUND, ErrorMessage.NOT_FOUND);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<RestData<?>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return VsResponseUtil.error(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<RestData<?>> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
+        log.warn("File upload failed: The file exceeds the maximum allowed size.");
+        return VsResponseUtil.error(HttpStatus.PAYLOAD_TOO_LARGE, ErrorMessage.File.FILE_TOO_LARGE);
+    }
+
+    private boolean isTypeMismatchError(FieldError error) {
+        for (String code : Objects.requireNonNull(error.getCodes())) {
+            if (code.equals("typeMismatch")) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
