@@ -5,13 +5,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.constant.Role;
-import my_computer.backendsymphony.domain.dto.pagination.PaginationRequestDto;
+import my_computer.backendsymphony.constant.SortByDataConstant;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
 import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
-import my_computer.backendsymphony.domain.dto.request.AddMembersRequest;
-import my_computer.backendsymphony.domain.dto.request.ClassroomCreationRequest;
-import my_computer.backendsymphony.domain.dto.request.ClassroomUpdateRequest;
-import my_computer.backendsymphony.domain.dto.request.RemoveMembersRequest;
+import my_computer.backendsymphony.domain.dto.request.*;
 import my_computer.backendsymphony.domain.dto.response.AddMembersResponse;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 import my_computer.backendsymphony.domain.dto.response.UserSummaryResponse;
@@ -22,14 +19,17 @@ import my_computer.backendsymphony.domain.mapper.UserMapper;
 import my_computer.backendsymphony.exception.DuplicateResourceException;
 import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;
-import my_computer.backendsymphony.exception.UnauthorizedException;
 import my_computer.backendsymphony.repository.ClassRoomRepository;
 import my_computer.backendsymphony.repository.UserRepository;
+import my_computer.backendsymphony.service.AuthorizationService;
 import my_computer.backendsymphony.service.ClassroomService;
+import my_computer.backendsymphony.service.specification.ClassroomSpecification;
+import my_computer.backendsymphony.service.specification.UserSpecification;
 import my_computer.backendsymphony.util.PaginationUtil;
 import my_computer.backendsymphony.util.UploadFileUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,10 +54,11 @@ public class ClassroomServiceImpl implements ClassroomService {
     UserMapper userMapper;
     ClassroomMapper classroomMapper;
     UploadFileUtil uploadFileUtil;
+    AuthorizationService authorizationService;
 
     @Override
     public List<ClassroomResponse> getClassroomsOfUser(String userId) {
-        if(!userRepository.existsById(userId)){
+        if (!userRepository.existsById(userId)) {
             throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID);
         }
 
@@ -204,9 +205,14 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     @Transactional(readOnly = true)
-    public PaginationResponseDto<ClassroomResponse> getAllClassrooms(PaginationRequestDto request) {
-        Pageable pageable = PaginationUtil.buildPageable(request);
-        Page<ClassRoom> classroomPage = classroomRepository.findAll(pageable);
+    public PaginationResponseDto<ClassroomResponse> getAllClassrooms(ClassroomFilterRequest request) {
+        Pageable pageable = PaginationUtil.buildPageable(request, SortByDataConstant.CLASSROOM);
+        Specification<ClassRoom> spec = Specification.where(
+                ClassroomSpecification.hasStatus(request.getStatus())
+        );
+        spec = spec.and(ClassroomSpecification.hasStartYear(request.getStartYear()));
+        spec = spec.and(ClassroomSpecification.matchesKeyword(request.getKeyword()));
+        Page<ClassRoom> classroomPage = classroomRepository.findAll(spec, pageable);
 
         List<ClassroomResponse> classroomResponses = classroomMapper.toClassroomResponseList(classroomPage.getContent());
 
@@ -269,36 +275,41 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     @Transactional(readOnly = true)
-    public PaginationResponseDto<UserSummaryResponse> getMembersInClassroom(String id, PaginationRequestDto request) {
-        ClassRoom classRoom=findClassroomByIdOrElseThrow(id);
+    public PaginationResponseDto<UserSummaryResponse> getMembersInClassroom(String id, UserFilterRequest request) {
+        ClassRoom classRoom = findClassroomByIdOrElseThrow(id);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isValidLeader = isLeaderOfClassroomOrAdmin(classRoom, authentication);
-        boolean isValidMember = isMemberOfClassroom(classRoom, authentication);
+        boolean isValidLeader = authorizationService.isLeaderOfClassroomOrAdmin(classRoom, authentication);
+        boolean isValidMember = authorizationService.isMemberOfClassroomOrAdmin(classRoom, authentication);
         if (!isValidLeader && !isValidMember)
             throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
-        Pageable pageable = PaginationUtil.buildPageable(request);
-        Page<User> memberPage = userRepository.findMembersByClassroomId(id, pageable);
-        List<UserSummaryResponse> memberResponses = userMapper.toUserSummaryResponseList(memberPage.getContent());
-        PagingMeta meta = PaginationUtil.buildPagingMeta(request, memberPage);
-        return new PaginationResponseDto<>(meta, memberResponses);
+        Pageable pageable = PaginationUtil.buildPageable(request, SortByDataConstant.USER);
+        Specification<User> spec = UserSpecification.hasClassroom(id);
+        spec = spec.and(UserSpecification.hasRole(request.getRole()));
+        spec = spec.and(UserSpecification.hasIntake(request.getIntake()));
+        spec = spec.and(UserSpecification.matchesKeyword(request.getKeyword()));
+        Page<User> membersPage = userRepository.findAll(spec, pageable);
+        List<UserSummaryResponse> userSummaryResponses = userMapper.toUserSummaryResponseList(membersPage.getContent());
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, SortByDataConstant.USER, membersPage);
+        return new PaginationResponseDto<>(meta, userSummaryResponses);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public PaginationResponseDto<UserSummaryResponse> getUsersNotInClassroom(String classroomId, PaginationRequestDto request) {
+    public PaginationResponseDto<UserSummaryResponse> getUsersNotInClassroom(String classroomId, UserFilterRequest request) {
         ClassRoom classRoom = findClassroomByIdOrElseThrow(classroomId);
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!isLeaderOfClassroomOrAdmin(classRoom, authentication)) {
+        boolean isValidLeader = authorizationService.isLeaderOfClassroomOrAdmin(classRoom, authentication);
+        boolean isValidMember = authorizationService.isMemberOfClassroomOrAdmin(classRoom, authentication);
+        if (!isValidLeader && !isValidMember)
             throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
-        }
-
-        Pageable pageable = PaginationUtil.buildPageable(request);
-        Page<User> userPage = userRepository.findUsersNotInClassroom(classroomId, pageable);
-
+        Pageable pageable = PaginationUtil.buildPageable(request, SortByDataConstant.USER);
+        Specification<User> spec = UserSpecification.doesNotHaveClassroom(classroomId);
+        spec = spec.and(UserSpecification.hasRole(request.getRole()));
+        spec = spec.and(UserSpecification.hasIntake(request.getIntake()));
+        spec = spec.and(UserSpecification.matchesKeyword(request.getKeyword()));
+        Page<User> userPage = userRepository.findAll(spec, pageable);
         List<UserSummaryResponse> responseList = userMapper.toUserSummaryResponseList(userPage.getContent());
-        PagingMeta meta = PaginationUtil.buildPagingMeta(request, userPage);
-
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, SortByDataConstant.USER, userPage);
         return new PaginationResponseDto<>(meta, responseList);
     }
 
@@ -325,13 +336,14 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ClassroomResponse> getClassroomsOfLeader() {
+    public List<ClassroomResponse> getClassroomsOfLeader(ClassroomFilterRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Jwt jwt = (Jwt) authentication.getPrincipal();
         String currentUserId = jwt.getSubject();
-
-        List<ClassRoom> leaderClassrooms = classroomRepository.findByLeaderId(currentUserId);
-
+        Specification<ClassRoom> spec = ClassroomSpecification.hasLeaderId(currentUserId);
+        spec = spec.and(ClassroomSpecification.matchesKeyword(request.getKeyword()));
+        spec = spec.and(ClassroomSpecification.hasStartYear(request.getStartYear()));
+        List<ClassRoom> leaderClassrooms = classroomRepository.findAll(spec);
         List<ClassroomResponse> responses = leaderClassrooms.stream()
                 .map(c -> {
                     ClassroomResponse response = classroomMapper.toClassroomResponse(c);
@@ -339,11 +351,8 @@ public class ClassroomServiceImpl implements ClassroomService {
                     return response;
                 })
                 .collect(Collectors.toList());
-
         return responses;
     }
-
-
 
 
     private boolean isLeaderOfClassroomOrAdmin(ClassRoom classroom, Authentication authentication) {

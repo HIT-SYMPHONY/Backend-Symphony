@@ -3,16 +3,12 @@ package my_computer.backendsymphony.service.impl;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import my_computer.backendsymphony.constant.ClassroomStatus;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.constant.Role;
 import my_computer.backendsymphony.constant.SortByDataConstant;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
-import my_computer.backendsymphony.domain.dto.pagination.PaginationSortRequestDto;
 import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
-import my_computer.backendsymphony.domain.dto.request.UpdateRoleRequest;
-import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
-import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
+import my_computer.backendsymphony.domain.dto.request.*;
 import my_computer.backendsymphony.domain.dto.response.*;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
 import my_computer.backendsymphony.domain.entity.Competition;
@@ -31,23 +27,30 @@ import my_computer.backendsymphony.repository.CompetitionRepository;
 import my_computer.backendsymphony.repository.PostRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.UserService;
+import my_computer.backendsymphony.service.specification.ClassroomSpecification;
+import my_computer.backendsymphony.service.specification.CompetitionSpecification;
+import my_computer.backendsymphony.service.specification.UserSpecification;
 import my_computer.backendsymphony.util.PaginationUtil;
 import my_computer.backendsymphony.util.UploadFileUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import my_computer.backendsymphony.service.specification.PostSpecification;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.web.multipart.MultipartFile;
+
+import static java.util.stream.Collectors.toMap;
 
 @Service
 @RequiredArgsConstructor
@@ -186,9 +189,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserResponse> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return userMapper.toListUserResponse(users);
+    public PaginationResponseDto<UserResponse> getAllUsers(UserFilterRequest request) {
+        Pageable pageable = PaginationUtil.buildPageable(request, SortByDataConstant.USER);
+        Specification<User> spec = Specification.where(
+                UserSpecification.hasRole(request.getRole())
+        );
+        spec = spec.and(UserSpecification.hasIntake(request.getIntake()));
+        spec = spec.and(UserSpecification.matchesKeyword(request.getKeyword()));
+        Page<User> usersPage = userRepository.findAll(spec, pageable);
+        List<UserResponse> userResponses = userMapper.toListUserResponse(usersPage.getContent());
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, SortByDataConstant.USER, usersPage);
+        return new PaginationResponseDto<>(meta, userResponses);
     }
 
     @Override
@@ -205,15 +216,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public PaginationResponseDto<CompetitionResponse> getMyCompetitions(PaginationSortRequestDto request) {
+    public List<CompetitionResponse> getMyCompetitions(CompetitionFilterRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Jwt jwt = (Jwt) authentication.getPrincipal();
         String currentUserId = jwt.getSubject();
-        Pageable pageable = PaginationUtil.buildPageable(request, SortByDataConstant.COMPETITION);
-        Page<Competition> competitionPage = competitionRepository.findByCompetitionUsers_User_Id(currentUserId, pageable);
-        List<CompetitionResponse> competitionResponses = competitionMapper.toCompetitionResponseList(competitionPage.getContent());
-        PagingMeta meta = PaginationUtil.buildPagingMeta(request, SortByDataConstant.COMPETITION, competitionPage);
-        return new PaginationResponseDto<>(meta, competitionResponses);
+        Sort sort = PaginationUtil.buildSort(request, SortByDataConstant.COMPETITION);
+        Specification<Competition> spec = Specification.where(
+                CompetitionSpecification.forUser(currentUserId)
+        );
+        spec = spec.and(CompetitionSpecification.hasStatus(request.getStatus()));
+        spec = spec.and(CompetitionSpecification.matchesKeyword(request.getKeyword()));
+        List<Competition> competitions = competitionRepository.findAll(spec, sort);
+        return competitionMapper.toCompetitionResponseList(competitions);
     }
 
     @Override
@@ -242,7 +256,7 @@ public class UserServiceImpl implements UserService {
         Role newRole;
         try {
             newRole = Role.valueOf(request.getRoleStr().toUpperCase());
-        } catch (IllegalArgumentException  e) {
+        } catch (IllegalArgumentException e) {
             throw new InvalidException(ErrorMessage.User.INVALID_ROLE);
         }
 
@@ -264,50 +278,50 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PostResponse> getMyPosts() {
+    public PaginationResponseDto<PostResponse> getMyPosts(PostFilterRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Jwt jwt = (Jwt) authentication.getPrincipal();
         String currentUserId = jwt.getSubject();
-        List<ClassRoom> myClassrooms = classroomRepository.findByLeaderIdOrMembers_Id(currentUserId, currentUserId);
-        if (myClassrooms.isEmpty()) {
-            return List.of();
-        }
-        List<String> myClassroomIds = myClassrooms.stream()
-                .map(ClassRoom::getId)
-                .collect(Collectors.toList());
-        List<Post> posts = postRepository.findByClassRoom_IdInOrderByCreatedAtDesc(myClassroomIds);
-        return postMapper.toResponseList(posts);
+        Pageable pageable = PaginationUtil.buildPageable(request, SortByDataConstant.POST);
+        Specification<Post> spec = Specification.where(
+                PostSpecification.inUserClassrooms(currentUserId)
+        );
+        spec = spec.and(PostSpecification.hasClassroomId(request.getClassroomId()));
+        Page<Post> postPage = postRepository.findAll(spec, pageable);
+        List<PostResponse> postResponses = postMapper.toResponseList(postPage.getContent());
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, SortByDataConstant.POST, postPage);
+        return new PaginationResponseDto<>(meta, postResponses);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<ClassroomResponse> getMyClasses(String status) {
+    public List<ClassroomResponse> getMyClasses(ClassroomFilterRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Jwt jwt = (Jwt) authentication.getPrincipal();
         String currentUserId = jwt.getSubject();
-        List<ClassRoom> allUserClasses = classroomRepository.findByLeaderIdOrMembers_Id(currentUserId, currentUserId);
-        List<ClassroomResponse> allClassroomResponses = classroomMapper.toClassroomResponseList(allUserClasses);
-        if (!allClassroomResponses.isEmpty()) {
-            List<String> leaderIds = allClassroomResponses.stream()
-                    .map(ClassroomResponse::getLeaderId).distinct().collect(Collectors.toList());
+        Sort sort = PaginationUtil.buildSort(request, SortByDataConstant.CLASSROOM);
+        Specification<ClassRoom> spec = Specification.where(
+                ClassroomSpecification.forUser(currentUserId)
+        );
+        spec = spec.and(ClassroomSpecification.hasStatus(request.getStatus()));
+        spec = spec.and(ClassroomSpecification.hasStartYear(request.getStartYear()));
+        spec = spec.and(ClassroomSpecification.matchesKeyword(request.getKeyword()));
+        List<ClassRoom> userClasses = classroomRepository.findAll(spec, sort);
+        List<ClassroomResponse> classroomResponses = classroomMapper.toClassroomResponseList(userClasses);
+        if (!classroomResponses.isEmpty()) {
+            List<String> leaderIds = classroomResponses.stream()
+                    .map(ClassroomResponse::getLeaderId)
+                    .distinct()
+                    .collect(Collectors.toList());
+
             Map<String, String> leaderMap = userRepository.findAllById(leaderIds).stream()
-                    .collect(Collectors.toMap(User::getId, User::getFullName));
-            allClassroomResponses.forEach(response -> {
+                    .collect(toMap(User::getId, User::getFullName));
+            classroomResponses.forEach(response -> {
                 String leaderName = leaderMap.get(response.getLeaderId());
                 response.setLeaderName(leaderName);
             });
         }
-        if (status != null && !status.isBlank()) {
-            try {
-                ClassroomStatus filterStatus = ClassroomStatus.valueOf(status.toUpperCase());
-                return allClassroomResponses.stream()
-                        .filter(response -> filterStatus.equals(response.getStatus()))
-                        .collect(Collectors.toList());
-            } catch (IllegalArgumentException e) {
-                return List.of();
-            }
-        }
-        return allClassroomResponses;
+        return classroomResponses;
     }
 
     @Override
@@ -328,7 +342,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    private String generateUsername (String studentCode) {
+    private String generateUsername(String studentCode) {
         return "sv" + studentCode;  // vd: sv2301012345
     }
 

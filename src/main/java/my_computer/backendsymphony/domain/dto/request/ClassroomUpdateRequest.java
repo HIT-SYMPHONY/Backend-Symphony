@@ -4,9 +4,9 @@ import jakarta.validation.constraints.Positive;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import my_computer.backendsymphony.constant.ErrorMessage;
+import my_computer.backendsymphony.validator.annotation.IsJsonString;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -26,6 +26,7 @@ public class ClassroomUpdateRequest {
     @Positive(message = ErrorMessage.Validation.POSITIVE)
     Integer duration;
 
+    @IsJsonString
     String description;
 
     String leaderId;

@@ -1,10 +1,7 @@
 package my_computer.backendsymphony.service;
 
 import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
-import my_computer.backendsymphony.domain.dto.pagination.PaginationSortRequestDto;
-import my_computer.backendsymphony.domain.dto.request.UpdateRoleRequest;
-import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
-import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
+import my_computer.backendsymphony.domain.dto.request.*;
 import my_computer.backendsymphony.domain.dto.response.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,19 +19,19 @@ public interface UserService {
 
     UserResponse getCurrentUser();
 
-    List<ClassroomResponse> getMyClasses(String status);
+    List<ClassroomResponse> getMyClasses(ClassroomFilterRequest request);
 
-    List<UserResponse> getAllUsers();
+    PaginationResponseDto<UserResponse> getAllUsers(UserFilterRequest request);
 
     List<UserResponse> getUsersByUsername(String username);
 
-    PaginationResponseDto<CompetitionResponse> getMyCompetitions(PaginationSortRequestDto request);
+    List<CompetitionResponse> getMyCompetitions(CompetitionFilterRequest request);
 
     List<UserResponse> getUsersByRole (String roleStr);
 
     List<UserResponse> updateRole(UpdateRoleRequest request);
 
-    List<PostResponse> getMyPosts();
+    PaginationResponseDto<PostResponse> getMyPosts(PostFilterRequest request);
 
     AdminResetPasswordResponse adminResetPassword(String userId);
 }

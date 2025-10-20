@@ -7,7 +7,9 @@ import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationRequestDto;
 import my_computer.backendsymphony.domain.dto.request.AddMembersToCompetitionRequest;
+import my_computer.backendsymphony.domain.dto.request.CompetitionFilterRequest;
 import my_computer.backendsymphony.domain.dto.request.JoinCompetitionRequest;
+import my_computer.backendsymphony.domain.dto.request.UserFilterRequest;
 import my_computer.backendsymphony.service.CompetitionUserService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -40,15 +42,15 @@ public class CompetitionUserController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('LEADER')")
     @GetMapping(UrlConstant.CompetitionUser.MEMBERS)
     public ResponseEntity<?> getMembersCompetition(@PathVariable String id,
-                                                   @Valid @ModelAttribute PaginationRequestDto paginationRequestDto) {
-        return VsResponseUtil.success(competitionUserService.getMembersCompetition(id,paginationRequestDto));
+                                                   @Valid @ModelAttribute UserFilterRequest request) {
+        return VsResponseUtil.success(competitionUserService.getMembersCompetition(id,request));
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('LEADER')")
     @GetMapping(UrlConstant.CompetitionUser.NON_MEMBERS)
     public ResponseEntity<?> getNonMembersCompetition(@PathVariable String id,
-                                                   @Valid @ModelAttribute PaginationRequestDto paginationRequestDto) {
-        return VsResponseUtil.success(competitionUserService.getNonMembersCompetition(id,paginationRequestDto));
+                                                   @Valid @ModelAttribute UserFilterRequest request) {
+        return VsResponseUtil.success(competitionUserService.getNonMembersCompetition(id,request));
     }
 
 }

@@ -27,12 +27,11 @@ public class ClassroomResponse {
     ClassroomStatus status;
 
     public ClassroomStatus getStatus() {
-        if (startTime == null || duration == null || duration <= 0) {
-            return null;
+        if (startTime == null || endTime == null) {
+            return ClassroomStatus.UPCOMING;
         }
         LocalDate today = LocalDate.now();
         if (startTime.isAfter(today)) return ClassroomStatus.UPCOMING;
-        LocalDate endTime = startTime.plusWeeks(duration);
         if (today.isAfter(endTime)) return ClassroomStatus.COMPLETED;
         return ClassroomStatus.ONGOING;
     }

@@ -2,12 +2,13 @@ package my_computer.backendsymphony.repository;
 
 import my_computer.backendsymphony.domain.entity.ClassRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface ClassRoomRepository extends JpaRepository<ClassRoom, String> {
+public interface ClassRoomRepository extends JpaRepository<ClassRoom, String>, JpaSpecificationExecutor<ClassRoom> {
     boolean existsByName(String name);
 
     List<ClassRoom> findByLeaderIdOrMembers_Id(String leaderId, String memberId);

@@ -7,9 +7,7 @@ import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationSortRequestDto;
-import my_computer.backendsymphony.domain.dto.request.UpdateRoleRequest;
-import my_computer.backendsymphony.domain.dto.request.UserCreationRequest;
-import my_computer.backendsymphony.domain.dto.request.UserUpdateRequest;
+import my_computer.backendsymphony.domain.dto.request.*;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 import my_computer.backendsymphony.service.ClassroomService;
 import my_computer.backendsymphony.service.UserService;
@@ -74,20 +72,17 @@ public class UserController {
 
     @GetMapping(UrlConstant.User.USER_COMMON)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getAllUser() {
-        return VsResponseUtil.success(HttpStatus.OK, userService.getAllUsers());
+    public ResponseEntity<?> getAllUser(UserFilterRequest request) {
+        return VsResponseUtil.success(HttpStatus.OK, userService.getAllUsers(request));
     }
 
     @GetMapping(UrlConstant.User.GET_MY_CLASSROOMS)
-    public ResponseEntity<?> getMyClasses(
-            @RequestParam(value = "status", required = false) String status) {
-
-        List<ClassroomResponse> classrooms = userService.getMyClasses(status);
-        return VsResponseUtil.success(classrooms);
+    public ResponseEntity<?> getMyClasses(@ModelAttribute ClassroomFilterRequest request) {
+        return VsResponseUtil.success(userService.getMyClasses(request));
     }
 
     @GetMapping(UrlConstant.User.GET_MY_COMPETITIONS)
-    public ResponseEntity<?> getMyCompetitions(PaginationSortRequestDto request) {
+    public ResponseEntity<?> getMyCompetitions(CompetitionFilterRequest request) {
         return VsResponseUtil.success(userService.getMyCompetitions(request));
     }
 
@@ -104,8 +99,8 @@ public class UserController {
     }
 
     @GetMapping(UrlConstant.User.GET_MY_POSTS)
-    public ResponseEntity<?> getMyPosts() {
-        return VsResponseUtil.success(userService.getMyPosts());
+    public ResponseEntity<?> getMyPosts(PostFilterRequest request) {
+        return VsResponseUtil.success(userService.getMyPosts(request));
     }
 
     @PatchMapping(UrlConstant.User.RESET_PASSWORD)

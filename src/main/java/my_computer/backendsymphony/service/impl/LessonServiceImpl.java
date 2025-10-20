@@ -1,14 +1,16 @@
 package my_computer.backendsymphony.service.impl;
 
 import my_computer.backendsymphony.constant.ErrorMessage;
-import my_computer.backendsymphony.constant.Role;
+import my_computer.backendsymphony.constant.SortByDataConstant;
+import my_computer.backendsymphony.domain.dto.request.LessonFilterRequest;
 import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.UnauthorizedException;
 import my_computer.backendsymphony.repository.CompetitionUserRepository;
 import my_computer.backendsymphony.service.AuthorizationService;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
+import my_computer.backendsymphony.service.specification.LessonSpecification;
+import my_computer.backendsymphony.util.PaginationUtil;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import my_computer.backendsymphony.domain.dto.request.LessonUpdateRequest;
 import my_computer.backendsymphony.domain.entity.User;
@@ -28,7 +30,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,17 +84,22 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<LessonResponse> getLessonsByClassRoomId(String classRoomId) {
-        if (!classroomRepository.existsById(classRoomId))
-            throw new NotFoundException("Không tìm thấy lớp học!");
-
-        List<Lesson> lessons = lessonRepository.findByClassRoomId(classRoomId);
-
+    public List<LessonResponse> getLessonsByClassRoomId(String classRoomId, LessonFilterRequest request) { // Return type is now List
+        if (!classroomRepository.existsById(classRoomId)) {
+            throw new NotFoundException(
+                    ErrorMessage.Classroom.ERR_NOT_FOUND_ID,new String[]{classRoomId}
+            );
+        }
+        Sort sort = PaginationUtil.buildSort(request, SortByDataConstant.LESSON);
+        Specification<Lesson> spec = Specification.where(
+                LessonSpecification.hasClassroomId(classRoomId)
+        );
+        spec = spec.and(LessonSpecification.matchesKeyword(request.getKeyword()));
+        List<Lesson> lessons = lessonRepository.findAll(spec, sort);
         return lessons.stream()
                 .map(this::mapToLessonResponseWithDetails)
                 .collect(Collectors.toList());
     }
-
     @Override
     @Transactional(readOnly = true)
     public List<LessonResponse> getLessonsForCurrentUser(Authentication authentication) {
@@ -140,7 +146,7 @@ public class LessonServiceImpl implements LessonService {
         finalResponse.setLocation(lesson.getLocation());
         finalResponse.setCreatedAt(lesson.getCreatedAt());
         finalResponse.setLeaderName(leaderName);
-        finalResponse.setClassName(classRoomOfThisLesson.getName());
+        finalResponse.setClassName(classRoomOfThisLesson != null ? classRoomOfThisLesson.getName() : null);
 
         return finalResponse;
     }

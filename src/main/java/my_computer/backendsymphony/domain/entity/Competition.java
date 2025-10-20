@@ -28,12 +28,13 @@ public class Competition {
 
     private String name;
 
+    @Lob
     private String rule;
 
-    @Column(columnDefinition = "TEXT")
+    @Lob
     private String content;
 
-    @Column(columnDefinition = "TEXT")
+    @Lob
     private String description;
 
     private String image;

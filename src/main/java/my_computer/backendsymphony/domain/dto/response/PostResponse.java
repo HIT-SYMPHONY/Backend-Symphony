@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import my_computer.backendsymphony.constant.PostStatus;
 
 import java.time.LocalDateTime;
 
@@ -33,4 +34,19 @@ public class PostResponse {
     private String classRoomName;
 
     private String creatorName;
+
+    private PostStatus status;
+
+    public PostStatus getStatus() {
+        if (deadline == null)
+            return PostStatus.PENDING;
+        LocalDateTime now = LocalDateTime.now();
+        if (deadline.isBefore(now)) {
+            return PostStatus.OVERDUE;
+        }
+        if (deadline.toLocalDate().isEqual(now.toLocalDate())) {
+            return PostStatus.DUE;
+        }
+        return PostStatus.PENDING;
+    }
 }

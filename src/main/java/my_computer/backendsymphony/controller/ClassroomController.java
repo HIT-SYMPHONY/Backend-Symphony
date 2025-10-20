@@ -9,10 +9,7 @@ import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationRequestDto;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
-import my_computer.backendsymphony.domain.dto.request.AddMembersRequest;
-import my_computer.backendsymphony.domain.dto.request.ClassroomCreationRequest;
-import my_computer.backendsymphony.domain.dto.request.ClassroomUpdateRequest;
-import my_computer.backendsymphony.domain.dto.request.RemoveMembersRequest;
+import my_computer.backendsymphony.domain.dto.request.*;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 import my_computer.backendsymphony.service.ClassroomService;
 import org.springframework.http.HttpStatus;
@@ -60,7 +57,7 @@ public class ClassroomController {
 
     @GetMapping(UrlConstant.Classroom.CLASSROOM_COMMON)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getAllClassrooms(@ModelAttribute PaginationRequestDto request) {
+    public ResponseEntity<?> getAllClassrooms(@ModelAttribute ClassroomFilterRequest request) {
         PaginationResponseDto<ClassroomResponse> response = classroomService.getAllClassrooms(request);
         return VsResponseUtil.success(response);
     }
@@ -77,14 +74,14 @@ public class ClassroomController {
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     public ResponseEntity<?> getUsersNotInClassroom(
             @PathVariable String id,
-            @Valid @ModelAttribute PaginationRequestDto request) {
+            @Valid @ModelAttribute UserFilterRequest request) {
         return VsResponseUtil.success(classroomService.getUsersNotInClassroom(id, request));
     }
 
 
     @GetMapping(UrlConstant.Classroom.MEMBERS)
     public ResponseEntity<?> getMembersInClassroom(
-            @PathVariable String id, PaginationRequestDto request) {
+            @PathVariable String id, UserFilterRequest request) {
         return VsResponseUtil.success(classroomService.getMembersInClassroom(id, request));
     }
 
@@ -106,8 +103,8 @@ public class ClassroomController {
 
     @PreAuthorize("hasRole('LEADER')")
     @GetMapping(UrlConstant.Classroom.BY_LEADER)
-    public ResponseEntity<?> getClassroomByLeader() {
-        return VsResponseUtil.success(classroomService.getClassroomsOfLeader());
+    public ResponseEntity<?> getClassroomByLeader(ClassroomFilterRequest request) {
+        return VsResponseUtil.success(classroomService.getClassroomsOfLeader(request));
     }
 
 }
