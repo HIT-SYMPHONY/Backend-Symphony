@@ -14,9 +14,8 @@ import my_computer.backendsymphony.constant.ErrorMessage;
 public class NotificationRequest {
 
     @NotNull(message = ErrorMessage.Validation.NOT_BLANK)
+    private String title;
+
+    @NotNull(message = ErrorMessage.Validation.NOT_BLANK)
     private String content;
-
-    private String classRoomId;
-
-    private String competitionId;
 }

@@ -4,23 +4,11 @@ import my_computer.backendsymphony.domain.entity.Notification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-@Repository
-public interface NotificationRepository extends JpaRepository<Notification, String> {
+import java.util.Optional;
 
-    Page<Notification> findByClassRoom_Id(String classRoomId, Pageable pageable);
-
-
-    @Query("""
-        SELECT n FROM Notification n
-        JOIN n.classRoom c
-        JOIN c.members m
-        WHERE m.id = :userId
-    """)
-    Page<Notification> findByUserId(String userId, Pageable pageable);
-
+public interface NotificationRepository extends JpaRepository<Notification, String>, JpaSpecificationExecutor<Notification> {
+    Page<Notification> findByClassRoom_Id(String classroomId, Pageable pageable);
     Page<Notification> findByCompetition_Id(String competitionId, Pageable pageable);
-
 }

@@ -5,6 +5,7 @@ import my_computer.backendsymphony.domain.dto.request.*;
 import my_computer.backendsymphony.domain.dto.response.AddMembersResponse;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
 
+import my_computer.backendsymphony.domain.dto.response.NotificationResponse;
 import my_computer.backendsymphony.domain.dto.response.UserSummaryResponse;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,4 +35,8 @@ public interface ClassroomService {
     List<ClassroomResponse> getClassroomsOfLeader(ClassroomFilterRequest request);
 
     List<ClassroomResponse> getClassroomsOfUser (String userId);
+
+    NotificationResponse createNotification(String classroomId, NotificationRequest request);
+
+    PaginationResponseDto<NotificationResponse> getNotificationsOfClassroom(String id, NotificationFilterRequest request);
 }

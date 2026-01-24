@@ -85,4 +85,52 @@ public class JwtTokenProvider {
                 .forEach(stringJoiner::add);
         return stringJoiner.toString();
     }
+
+    public String getUsernameFromToken(String token) {
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(token);
+            JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
+            return claimsSet.getStringClaim("username");
+        } catch (ParseException e) {
+            log.error("Cannot parse token claims", e);
+            throw new RuntimeException("Invalid token format", e);
+        }
+    }
+
+    public String getUserIdFromToken(String token) {
+        try {
+            JWTClaimsSet claimsSet = getClaimsFromToken(token);
+            return claimsSet.getSubject();
+        } catch (ParseException | JOSEException e) {
+            log.error("Cannot get user ID from token", e);
+            throw new RuntimeException("Invalid or expired token", e);
+        }
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            getClaimsFromToken(token);
+            return true;
+        } catch (Exception e) {
+            log.warn("Token validation failed: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    public JWTClaimsSet getClaimsFromToken(String token) throws JOSEException, ParseException {
+        SignedJWT signedJWT = SignedJWT.parse(token);
+        JWSVerifier verifier = new MACVerifier(SECRET_KEY.getBytes());
+        if (!signedJWT.verify(verifier)) {
+            throw new JOSEException("Invalid token signature");
+        }
+        JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
+        Date expiryTime = claimsSet.getExpirationTime();
+        if (expiryTime == null || expiryTime.before(new Date())) {
+            throw new JOSEException("Token is expired");
+        }
+        if (!"hitsymphony.com".equals(claimsSet.getIssuer())) {
+            throw new JOSEException("Invalid token issuer");
+        }
+        return claimsSet;
+    }
 }

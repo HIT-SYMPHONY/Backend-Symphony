@@ -107,4 +107,14 @@ public class ClassroomController {
         return VsResponseUtil.success(classroomService.getClassroomsOfLeader(request));
     }
 
+    @GetMapping(UrlConstant.Classroom.GET_CLASSROOM_NOTIFICATIONS)
+    public ResponseEntity<?> getNotificationsOfClassroom(@PathVariable String id, NotificationFilterRequest request) {
+        return VsResponseUtil.success(classroomService.getNotificationsOfClassroom(id, request));
+    }
+
+    @PostMapping(UrlConstant.Classroom.GET_CLASSROOM_NOTIFICATIONS)
+    public ResponseEntity<?> createNotification(@PathVariable String id, @RequestBody @Valid NotificationRequest request) {
+        return VsResponseUtil.success(classroomService.createNotification(id, request));
+    }
+
 }

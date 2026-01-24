@@ -15,6 +15,8 @@ public class NotificationResponse {
 
     private String id;
 
+    private String title;
+
     private String content;
 
     private LocalDateTime createdAt;
@@ -29,4 +31,5 @@ public class NotificationResponse {
 
     private String createdBy;
 
+    private String createdByName;
 }

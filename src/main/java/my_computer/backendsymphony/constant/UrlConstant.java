@@ -55,7 +55,7 @@ public class UrlConstant {
         public static final String NON_MEMBERS = PRE_FIX + "/{id}/non-members";
         public static final String CLASSROOM_NAME = PRE_FIX + "/search" + "/{name}" + "/members";
         public static final String BY_LEADER = PRE_FIX + "/by-leader";
-
+        public static final String GET_CLASSROOM_NOTIFICATIONS = CLASSROOM_ID + "/notifications";
         private Classroom() {
         }
     }
@@ -65,10 +65,8 @@ public class UrlConstant {
         private static final String PRE_FIX = "/notifications";
         public static final String NOTIFICATION_COMMON = PRE_FIX;
         public static final String NOTIFICATION_ID = PRE_FIX + "/{id}";
-        public static final String GET_OF_CLASS = PRE_FIX + "/classrooms/{id}";
-        public static final String GET_OF_COMPETITION = PRE_FIX + "/competitions/{id}";
-
-        public Notification() {
+        public static final String  GET_MY_NOTIFICATIONS = PRE_FIX + "/me";
+        private Notification() {
         }
     }
 
@@ -83,7 +81,7 @@ public class UrlConstant {
         private static final String PRE_FIX = "/competitions";
         public static final String COMPETITION_COMMON = PRE_FIX;
         public static final String COMPETITION_ID = PRE_FIX + "/{id}";
-
+        public static final String GET_COMPETITION_NOTIFICATIONS= COMPETITION_ID + "/notifications";
         private Competition() {
         }
     }
@@ -118,6 +116,12 @@ public class UrlConstant {
     public static final class Image {
         public static final String PRE_FIX = "/images";
         public static final String IMAGE_COMMON=PRE_FIX;
+    }
+
+    public static class Websocket {
+        private static final String PRE_FIX = "/topic";
+        public static final String NOTIFICATION_CLASSROOM = PRE_FIX + "/classrooms/%s/notifications";
+        public static final String NOTIFICATION_COMPETITION = PRE_FIX + "/competitions/%s/notifications";
     }
 
 }

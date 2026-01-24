@@ -28,15 +28,23 @@ public final class PostSpecification {
 
     public static Specification<Post> inUserClassrooms(String userId) {
         return (root, query, cb) -> {
-            Subquery<String> subquery = query.subquery(String.class);
-            Root<ClassRoom> subqueryRoot = subquery.from(ClassRoom.class);
-            subquery.select(subqueryRoot.get(ClassRoom_.id));
-            Predicate isLeaderPredicate = cb.equal(subqueryRoot.get(ClassRoom_.leaderId), userId);
-            Join<ClassRoom, User> membersJoin = subqueryRoot.join(ClassRoom_.members);
+            Join<Post, ClassRoom> classroomJoin = root.join(Post_.classRoom);
+            Predicate isLeaderPredicate = cb.equal(classroomJoin.get(ClassRoom_.leaderId), userId);
+            Join<ClassRoom, User> membersJoin = classroomJoin.join(ClassRoom_.members);
             Predicate isMemberPredicate = cb.equal(membersJoin.get(User_.id), userId);
-            subquery.where(cb.or(isLeaderPredicate, isMemberPredicate));
-            subquery.distinct(true);
-            return root.get(Post_.classRoom).get(ClassRoom_.id).in(subquery);
+            query.distinct(true);
+            return cb.or(isLeaderPredicate, isMemberPredicate);
+        };
+    }
+
+    public static Specification<Post> inParticipatingClassrooms(String userId) {
+        if (!StringUtils.hasText(userId)) {
+            return null;
+        }
+        return (root, query, cb) -> {
+            Join<Post, ClassRoom> classroomJoin = root.join(Post_.classRoom);
+            Join<ClassRoom, User> membersJoin = classroomJoin.join(ClassRoom_.members);
+            return cb.equal(membersJoin.get(User_.id), userId);
         };
     }
 }

@@ -11,18 +11,24 @@ import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
 import my_computer.backendsymphony.domain.dto.request.*;
 import my_computer.backendsymphony.domain.dto.response.AddMembersResponse;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
+import my_computer.backendsymphony.domain.dto.response.NotificationResponse;
 import my_computer.backendsymphony.domain.dto.response.UserSummaryResponse;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
+import my_computer.backendsymphony.domain.entity.Notification;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.ClassroomMapper;
+import my_computer.backendsymphony.domain.mapper.NotificationMapper;
 import my_computer.backendsymphony.domain.mapper.UserMapper;
 import my_computer.backendsymphony.exception.DuplicateResourceException;
 import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;
+import my_computer.backendsymphony.exception.UnauthorizedException;
 import my_computer.backendsymphony.repository.ClassRoomRepository;
+import my_computer.backendsymphony.repository.NotificationRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.AuthorizationService;
 import my_computer.backendsymphony.service.ClassroomService;
+import my_computer.backendsymphony.service.WebSocketNotificationService;
 import my_computer.backendsymphony.service.specification.ClassroomSpecification;
 import my_computer.backendsymphony.service.specification.UserSpecification;
 import my_computer.backendsymphony.util.PaginationUtil;
@@ -42,6 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,6 +62,9 @@ public class ClassroomServiceImpl implements ClassroomService {
     ClassroomMapper classroomMapper;
     UploadFileUtil uploadFileUtil;
     AuthorizationService authorizationService;
+    NotificationRepository notificationRepository;
+    NotificationMapper notificationMapper;
+    WebSocketNotificationService webSocketNotificationService;
 
     @Override
     public List<ClassroomResponse> getClassroomsOfUser(String userId) {
@@ -352,6 +362,62 @@ public class ClassroomServiceImpl implements ClassroomService {
                 })
                 .collect(Collectors.toList());
         return responses;
+    }
+
+    @Override
+    @Transactional
+    public NotificationResponse createNotification(String classroomId, NotificationRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        ClassRoom linkedClassRoom = findClassroomByIdOrElseThrow(classroomId);
+        if (!authorizationService.isLeaderOfClassroomOrAdmin(linkedClassRoom, authentication)) {
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+        }
+
+        Notification notification = notificationMapper.toNotification(request);
+        notification.setClassRoom(linkedClassRoom);
+        Notification savedNotification = notificationRepository.save(notification);
+
+        NotificationResponse response = notificationMapper.toNotificationResponse(savedNotification);
+        
+        // Populate creator name for the real-time message
+        userRepository.findById(savedNotification.getCreatedBy()).ifPresent(creator -> {
+            response.setCreatedByName(creator.getFullName());
+        });
+
+        // Broadcast to topic
+        webSocketNotificationService.sendNotificationToClassroom(classroomId, response);
+
+        return response;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PaginationResponseDto<NotificationResponse> getNotificationsOfClassroom(String id, NotificationFilterRequest request) {
+        if (!classroomRepository.existsById(id)) {
+            throw new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND_ID, new String[]{id});
+        }
+        Pageable pageable = PaginationUtil.buildPageable(request, SortByDataConstant.NOTIFICATION);
+        Page<Notification> notificationPage = notificationRepository.findByClassRoom_Id(id, pageable);
+
+        List<NotificationResponse> notificationResponseList = notificationMapper.toNotificationResponseList(notificationPage.getContent());
+        
+        // Populate creator names
+        if (!notificationResponseList.isEmpty()) {
+            Set<String> creatorIds = notificationResponseList.stream()
+                    .map(NotificationResponse::getCreatedBy)
+                    .collect(Collectors.toSet());
+            Map<String, User> creators = userRepository.findAllById(creatorIds).stream()
+                    .collect(Collectors.toMap(User::getId, Function.identity()));
+            notificationResponseList.forEach(dto -> {
+                User creator = creators.get(dto.getCreatedBy());
+                if (creator != null) {
+                    dto.setCreatedByName(creator.getFullName());
+                }
+            });
+        }
+
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, SortByDataConstant.NOTIFICATION, notificationPage);
+        return new PaginationResponseDto<>(meta, notificationResponseList);
     }
 
 

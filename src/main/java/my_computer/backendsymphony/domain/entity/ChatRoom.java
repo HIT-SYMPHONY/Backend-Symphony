@@ -30,6 +30,8 @@ public class ChatRoom {
     @Column(name = "is_group")
     private Boolean isGroup;
 
+    private String imageUrl;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

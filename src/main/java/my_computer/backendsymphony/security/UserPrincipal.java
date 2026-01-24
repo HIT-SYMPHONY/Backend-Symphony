@@ -27,7 +27,7 @@ public class UserPrincipal implements UserDetails {
 
   private UserPrincipal(String id, String studentCode, String password, Collection<? extends GrantedAuthority> authorities) {
     this.id = id;
-    this.username = studentCode; // Assign studentCode to the 'username' field
+    this.username = studentCode;
     this.password = password;
     this.authorities = authorities;
   }

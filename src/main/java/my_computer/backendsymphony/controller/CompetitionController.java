@@ -1,5 +1,6 @@
 package my_computer.backendsymphony.controller;
 
+import com.cloudinary.Url;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,8 @@ import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.request.CompetitionFilterRequest;
 import my_computer.backendsymphony.domain.dto.request.CompetitionRequest;
+import my_computer.backendsymphony.domain.dto.request.NotificationFilterRequest;
+import my_computer.backendsymphony.domain.dto.request.NotificationRequest;
 import my_computer.backendsymphony.service.CompetitionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -50,5 +53,15 @@ public class CompetitionController {
                                                @Valid @RequestPart("data") CompetitionRequest request,
                                                @RequestPart(value = "image", required = false) MultipartFile imageFile) {
         return VsResponseUtil.success(competitionService.updateCompetition(id, request, imageFile));
+    }
+
+    @GetMapping(UrlConstant.Competition.GET_COMPETITION_NOTIFICATIONS)
+    public ResponseEntity<?> getNotificationsOfCompetition(@PathVariable String id, NotificationFilterRequest request) {
+        return VsResponseUtil.success(competitionService.getNotificationsOfCompetition(id, request));
+    }
+
+    @PostMapping(UrlConstant.Competition.GET_COMPETITION_NOTIFICATIONS)
+    public ResponseEntity<?> createNotification(@PathVariable String id, @RequestBody @Valid NotificationRequest request) {
+        return VsResponseUtil.success(competitionService.createNotification(id, request));
     }
 }

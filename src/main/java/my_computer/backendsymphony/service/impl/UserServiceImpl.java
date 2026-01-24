@@ -284,7 +284,7 @@ public class UserServiceImpl implements UserService {
         String currentUserId = jwt.getSubject();
         Pageable pageable = PaginationUtil.buildPageable(request, SortByDataConstant.POST);
         Specification<Post> spec = Specification.where(
-                PostSpecification.inUserClassrooms(currentUserId)
+                PostSpecification.inParticipatingClassrooms(currentUserId)
         );
         spec = spec.and(PostSpecification.hasClassroomId(request.getClassroomId()));
         Page<Post> postPage = postRepository.findAll(spec, pageable);

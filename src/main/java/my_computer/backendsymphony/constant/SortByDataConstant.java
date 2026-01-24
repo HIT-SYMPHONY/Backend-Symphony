@@ -24,6 +24,10 @@ public enum SortByDataConstant {
     ),
     LESSON(
             Set.of("createdAt")
+    ),
+    NOTIFICATION(
+            Set.of("createdAt"),
+            "createdAt"
     );
 
     private final Set<String> allowedFields;

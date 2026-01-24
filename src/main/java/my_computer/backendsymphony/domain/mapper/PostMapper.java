@@ -1,7 +1,6 @@
 package my_computer.backendsymphony.domain.mapper;
 
 import my_computer.backendsymphony.domain.dto.request.PostRequest;
-import my_computer.backendsymphony.domain.dto.request.PostUpdateRequest;
 import my_computer.backendsymphony.domain.dto.response.PostResponse;
 import my_computer.backendsymphony.domain.entity.Post;
 import org.mapstruct.BeanMapping;
@@ -24,7 +23,7 @@ public interface PostMapper {
     PostResponse toResponse(Post post);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updatePost(PostUpdateRequest request, @MappingTarget Post post);
+    void updatePost(PostRequest request, @MappingTarget Post post);
 
     List<PostResponse> toResponseList(List<Post> posts);
 }

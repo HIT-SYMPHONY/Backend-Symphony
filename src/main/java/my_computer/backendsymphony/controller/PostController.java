@@ -8,9 +8,9 @@ import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationRequestDto;
 import my_computer.backendsymphony.domain.dto.request.PostFilterRequest;
 import my_computer.backendsymphony.domain.dto.request.PostRequest;
-import my_computer.backendsymphony.domain.dto.request.PostUpdateRequest;
 import my_computer.backendsymphony.service.PostService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,8 +34,8 @@ public class PostController {
     }
 
     @PreAuthorize("hasRole('LEADER') or hasRole('ADMIN')")
-    @PatchMapping(UrlConstant.Post.POST_ID)
-    public ResponseEntity<?> updatePost( @RequestBody PostUpdateRequest postRequest,
+    @PutMapping(UrlConstant.Post.POST_ID)
+    public ResponseEntity<?> updatePost( @RequestBody PostRequest postRequest,
                                          @PathVariable String id) {
         return VsResponseUtil.success(postService.updatePost(postRequest, id));
     }
@@ -46,14 +46,14 @@ public class PostController {
     }
 
     @GetMapping(UrlConstant.Post.POST_ID)
-    public ResponseEntity<?> getPostById(@PathVariable String postId) {
-        return VsResponseUtil.success(postService.getPostById(postId));
+    public ResponseEntity<?> getPostById(@PathVariable String id) {
+        return VsResponseUtil.success(postService.getPostById(id));
     }
 
 
     @GetMapping(UrlConstant.Post.POST_COMMON)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getAllPost(@ModelAttribute PaginationRequestDto requestDto) {
+    public ResponseEntity<?> getAllPost(@ModelAttribute PostFilterRequest requestDto) {
         return VsResponseUtil.success(postService.getAllPosts(requestDto));
     }
 

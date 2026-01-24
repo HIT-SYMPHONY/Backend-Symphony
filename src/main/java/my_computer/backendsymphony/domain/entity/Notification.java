@@ -24,6 +24,8 @@ public class Notification {
     @Column(insertable = false, updatable = false, nullable = false, columnDefinition = "CHAR(36)")
     private String id;
 
+    @Column(nullable = false)
+    private String title;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;

@@ -28,6 +28,7 @@ public class Post {
     private String title;
 
     @Lob
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content;
 
     private LocalDateTime deadline;
