@@ -30,6 +30,7 @@ import my_computer.backendsymphony.service.AuthorizationService;
 import my_computer.backendsymphony.service.ClassroomService;
 import my_computer.backendsymphony.service.WebSocketNotificationService;
 import my_computer.backendsymphony.service.specification.ClassroomSpecification;
+import my_computer.backendsymphony.service.specification.NotificationSpecification;
 import my_computer.backendsymphony.service.specification.UserSpecification;
 import my_computer.backendsymphony.util.PaginationUtil;
 import my_computer.backendsymphony.util.UploadFileUtil;
@@ -397,7 +398,11 @@ public class ClassroomServiceImpl implements ClassroomService {
             throw new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND_ID, new String[]{id});
         }
         Pageable pageable = PaginationUtil.buildPageable(request, SortByDataConstant.NOTIFICATION);
-        Page<Notification> notificationPage = notificationRepository.findByClassRoom_Id(id, pageable);
+        
+        Specification<Notification> spec = Specification.where(NotificationSpecification.hasClassroomId(id));
+        spec = spec.and(NotificationSpecification.matchesKeyword(request.getKeyword()));
+        
+        Page<Notification> notificationPage = notificationRepository.findAll(spec, pageable);
 
         List<NotificationResponse> notificationResponseList = notificationMapper.toNotificationResponseList(notificationPage.getContent());
         

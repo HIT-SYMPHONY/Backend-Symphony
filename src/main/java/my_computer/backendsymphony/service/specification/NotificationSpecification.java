@@ -34,4 +34,26 @@ public final class NotificationSpecification {
             return root.get(Notification_.competition).get(Competition_.id).in(subquery);
         };
     }
+
+    public static Specification<Notification> hasClassroomId(String classroomId) {
+        if (!StringUtils.hasText(classroomId)) {
+            return null;
+        }
+        return (root, query, cb) -> cb.equal(root.get(Notification_.classRoom).get(ClassRoom_.id), classroomId);
+    }
+
+    public static Specification<Notification> hasCompetitionId(String competitionId) {
+        if (!StringUtils.hasText(competitionId)) {
+            return null;
+        }
+        return (root, query, cb) -> cb.equal(root.get(Notification_.competition).get(Competition_.id), competitionId);
+    }
+
+    public static Specification<Notification> matchesKeyword(String keyword) {
+        if (!StringUtils.hasText(keyword)) {
+            return null;
+        }
+        String likePattern = "%" + keyword.toLowerCase() + "%";
+        return (root, query, cb) -> cb.like(cb.lower(root.get(Notification_.title)), likePattern);
+    }
 }

@@ -2,6 +2,7 @@ package my_computer.backendsymphony.constant;
 
 public class ErrorMessage {
 
+
     private ErrorMessage() {}
     public static final String ERR_EXCEPTION_GENERAL = "Có lỗi bất thường đã xảy ra";
     public static final String UNAUTHORIZED = "Xin lỗi, bạn cần cung cấp thông tin xác thực để thực hiện hành động này";
@@ -13,6 +14,7 @@ public class ErrorMessage {
     public static final String INCORRECT_PASSWORD = "Mật khẩu sai";
     public static final String NOT_FOUND = "Không tìm thấy tài nguyên";
     public static final String INVALID_SORT_FIELD = "Trường sắp xếp '%s' không hợp lệ. Các trường có thể được sắp xếp là: %s.";
+    public static final String HTTP_METHOD_NOT_SUPPORTED = "Phương thức HTTP này không được hỗ trợ";
     //error validation dto
     public static class Validation {
         public static final String NOT_BLANK = "Không thể trống";

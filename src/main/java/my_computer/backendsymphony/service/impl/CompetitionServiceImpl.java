@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.constant.Role;
 import my_computer.backendsymphony.constant.SortByDataConstant;
+import my_computer.backendsymphony.constant.UrlConstant;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
 import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
 import my_computer.backendsymphony.domain.dto.request.CompetitionFilterRequest;
@@ -31,6 +32,7 @@ import my_computer.backendsymphony.service.CompetitionService;
 import my_computer.backendsymphony.service.UserService;
 import my_computer.backendsymphony.service.WebSocketNotificationService;
 import my_computer.backendsymphony.service.specification.CompetitionSpecification;
+import my_computer.backendsymphony.service.specification.NotificationSpecification;
 import my_computer.backendsymphony.util.PaginationUtil;
 import my_computer.backendsymphony.util.UploadFileUtil;
 import org.springframework.data.domain.Page;
@@ -179,7 +181,11 @@ public class CompetitionServiceImpl implements CompetitionService {
             throw new NotFoundException(ErrorMessage.Competition.ERR_NOT_FOUND_ID, new String[]{id});
         }
         Pageable pageable = PaginationUtil.buildPageable(request, SortByDataConstant.NOTIFICATION);
-        Page<Notification> notificationPage = notificationRepository.findByCompetition_Id(id, pageable);
+        
+        Specification<Notification> spec = Specification.where(NotificationSpecification.hasCompetitionId(id));
+        spec = spec.and(NotificationSpecification.matchesKeyword(request.getKeyword()));
+        
+        Page<Notification> notificationPage = notificationRepository.findAll(spec, pageable);
 
         List<NotificationResponse> notificationResponseList = notificationMapper.toNotificationResponseList(notificationPage.getContent());
         

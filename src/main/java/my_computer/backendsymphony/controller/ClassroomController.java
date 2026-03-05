@@ -30,7 +30,7 @@ public class ClassroomController {
     public ResponseEntity<?> createClassroom(
             @Valid @RequestPart("data") ClassroomCreationRequest request,
             @RequestPart(value = "image", required = false) MultipartFile imageFile) {
-        return VsResponseUtil.success(classroomService.createClassroom(request, imageFile));
+        return VsResponseUtil.success(HttpStatus.CREATED, classroomService.createClassroom(request, imageFile));
     }
 
     @DeleteMapping(UrlConstant.Classroom.CLASSROOM_ID)

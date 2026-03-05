@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,14 +35,12 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
+    private final UserService userService; // Keep for other methods if needed, but not for getting current user ID here
     private final UserRepository userRepository;
 
     @Override
     @Transactional
     public void deleteNotification(String id) {
-        // Since notifications are now shared (broadcast), users cannot delete them individually.
-        // Only admins or creators (via Classroom/Competition service) should delete them.
-        // This endpoint is now invalid in the broadcast model.
         throw new UnsupportedOperationException("Deleting individual notifications is not supported in broadcast mode.");
     }
 
@@ -51,18 +48,28 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional(readOnly = true)
     public PaginationResponseDto<NotificationResponse> getMyNotifications(NotificationFilterRequest requestDto) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Jwt jwt = (Jwt) auth.getPrincipal();
-        String userId = jwt.getSubject();
+        String userId = auth.getName(); // Get userId directly from SecurityContext
         Pageable pageable = PaginationUtil.buildPageable(requestDto, SortByDataConstant.NOTIFICATION);
 
-        // Fetch notifications from Classrooms the user is part of OR Competitions the user is part of
+        // Base spec: Notifications from Classrooms OR Competitions the user is part of
         Specification<Notification> spec = Specification.where(
                 NotificationSpecification.inUserClassrooms(userId)
         ).or(
                 NotificationSpecification.inUserCompetitions(userId)
         );
+
+        // Apply filters if provided
+        if (requestDto.getClassRoomId() != null) {
+            spec = spec.and(NotificationSpecification.hasClassroomId(requestDto.getClassRoomId()));
+        }
+        if (requestDto.getCompetitionId() != null) {
+            spec = spec.and(NotificationSpecification.hasCompetitionId(requestDto.getCompetitionId()));
+        }
+
         Page<Notification> notificationPage = notificationRepository.findAll(spec, pageable);
+
         List<NotificationResponse> notificationResponseList = notificationMapper.toNotificationResponseList(notificationPage.getContent());
+
         // Populate creator names
         if (!notificationResponseList.isEmpty()) {
             Set<String> creatorIds = notificationResponseList.stream()

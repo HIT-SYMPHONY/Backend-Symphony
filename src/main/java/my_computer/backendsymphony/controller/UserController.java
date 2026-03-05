@@ -72,7 +72,7 @@ public class UserController {
     }
 
     @GetMapping(UrlConstant.User.GET_MY_CLASSROOMS)
-    public ResponseEntity<?> getMyClasses(@ModelAttribute ClassroomFilterRequest request) {
+    public ResponseEntity<?> getMyClasses(ClassroomFilterRequest request) {
         return VsResponseUtil.success(userService.getMyClasses(request));
     }
 

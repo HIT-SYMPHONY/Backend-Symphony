@@ -10,6 +10,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -109,6 +110,13 @@ public class GlobalExceptionHandler {
         log.warn("File upload failed: The file exceeds the maximum allowed size.");
         return VsResponseUtil.error(HttpStatus.PAYLOAD_TOO_LARGE, ErrorMessage.File.FILE_TOO_LARGE);
     }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<RestData<?>> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
+        return VsResponseUtil.error(HttpStatus.METHOD_NOT_ALLOWED, ErrorMessage.HTTP_METHOD_NOT_SUPPORTED);
+
+    }
+
 
     private boolean isTypeMismatchError(FieldError error) {
         for (String code : Objects.requireNonNull(error.getCodes())) {

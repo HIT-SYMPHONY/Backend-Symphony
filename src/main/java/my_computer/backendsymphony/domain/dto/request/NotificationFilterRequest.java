@@ -6,5 +6,6 @@ import my_computer.backendsymphony.domain.dto.pagination.PaginationFullRequestDt
 @Getter
 @Setter
 public class NotificationFilterRequest extends PaginationFullRequestDto {
-
+    private String classRoomId;
+    private String competitionId;
 }
