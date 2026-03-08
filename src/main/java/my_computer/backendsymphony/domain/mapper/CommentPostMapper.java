@@ -1,10 +1,10 @@
 package my_computer.backendsymphony.domain.mapper;
 
 import my_computer.backendsymphony.domain.dto.request.CommentPostRequest;
+import my_computer.backendsymphony.domain.dto.request.MarkRequest;
 import my_computer.backendsymphony.domain.dto.response.CommentPostResponse;
 import my_computer.backendsymphony.domain.entity.CommentPost;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface CommentPostMapper {
@@ -14,4 +14,7 @@ public interface CommentPostMapper {
 
     @Mapping(source = "post.id", target = "postId")
     CommentPostResponse toResponse(CommentPost commentPost);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateCommentPost(MarkRequest request, @MappingTarget CommentPost commentPost);
 }

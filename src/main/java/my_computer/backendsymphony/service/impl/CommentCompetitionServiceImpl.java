@@ -91,23 +91,6 @@ public class CommentCompetitionServiceImpl implements CommentCompetitionService 
         return response;
     }
 
-    @Override
-    @Transactional
-    public CommentCompetitionResponse markCommentCompetition(MarkRequest markRequest) {
-        CommentCompetition commentCompetition = commentCompetitionRepository.findById(markRequest.getId())
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.CommentCompetition.ERR_NOT_FOUND_ID));
-
-        String leaderId = commentCompetition.getCompetition().getCompetitionLeaderId();
-        UserResponse currentUser = userService.getCurrentUser();
-        if (!currentUser.getId().equals(leaderId) && currentUser.getRole() != Role.ADMIN) {
-            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
-        }
-        commentCompetition.setScore(markRequest.getScore());
-        commentCompetitionRepository.save(commentCompetition);
-        CommentCompetitionResponse response = commentCompetitionMapper.toResponse(commentCompetition);
-        response.setCreatedByUserName(currentUser.getUsername());
-        return response;
-    }
 
     @Override
     @Transactional

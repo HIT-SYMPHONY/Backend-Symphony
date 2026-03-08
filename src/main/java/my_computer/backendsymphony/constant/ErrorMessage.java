@@ -66,6 +66,7 @@ public class ErrorMessage {
 
     public static class CommentPost {
         public static final String ERR_NOT_FOUND_ID = "Không tìm thấy bài nộp nào với id: %s";
+        public static final String ERR_ALREADY_COMMENT = "Một user chỉ được comment một lần trên một bài";
     }
 
     public static class Competition {

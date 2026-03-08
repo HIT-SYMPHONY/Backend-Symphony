@@ -20,11 +20,15 @@ public class CommentPostResponse {
 
     private Double score;
 
+    private String feedback;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
     private String postId;
 
-    private String username;
+    private String createdBy;
+
+    private String fullName;
 }

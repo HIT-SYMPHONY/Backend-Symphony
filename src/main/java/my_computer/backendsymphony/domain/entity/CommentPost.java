@@ -31,6 +31,9 @@ public class CommentPost {
 
     private Double score;
 
+    @Lob
+    private String feedback;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

@@ -16,10 +16,9 @@ import my_computer.backendsymphony.constant.ErrorMessage;
 public class MarkRequest {
 
     @NotNull(message = ErrorMessage.Validation.NOT_NULL)
-    private String id;
-
-    @NotNull(message = ErrorMessage.Validation.NOT_NULL)
     @DecimalMin(value = "0.0", message = ErrorMessage.Validation.INVALID_SCORE)
     @DecimalMax(value = "10.0", message = ErrorMessage.Validation.INVALID_SCORE)
     private Double score;
+
+    private String feedback;
 }

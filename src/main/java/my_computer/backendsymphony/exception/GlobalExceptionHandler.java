@@ -73,6 +73,11 @@ public class GlobalExceptionHandler {
         return VsResponseUtil.error(HttpStatus.FORBIDDEN, ErrorMessage.FORBIDDEN);
     }
 
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<RestData<?>> handleForbiddenException(ForbiddenException ex) {
+        return VsResponseUtil.error(ex.getStatus(), ex.getMessage());
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<RestData<?>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         log.warn("Malformed JSON request received: {}", ex.getMessage());

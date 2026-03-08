@@ -14,7 +14,5 @@ public interface CommentCompetitionService {
 
     CommentCompetitionResponse deleteCommentCompetition(String competitionId);
 
-    CommentCompetitionResponse markCommentCompetition (MarkRequest markRequest);
-
     List<CommentCompetitionResponse> getMyCommentsInCompetition (String competitionId);
 }

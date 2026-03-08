@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
+import my_computer.backendsymphony.domain.dto.request.CommentPostFilterRequest;
 import my_computer.backendsymphony.domain.dto.request.CommentPostRequest;
 import my_computer.backendsymphony.domain.dto.request.MarkRequest;
 import my_computer.backendsymphony.service.CommentPostService;
@@ -18,30 +19,29 @@ public class CommentPostController {
 
     private final CommentPostService commentPostService;
 
-    @PostMapping(UrlConstant.CommentPost.COMMENT_POST_COMMON)
-    public ResponseEntity<?> createCommentPost(@Valid @RequestBody CommentPostRequest request) {
-        return VsResponseUtil.success(commentPostService.createCommentPost(request));
+    @PostMapping(UrlConstant.Post.GET_POST_COMMENTS)
+    public ResponseEntity<?> createCommentPost(@PathVariable String id, @Valid @RequestBody CommentPostRequest request) {
+        return VsResponseUtil.success(commentPostService.createCommentPost(id, request));
     }
 
     @DeleteMapping(UrlConstant.CommentPost.COMMENT_POST_ID)
-    @PreAuthorize("hasRole('ADMIN') or hasRole('LEADER')")
     public ResponseEntity<?> deleteCommentPost(@PathVariable String id) {
         return VsResponseUtil.success(commentPostService.deleteCommentPost(id));
     }
 
-    @GetMapping(UrlConstant.CommentPost.COMMENT_POST_ID)
-    public ResponseEntity<?> getAllCommentPostByPostId(@PathVariable String id) {
-        return VsResponseUtil.success(commentPostService.getCommentPostByPostId(id));
+    @GetMapping(UrlConstant.Post.GET_POST_COMMENTS)
+    public ResponseEntity<?> getAllCommentsOfPost(@PathVariable String id, @ModelAttribute CommentPostFilterRequest request) {
+        return VsResponseUtil.success(commentPostService.getAllCommentsOfPost(id, request));
     }
 
-    @PatchMapping(UrlConstant.CommentPost.COMMENT_POST_SCORE)
-    public ResponseEntity<?> updateCommentPostScore(@Valid @RequestBody MarkRequest request) {
-        return VsResponseUtil.success(commentPostService.markCommentPost(request));
+    @PatchMapping(UrlConstant.CommentPost.COMMENT_POST_ID)
+    public ResponseEntity<?> updateCommentPost(@PathVariable String id, @Valid @RequestBody MarkRequest request) {
+        return VsResponseUtil.success(commentPostService.updateCommentPost(id, request));
     }
 
-    @GetMapping(UrlConstant.CommentPost.MY_COMMENT_IN_POST)
-    public ResponseEntity<?> getMyCommentsInPost(@PathVariable String postId) {
-        return VsResponseUtil.success(commentPostService.getMyCommentsInPost(postId));
+    @GetMapping(UrlConstant.Post.GET_MY_POST_COMMENTS)
+    public ResponseEntity<?> getMyCommentInPost(@PathVariable String id) {
+        return VsResponseUtil.success(commentPostService.getMyCommentInPost(id));
     }
 
 }

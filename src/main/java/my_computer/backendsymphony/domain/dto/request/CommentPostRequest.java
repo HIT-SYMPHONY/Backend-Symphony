@@ -15,7 +15,4 @@ public class CommentPostRequest {
 
     @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
     private String content;
-
-    @NotBlank(message = ErrorMessage.Validation.NOT_NULL)
-    private String postId;
 }

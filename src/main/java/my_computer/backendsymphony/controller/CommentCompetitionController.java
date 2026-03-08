@@ -36,12 +36,6 @@ public class CommentCompetitionController {
         return VsResponseUtil.success(commentCompetitionService.getAllCommentOfCompetition(competitionId));
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('LEADER')")
-    @PatchMapping(UrlConstant.CommentCompetition.COMMENT_COMPETITION_SCORE)
-    public ResponseEntity<?> updateCommentCompetition(@Valid @RequestBody MarkRequest request) {
-        return VsResponseUtil.success(commentCompetitionService.markCommentCompetition(request));
-    }
-
     @GetMapping(UrlConstant.CommentCompetition.MY_COMMENTS_IN_COMPETITION)
     public ResponseEntity<?> getMyCommentsInCompetition(@PathVariable String competitionId) {
         return VsResponseUtil.success(commentCompetitionService.getMyCommentsInCompetition(competitionId));

@@ -31,6 +31,9 @@ public class CommentCompetition {
     @Lob
     private String content;
 
+    @Lob
+    private String feedback;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

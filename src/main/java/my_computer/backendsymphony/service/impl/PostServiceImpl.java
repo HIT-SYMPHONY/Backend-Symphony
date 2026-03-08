@@ -3,6 +3,7 @@ package my_computer.backendsymphony.service.impl;
 import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.constant.ErrorMessage;
 import my_computer.backendsymphony.constant.Role;
+import my_computer.backendsymphony.constant.SortByDataConstant;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
 import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
 import my_computer.backendsymphony.domain.dto.request.PostFilterRequest;
@@ -25,6 +26,7 @@ import my_computer.backendsymphony.service.specification.PostSpecification;
 import my_computer.backendsymphony.util.PaginationUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -115,7 +117,8 @@ public class PostServiceImpl implements PostService {
         }
         Specification<Post> spec = Specification.where(PostSpecification.matchesKeyword(requestDto.getKeyword()));
         spec = spec.and(PostSpecification.hasClassroomId(classId));
-        List<Post> posts = postRepository.findAll(spec);
+        Sort sort = PaginationUtil.buildSort(requestDto, SortByDataConstant.POST);
+        List<Post> posts = postRepository.findAll(spec, sort);
         List<PostResponse> postResponseList = postMapper.toResponseList(posts);
         enrichPostResponses(postResponseList);
         return postResponseList;
@@ -125,7 +128,7 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = true)
     public PaginationResponseDto<PostResponse> getAllPosts(PostFilterRequest requestDto) {
 
-        Pageable pageable = PaginationUtil.buildPageable(requestDto);
+        Pageable pageable = PaginationUtil.buildPageable(requestDto, SortByDataConstant.POST);
 
         Page<Post> postPage = postRepository.findAll(pageable);
         List<PostResponse> postResponseList = postMapper.toResponseList(postPage.getContent());

@@ -28,7 +28,11 @@ public enum SortByDataConstant {
     NOTIFICATION(
             Set.of("createdAt"),
             "createdAt"
-    );
+    ),
+    COMMENT_POST(
+            Set.of("createdAt")
+    )
+    ;
 
     private final Set<String> allowedFields;
     private final String defaultSortField;
