@@ -21,4 +21,4 @@ public class MarkRequest {
     private Double score;
 
     private String feedback;
-}
+} 

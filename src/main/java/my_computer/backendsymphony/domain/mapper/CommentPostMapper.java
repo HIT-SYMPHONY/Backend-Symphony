@@ -1,6 +1,7 @@
 package my_computer.backendsymphony.domain.mapper;
 
 import my_computer.backendsymphony.domain.dto.request.CommentPostRequest;
+import my_computer.backendsymphony.domain.dto.request.CommentPostUpdateRequest;
 import my_computer.backendsymphony.domain.dto.request.MarkRequest;
 import my_computer.backendsymphony.domain.dto.response.CommentPostResponse;
 import my_computer.backendsymphony.domain.entity.CommentPost;
@@ -16,5 +17,8 @@ public interface CommentPostMapper {
     CommentPostResponse toResponse(CommentPost commentPost);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateCommentPost(MarkRequest request, @MappingTarget CommentPost commentPost);
+    void updateCommentPostFromMark(MarkRequest request, @MappingTarget CommentPost commentPost);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateCommentPostFromContent(CommentPostUpdateRequest request, @MappingTarget CommentPost commentPost);
 }

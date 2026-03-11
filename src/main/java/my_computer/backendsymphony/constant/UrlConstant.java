@@ -75,8 +75,6 @@ public class UrlConstant {
         public static final String POST_COMMON = PRE_FIX;
         public static final String POST_ID = PRE_FIX + "/{id}";
         public static final String GET_POSTS_BY_CLASSROOM_ID = Classroom.CLASSROOM_ID + "/posts";
-        public static final String GET_POST_COMMENTS = POST_ID + "/comments";
-        public static final String GET_MY_POST_COMMENTS = GET_POST_COMMENTS + "/me";
     }
 
     public static class Competition {
@@ -100,7 +98,8 @@ public class UrlConstant {
     public static class CommentPost {
         private static final String PRE_FIX = "/post-comments";
         public static final String COMMENT_POST_ID = PRE_FIX + "/{id}";
-        public static final String COMMENT_POST_SCORE = PRE_FIX + "/score";
+        public static final String GET_POST_COMMENTS = Post.POST_ID + "/comments";
+        public static final String GET_MY_POST_COMMENTS = GET_POST_COMMENTS + "/me";
     }
 
     public static class CompetitionUser {
