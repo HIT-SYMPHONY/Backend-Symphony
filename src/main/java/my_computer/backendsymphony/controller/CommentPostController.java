@@ -10,6 +10,7 @@ import my_computer.backendsymphony.domain.dto.request.CommentPostRequest;
 import my_computer.backendsymphony.domain.dto.request.CommentPostUpdateRequest;
 import my_computer.backendsymphony.domain.dto.request.MarkRequest;
 import my_computer.backendsymphony.service.CommentPostService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class CommentPostController {
 
     @PostMapping(UrlConstant.CommentPost.GET_POST_COMMENTS)
     public ResponseEntity<?> createCommentPost(@PathVariable String id, @Valid @RequestBody CommentPostRequest request) {
-        return VsResponseUtil.success(commentPostService.createCommentPost(id, request));
+        return VsResponseUtil.success(HttpStatus.CREATED,commentPostService.createCommentPost(id, request));
     }
 
     @DeleteMapping(UrlConstant.CommentPost.COMMENT_POST_ID)
@@ -42,7 +43,6 @@ public class CommentPostController {
     }
 
     @PatchMapping(UrlConstant.CommentPost.COMMENT_POST_ID)
-    @PreAuthorize("hasRole('ADMIN') or hasRole('LEADER')")
     public ResponseEntity<?> markCommentPost(@PathVariable String id, @Valid @RequestBody MarkRequest request) {
         return VsResponseUtil.success(commentPostService.markCommentPost(id, request));
     }

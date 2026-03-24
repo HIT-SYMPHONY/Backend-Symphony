@@ -11,5 +11,6 @@ public interface AuthorizationService {
     boolean isLeaderOfClassroomOrAdmin(ClassRoom classroom, Authentication authentication);
     boolean canViewLesson(Authentication authentication, String lessonId);
     boolean isCreatorOrAdmin(Competition competition, Authentication authentication);
+    boolean isCompetitionLeaderOrAdmin(Competition competition, Authentication authentication);
     boolean canModifyPost(Authentication authentication, Post post);
 }

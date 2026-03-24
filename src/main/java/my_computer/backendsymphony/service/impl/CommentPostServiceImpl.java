@@ -18,6 +18,7 @@ import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.CommentPostMapper;
 import my_computer.backendsymphony.exception.DuplicateResourceException;
 import my_computer.backendsymphony.exception.ForbiddenException;
+import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.repository.CommentPostRepository;
 import my_computer.backendsymphony.repository.PostRepository;
@@ -59,7 +60,7 @@ public class CommentPostServiceImpl implements CommentPostService {
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID, new String[]{postId}));
 
         if (commentPostRepository.existsByPostIdAndCreatedBy(postId, currentUser.getId())) {
-            throw new DuplicateResourceException(ErrorMessage.ERR_DUPLICATE, new String[]{"Comment", "User already commented on this post"});
+            throw new InvalidException(ErrorMessage.CommentPost.ERR_ALREADY_COMMENT);
         }
 
         CommentPost commentPost = commentPostMapper.toEntity(commentPostRequest);

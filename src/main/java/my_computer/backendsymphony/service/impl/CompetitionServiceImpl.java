@@ -21,6 +21,7 @@ import my_computer.backendsymphony.domain.entity.Notification;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.CompetitionMapper;
 import my_computer.backendsymphony.domain.mapper.NotificationMapper;
+import my_computer.backendsymphony.exception.ForbiddenException;
 import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.exception.UnauthorizedException;
@@ -71,11 +72,6 @@ public class CompetitionServiceImpl implements CompetitionService {
 
         User user = userRepository.findById(request.getCompetitionLeaderId())
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID));
-
-        if (user.getRole() != Role.LEADER) {
-            throw new InvalidException(ErrorMessage.User.USER_IS_NOT_LEADER);
-        }
-
         if (request.getStartTime().isAfter(request.getEndTime()))
             throw new InvalidException(ErrorMessage.Competition.START_TIME_MUST_BEFORE_END_TIME);
         Competition competition = competitionMapper.toCompetition(request);
@@ -94,8 +90,9 @@ public class CompetitionServiceImpl implements CompetitionService {
         Competition competition = findCompetitionByIdOrElseThrow(id);
 
         UserResponse currentUser = userService.getCurrentUser();
-        if (!currentUser.getId().equals(competition.getCompetitionLeaderId()) && currentUser.getRole() != Role.ADMIN) {
-            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!authorizationService.isCompetitionLeaderOrAdmin(competition, authentication)) {
+            throw new ForbiddenException(ErrorMessage.FORBIDDEN);
         }
 
         if (request.getStartTime() != null && request.getEndTime() != null) {
@@ -142,8 +139,8 @@ public class CompetitionServiceImpl implements CompetitionService {
     public void deleteCompetition(String id) {
         Competition competition = findCompetitionByIdOrElseThrow(id);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!authorizationService.isCreatorOrAdmin(competition, authentication))
-            throw new AccessDeniedException(ErrorMessage.FORBIDDEN);
+        if (!authorizationService.isCompetitionLeaderOrAdmin(competition, authentication))
+            throw new ForbiddenException(ErrorMessage.FORBIDDEN);
         competitionRepository.deleteById(id);
     }
 

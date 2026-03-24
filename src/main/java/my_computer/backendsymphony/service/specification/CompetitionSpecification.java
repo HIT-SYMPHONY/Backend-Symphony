@@ -7,7 +7,6 @@ import my_computer.backendsymphony.domain.entity.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public final class CompetitionSpecification {
@@ -15,18 +14,23 @@ public final class CompetitionSpecification {
     }
 
     public static Specification<Competition> hasStatus(CompetitionStatus status) {
-        if (status == null) return null;
-        LocalDateTime today = LocalDateTime.now();
+        if (status == null) {
+            return (root, query, cb) -> cb.conjunction();
+        }
+        LocalDateTime now = LocalDateTime.now();
         return switch (status) {
             case UPCOMING -> (root, query, cb) ->
-                    cb.greaterThan(root.get(Competition_.startTime), today);
+                    cb.greaterThan(root.get(Competition_.startTime), now);
+
             case ONGOING -> (root, query, cb) ->
                     cb.and(
-                            cb.greaterThan(root.get(Competition_.startTime), today),
-                            cb.lessThan(root.get(Competition_.endTime), today)
+                            cb.lessThanOrEqualTo(root.get(Competition_.startTime), now),
+                            cb.greaterThanOrEqualTo(root.get(Competition_.endTime), now)
                     );
+
             case COMPLETED -> (root, query, cb) ->
-                    cb.lessThan(root.get(Competition_.endTime), today);
+                    cb.lessThan(root.get(Competition_.endTime), now);
+
             default -> (root, query, cb) -> cb.conjunction();
         };
     }

@@ -8,8 +8,7 @@ import my_computer.backendsymphony.constant.SortByDataConstant;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
 import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
 import my_computer.backendsymphony.domain.dto.request.AddMembersToCompetitionRequest;
-import my_computer.backendsymphony.domain.dto.request.CompetitionFilterRequest;
-import my_computer.backendsymphony.domain.dto.request.JoinCompetitionRequest;
+import my_computer.backendsymphony.domain.dto.request.CompetitionUserUpdateRequest;
 import my_computer.backendsymphony.domain.dto.request.UserFilterRequest;
 import my_computer.backendsymphony.domain.dto.response.CompetitionUserResponse;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
@@ -19,6 +18,7 @@ import my_computer.backendsymphony.domain.entity.CompetitionUser;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.CompetitionUserMapper;
 import my_computer.backendsymphony.domain.mapper.UserMapper;
+import my_computer.backendsymphony.exception.ForbiddenException;
 import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.exception.UnauthorizedException;
@@ -32,12 +32,14 @@ import my_computer.backendsymphony.util.PaginationUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -51,20 +53,37 @@ public class CompetitionUserServiceImpl implements CompetitionUserService {
     private final CompetitionUserMapper competitionUserMapper;
 
     @Override
-    @Transactional
-    public CompetitionUserResponse joinCompetition(JoinCompetitionRequest request) {
-        String userId = userService.getCurrentUser().getId();
-        String competitionId = request.getCompetitionId();
+    public boolean isUserParticipating(String userId, String competitionId) {
+        Optional<CompetitionUser> competitionUser = competitionUserRepository.findByUser_IdAndCompetition_Id(userId, competitionId);
+        return competitionUser.isPresent();
+    }
 
-        if (competitionUserRepository.existsByUser_IdAndCompetition_Id(userId, competitionId)) {
+    @Override
+    @Transactional
+    public CompetitionUserResponse updateCompetitionUser(String id, String userId, CompetitionUserUpdateRequest request) {
+        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!Objects.equals(currentUserId, userId))
+            throw new ForbiddenException(ErrorMessage.FORBIDDEN);
+        CompetitionUser competitionUser = competitionUserRepository
+                .findByUser_IdAndCompetition_Id(userId, id)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.CompetitionUser.ERR_NOT_FOUND));
+        competitionUserMapper.updateCompetitionUser(competitionUser, request);
+        return competitionUserMapper.toResponse(competitionUserRepository.save(competitionUser));
+    }
+
+    @Override
+    @Transactional
+    public CompetitionUserResponse registerCompetition(String id) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (competitionUserRepository.existsByUser_IdAndCompetition_Id(userId, id)) {
             throw new InvalidException(ErrorMessage.CompetitionUser.ALREADY_JOINED);
         }
 
-        Competition competition = competitionRepository.findById(competitionId)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.Competition.ERR_NOT_FOUND_ID));
-
-        if (LocalDateTime.now().isBefore(competition.getStartTime()) || LocalDateTime.now().isAfter(competition.getEndTime())) {
-            throw new InvalidException(ErrorMessage.Competition.INVALID_TIME_PERIOD);
+        Competition competition = competitionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Competition.ERR_NOT_FOUND_ID, new String[]{id}));
+        boolean isBeforeCompetition = LocalDateTime.now().isBefore(competition.getStartTime());
+        if (!isBeforeCompetition) {
+            throw new InvalidException(ErrorMessage.CompetitionUser.AFTER_REGISTER_PERIOD);
         }
 
         User user = userRepository.findById(userId)

@@ -92,6 +92,14 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         return currentUserId.equals(competition.getCreatedBy());
     }
 
+    public boolean isCompetitionLeaderOrAdmin(Competition competition, Authentication authentication) {
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String role = jwt.getClaimAsString("scope");
+        if (role.equals(Role.ADMIN.name())) return true;
+        String currentUserId = jwt.getSubject();
+        return currentUserId.equals(competition.getCompetitionLeaderId());
+    }
+
     public boolean canModifyPost(Authentication authentication, Post post) {
         if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
             return false;

@@ -11,7 +11,7 @@ import my_computer.backendsymphony.constant.ErrorMessage;
 @NoArgsConstructor
 @Getter
 @Setter
-public class CompetitionRegisterRequest {
+public class CompetitionRegistrationRequest {
 
     @NotBlank(message = ErrorMessage.Validation.NOT_BLANK)
     private String competitionId;

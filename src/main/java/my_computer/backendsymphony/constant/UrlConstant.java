@@ -88,11 +88,11 @@ public class UrlConstant {
 
     public static class CommentCompetition {
         private static final String PRE_FIX = "/competition-comments";
-        public static final String COMMENT_COMPETITION_COMMON = PRE_FIX;
-        public static final String BY_COMPETITION_ID = PRE_FIX + "/by-competition/{competitionId}";
         public static final String COMMENT_COMPETITION_ID = PRE_FIX + "/{id}";
         public static final String COMMENT_COMPETITION_SCORE = PRE_FIX + "/{id}";
-        public static final String MY_COMMENTS_IN_COMPETITION = PRE_FIX + "/competition/{competitionId}/mine";
+        public static final String GET_COMPETITION_COMMENTS = Competition.COMPETITION_ID + "/comments";
+        public static final String GET_MY_COMPETITION_COMMENTS = GET_COMPETITION_COMMENTS + "/me";
+        public static final String COMMENT_COMPETITION_CONTENT = PRE_FIX + "/{id}/content";
     }
 
     public static class CommentPost {
@@ -104,7 +104,8 @@ public class UrlConstant {
 
     public static class CompetitionUser {
         private static final String PRE_FIX = "/competition-users";
-        public static final String JOIN = PRE_FIX + "/join";
+        public static final String COMPETITION_USER_COMMON = Competition.COMPETITION_ID + "/users";
+        public static final String COMPETITION_USER_ID = COMPETITION_USER_COMMON + "/{userId}";
         public static final String ADD_MULTIPLE = PRE_FIX + "/add-multiple";
         public static final String REMOVE_MULTIPLE = PRE_FIX + "/remove-multiple";
         public static final String MEMBERS = PRE_FIX + "/{id}" + "/members";

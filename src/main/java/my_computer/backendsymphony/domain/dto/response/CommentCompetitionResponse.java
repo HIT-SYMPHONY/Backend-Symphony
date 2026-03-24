@@ -18,12 +18,16 @@ public class CommentCompetitionResponse {
     private Double score;
 
     private String content;
+    
+    private String feedback;
 
-   private LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
-   private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 
-   private String createdByUserName;
-
-    private String competitionName;
+    private String fullName;
+    
+    private String studentCode;
+    
+    private String createdBy;
 }

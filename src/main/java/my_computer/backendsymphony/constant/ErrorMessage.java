@@ -77,11 +77,13 @@ public class ErrorMessage {
 
     public static class CommentCompetition {
         public static final String ERR_NOT_FOUND_ID= "Không tìm phần trả lời nào cuộc thi nào với id: %s";
+        public static final String CANNOT_COMMENT_BEFORE_REGISTER = "Không thể trả lời trước khi đăng kí";
     }
 
     public static class CompetitionUser {
         public static final String ALREADY_JOINED = "Người dùng đã tham gia cuộc thi, không thể tham gia lại";
         public static final String ERR_NOT_FOUND = "Không thể tìm thấy người dùng này trong cuộc thi này";
+        public static final String AFTER_REGISTER_PERIOD = "Thời gian đăng kí cuộc thi đã hết";
     }
 
     public static class Lesson {
