@@ -1,26 +1,24 @@
 package my_computer.backendsymphony.domain.dto.response;
 
-import lombok.AccessLevel;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import my_computer.backendsymphony.constant.CompetitionStatus;
-import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class CompetitionResponse {
-    String id;
-    String name;
-    String rule;
-    String description;
-    String image;
-    String competitionLeaderId;
-    LocalDateTime startTime;
-    LocalDateTime endTime;
+@NoArgsConstructor
+@AllArgsConstructor
+public class CompetitionSummaryResponse {
+    private String id;
+    private String name;
+    private String image;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private Boolean isRegistered;
     CompetitionStatus status;
     public CompetitionStatus getStatus() {
         if (startTime == null || endTime == null) return null;

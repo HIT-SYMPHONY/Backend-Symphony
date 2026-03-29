@@ -89,10 +89,9 @@ public class UrlConstant {
     public static class CommentCompetition {
         private static final String PRE_FIX = "/competition-comments";
         public static final String COMMENT_COMPETITION_ID = PRE_FIX + "/{id}";
-        public static final String COMMENT_COMPETITION_SCORE = PRE_FIX + "/{id}";
         public static final String GET_COMPETITION_COMMENTS = Competition.COMPETITION_ID + "/comments";
         public static final String GET_MY_COMPETITION_COMMENTS = GET_COMPETITION_COMMENTS + "/me";
-        public static final String COMMENT_COMPETITION_CONTENT = PRE_FIX + "/{id}/content";
+        public static final String COMMENT_COMPETITION_CONTENT = GET_MY_COMPETITION_COMMENTS;
     }
 
     public static class CommentPost {

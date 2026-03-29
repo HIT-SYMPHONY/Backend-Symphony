@@ -16,7 +16,6 @@ import my_computer.backendsymphony.domain.entity.CommentPost;
 import my_computer.backendsymphony.domain.entity.Post;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.CommentPostMapper;
-import my_computer.backendsymphony.exception.DuplicateResourceException;
 import my_computer.backendsymphony.exception.ForbiddenException;
 import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;

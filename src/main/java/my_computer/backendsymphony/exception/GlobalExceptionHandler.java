@@ -119,7 +119,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<RestData<?>> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
         return VsResponseUtil.error(HttpStatus.METHOD_NOT_ALLOWED, ErrorMessage.HTTP_METHOD_NOT_SUPPORTED);
-
     }
 
 

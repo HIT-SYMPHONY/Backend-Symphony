@@ -11,7 +11,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface CompetitionUserRepository extends JpaRepository<CompetitionUser, CompetitionUserId> {
@@ -23,4 +26,11 @@ public interface CompetitionUserRepository extends JpaRepository<CompetitionUser
     @Query("SELECT cu.user FROM CompetitionUser cu WHERE cu.competition.id = :competitionId")
     Page<User> findUsersByCompetitionId(@Param("competitionId") String competitionId, Pageable pageable);
 
+    @Query("SELECT cu.competition.id FROM CompetitionUser cu WHERE cu.user.id = :userId AND cu.competition.id IN :competitionIds")
+    Set<String> findRegisteredCompetitionIds(
+            @Param("userId") String userId,
+            @Param("competitionIds") List<String> competitionIds
+    );
+
+    List<CompetitionUser> findByUser_IdAndCompetition_IdIn(String currentUserId, List<String> compIds);
 }

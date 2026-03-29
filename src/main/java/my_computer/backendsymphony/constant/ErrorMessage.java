@@ -76,7 +76,7 @@ public class ErrorMessage {
     }
 
     public static class CommentCompetition {
-        public static final String ERR_NOT_FOUND_ID= "Không tìm phần trả lời nào cuộc thi nào với id: %s";
+        public static final String ERR_NOT_FOUND_ID= "Không tìm thấy phần trả lời nào cho cuộc thi với id: %s";
         public static final String CANNOT_COMMENT_BEFORE_REGISTER = "Không thể trả lời trước khi đăng kí";
     }
 

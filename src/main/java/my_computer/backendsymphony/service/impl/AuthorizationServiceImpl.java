@@ -21,6 +21,16 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private final LessonRepository lessonRepository;
 
     @Override
+    public boolean isAdmin(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            return false;
+        }
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String role = jwt.getClaimAsString("scope");
+        return role.equals(Role.ADMIN.name());
+    }
+
+    @Override
     public boolean isClassLeader(Authentication authentication, String classRoomId) {
 
         if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {

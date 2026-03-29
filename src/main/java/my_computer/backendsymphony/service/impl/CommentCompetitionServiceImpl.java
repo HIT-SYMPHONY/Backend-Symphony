@@ -1,9 +1,12 @@
 package my_computer.backendsymphony.service.impl;
 
 import lombok.AllArgsConstructor;
-import my_computer.backendsymphony.constant.CompetitionUserStatus;
 import my_computer.backendsymphony.constant.ErrorMessage;
+import my_computer.backendsymphony.constant.SortByDataConstant;
+import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
+import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
 import my_computer.backendsymphony.domain.dto.request.CommentCompetitionRequest;
+import my_computer.backendsymphony.domain.dto.request.CommentCompetitionFilterRequest;
 import my_computer.backendsymphony.domain.dto.request.CommentCompetitionUpdateRequest;
 import my_computer.backendsymphony.domain.dto.request.MarkRequest;
 import my_computer.backendsymphony.domain.dto.response.CommentCompetitionResponse;
@@ -13,6 +16,7 @@ import my_computer.backendsymphony.domain.entity.Competition;
 import my_computer.backendsymphony.domain.entity.CompetitionUser;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.CommentCompetitionMapper;
+import my_computer.backendsymphony.exception.DuplicateResourceException;
 import my_computer.backendsymphony.exception.ForbiddenException;
 import my_computer.backendsymphony.exception.InvalidException;
 import my_computer.backendsymphony.exception.NotFoundException;
@@ -24,11 +28,13 @@ import my_computer.backendsymphony.service.AuthorizationService;
 import my_computer.backendsymphony.service.CommentCompetitionService;
 import my_computer.backendsymphony.service.CompetitionUserService;
 import my_computer.backendsymphony.service.UserService;
+import my_computer.backendsymphony.util.PaginationUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.ErrorResponseException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -92,7 +98,7 @@ public class CommentCompetitionServiceImpl implements CommentCompetitionService 
 
     @Override
     @Transactional(readOnly = true)
-    public List<CommentCompetitionResponse> getAllCommentOfCompetition(String competitionId) {
+    public PaginationResponseDto<CommentCompetitionResponse> getAllCommentOfCompetition(String competitionId, CommentCompetitionFilterRequest request) {
 
         Competition competition = competitionRepository.findById(competitionId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.Competition.ERR_NOT_FOUND_ID, new String[]{competitionId}));
@@ -103,12 +109,15 @@ public class CommentCompetitionServiceImpl implements CommentCompetitionService 
             throw new ForbiddenException(ErrorMessage.FORBIDDEN);
         }
 
-        List<CommentCompetition> comments = commentCompetitionRepository
-                .findCommentsByCompetitionId(competitionId);
+        Pageable pageable = PaginationUtil.buildPageable(request, SortByDataConstant.COMMENT_COMPETITION);
+        Page<CommentCompetition> commentCompetitionPage = commentCompetitionRepository
+                .findCommentsByCompetitionId(competitionId, pageable);
 
-        List<CommentCompetitionResponse> responses = commentCompetitionMapper.toListResponse(comments);
+        List<CommentCompetitionResponse> responses = commentCompetitionMapper.toListResponse(commentCompetitionPage.getContent());
         populateUserDetails(responses);
-        return responses;
+
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, SortByDataConstant.COMMENT_COMPETITION, commentCompetitionPage);
+        return new PaginationResponseDto<>(meta, responses);
     }
 
     @Override
@@ -131,7 +140,7 @@ public class CommentCompetitionServiceImpl implements CommentCompetitionService 
 
     @Override
     @Transactional
-    public List<CommentCompetitionResponse> getMyCommentsInCompetition(String competitionId) {
+    public CommentCompetitionResponse getMyCommentInCompetition(String competitionId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserId = authentication.getName();
 
@@ -144,16 +153,15 @@ public class CommentCompetitionServiceImpl implements CommentCompetitionService 
             throw new ForbiddenException(ErrorMessage.FORBIDDEN);
         }
 
-        List<CommentCompetition> comments = commentCompetitionRepository
-                .findByUserIdAndCompetitionId(currentUserId, competitionId);
+        CommentCompetition comment = commentCompetitionRepository
+                .findByUserIdAndCompetitionId(currentUserId, competitionId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.CommentCompetition.ERR_NOT_FOUND_ID, new String[]{competitionId}));
 
-        List<CommentCompetitionResponse> responses = commentCompetitionMapper.toListResponse(comments);
+        CommentCompetitionResponse response = commentCompetitionMapper.toResponse(comment);
         UserResponse currentUser = userService.getCurrentUser();
-        responses.forEach(res -> {
-            res.setFullName(currentUser.getFullName());
-            res.setStudentCode(currentUser.getStudentCode());
-        });
-        return responses;
+        response.setFullName(currentUser.getFullName());
+        response.setStudentCode(currentUser.getStudentCode());
+        return response;
     }
 
     @Override
@@ -213,7 +221,7 @@ public class CommentCompetitionServiceImpl implements CommentCompetitionService 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserId = authentication.getName();
 
-        CommentCompetition commentCompetition = commentCompetitionRepository.findById(id)
+        CommentCompetition commentCompetition = commentCompetitionRepository.findByUserIdAndCompetitionId(currentUserId, id)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.CommentCompetition.ERR_NOT_FOUND_ID, new String[]{id}));
 
         Competition competition = commentCompetition.getCompetition();
@@ -234,7 +242,6 @@ public class CommentCompetitionServiceImpl implements CommentCompetitionService 
         CommentCompetition savedComment = commentCompetitionRepository.save(commentCompetition);
 
         CommentCompetitionResponse response = commentCompetitionMapper.toResponse(savedComment);
-        // Use current user details since the caller is the creator
         UserResponse currentUser = userService.getCurrentUser();
         response.setFullName(currentUser.getFullName());
         response.setStudentCode(currentUser.getStudentCode());

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
+import my_computer.backendsymphony.domain.dto.request.CommentCompetitionFilterRequest;
 import my_computer.backendsymphony.domain.dto.request.CommentCompetitionRequest;
 import my_computer.backendsymphony.domain.dto.request.CommentCompetitionUpdateRequest;
 import my_computer.backendsymphony.domain.dto.request.MarkRequest;
@@ -31,13 +32,13 @@ public class CommentCompetitionController {
     }
 
     @GetMapping(UrlConstant.CommentCompetition.GET_COMPETITION_COMMENTS)
-    public ResponseEntity<?> getAllCommentOfCompetition(@PathVariable String id) {
-        return VsResponseUtil.success(commentCompetitionService.getAllCommentOfCompetition(id));
+    public ResponseEntity<?> getAllCommentOfCompetition(@PathVariable String id, CommentCompetitionFilterRequest request) {
+        return VsResponseUtil.success(commentCompetitionService.getAllCommentOfCompetition(id, request));
     }
 
     @GetMapping(UrlConstant.CommentCompetition.GET_MY_COMPETITION_COMMENTS)
     public ResponseEntity<?> getMyCommentsInCompetition(@PathVariable String id) {
-        return VsResponseUtil.success(commentCompetitionService.getMyCommentsInCompetition(id));
+        return VsResponseUtil.success(commentCompetitionService.getMyCommentInCompetition(id));
     }
 
     @GetMapping(UrlConstant.CommentCompetition.COMMENT_COMPETITION_ID)
@@ -50,7 +51,7 @@ public class CommentCompetitionController {
         return VsResponseUtil.success(commentCompetitionService.markCommentCompetition(id, request));
     }
 
-    @PatchMapping(UrlConstant.CommentCompetition.COMMENT_COMPETITION_CONTENT)
+    @PatchMapping(UrlConstant.CommentCompetition.GET_MY_COMPETITION_COMMENTS)
     public ResponseEntity<?> updateMyComment(@PathVariable String id, @Valid @RequestBody CommentCompetitionUpdateRequest request) {
         return VsResponseUtil.success(commentCompetitionService.updateMyComment(id, request));
     }
