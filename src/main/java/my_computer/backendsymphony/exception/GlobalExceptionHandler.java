@@ -64,7 +64,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UploadFileException.class)
     public ResponseEntity<RestData<?>> handleUploadFileException(UploadFileException ex) {
-        log.error("Error upload: ", ex);
         return VsResponseUtil.error(ex.getStatus(), ex.getMessage());
     }
 
@@ -112,7 +111,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<RestData<?>> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
-        log.warn("File upload failed: The file exceeds the maximum allowed size.");
         return VsResponseUtil.error(HttpStatus.PAYLOAD_TOO_LARGE, ErrorMessage.File.FILE_TOO_LARGE);
     }
 

@@ -117,6 +117,7 @@ public class CompetitionServiceImpl implements CompetitionService {
         );
         spec = spec.and(CompetitionSpecification.hasStartYear(request.getStartYear()));
         spec = spec.and(CompetitionSpecification.matchesKeyword(request.getKeyword()));
+        spec = spec.and(CompetitionSpecification.hasLeaderId(request.getLeaderId()));
         Page<Competition> competitionPage = competitionRepository.findAll(spec, pageable);
 
         Set<String> registeredIds = new HashSet<>();

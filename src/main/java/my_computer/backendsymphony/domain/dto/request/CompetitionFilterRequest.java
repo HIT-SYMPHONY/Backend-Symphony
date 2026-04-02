@@ -15,4 +15,6 @@ import java.time.LocalDateTime;
 public class CompetitionFilterRequest extends PaginationFullRequestDto {
     CompetitionStatus status;
     Integer startYear;
+    String leaderId;
 }
+ 

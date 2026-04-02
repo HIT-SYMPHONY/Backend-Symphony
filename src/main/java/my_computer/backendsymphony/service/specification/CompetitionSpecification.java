@@ -69,4 +69,12 @@ public final class CompetitionSpecification {
         };
     }
 
+    public static Specification<Competition> hasLeaderId(String leaderId) {
+        if (!StringUtils.hasText(leaderId)) {
+            return null;
+        }
+        return (root, query, cb) ->
+                cb.equal(root.get(Competition_.competitionLeaderId), leaderId);
+    }
+
 }

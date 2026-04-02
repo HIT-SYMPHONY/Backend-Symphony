@@ -4,6 +4,7 @@ import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
 import my_computer.backendsymphony.domain.dto.request.AddMembersToCompetitionRequest;
 import my_computer.backendsymphony.domain.dto.request.CompetitionUserUpdateRequest;
 import my_computer.backendsymphony.domain.dto.request.UserFilterRequest;
+import my_computer.backendsymphony.domain.dto.response.CompetitionMemberResponse;
 import my_computer.backendsymphony.domain.dto.response.CompetitionUserResponse;
 import my_computer.backendsymphony.domain.dto.response.UserSummaryResponse;
 
@@ -14,7 +15,7 @@ public interface CompetitionUserService {
     CompetitionUserResponse registerCompetition(String id);
     List<CompetitionUserResponse> addMembersToCompetition(AddMembersToCompetitionRequest request);
     List<CompetitionUserResponse> removeMembersFromCompetition(AddMembersToCompetitionRequest request);
-    PaginationResponseDto<UserSummaryResponse> getMembersCompetition(String competitionId, UserFilterRequest request);
+    PaginationResponseDto<CompetitionMemberResponse> getMembersCompetition(String competitionId, UserFilterRequest request);
     PaginationResponseDto<UserSummaryResponse> getNonMembersCompetition(String competitionId, UserFilterRequest request);
     boolean isUserParticipating(String userId, String competitionId);
 }

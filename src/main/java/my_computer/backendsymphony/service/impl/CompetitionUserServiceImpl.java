@@ -10,6 +10,7 @@ import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
 import my_computer.backendsymphony.domain.dto.request.AddMembersToCompetitionRequest;
 import my_computer.backendsymphony.domain.dto.request.CompetitionUserUpdateRequest;
 import my_computer.backendsymphony.domain.dto.request.UserFilterRequest;
+import my_computer.backendsymphony.domain.dto.response.CompetitionMemberResponse;
 import my_computer.backendsymphony.domain.dto.response.CompetitionUserResponse;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
 import my_computer.backendsymphony.domain.dto.response.UserSummaryResponse;
@@ -27,6 +28,7 @@ import my_computer.backendsymphony.repository.CompetitionUserRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.CompetitionUserService;
 import my_computer.backendsymphony.service.UserService;
+import my_computer.backendsymphony.service.specification.CompetitionUserSpecification;
 import my_computer.backendsymphony.service.specification.UserSpecification;
 import my_computer.backendsymphony.util.PaginationUtil;
 import org.springframework.data.domain.Page;
@@ -168,23 +170,26 @@ public class CompetitionUserServiceImpl implements CompetitionUserService {
 
     @Override
     @Transactional(readOnly = true)
-    public PaginationResponseDto<UserSummaryResponse> getMembersCompetition(String competitionId, UserFilterRequest request) {
+    public PaginationResponseDto<CompetitionMemberResponse> getMembersCompetition(String competitionId, UserFilterRequest request) {
         Competition competition = competitionRepository.findById(competitionId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.Competition.ERR_NOT_FOUND_ID, new String[]{competitionId}));
         UserResponse currentUser = userService.getCurrentUser();
         if (currentUser.getRole() != Role.ADMIN && !Objects.equals(competition.getCompetitionLeaderId(), currentUser.getId())) {
             throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
         }
+
         Pageable pageable = PaginationUtil.buildPageable(request, SortByDataConstant.USER);
-        Specification<User> spec = Specification.where(
-                UserSpecification.isMemberOfCompetition(competitionId)
+        Specification<CompetitionUser> spec = Specification.where(
+                CompetitionUserSpecification.withUserFetched()
         );
-        spec = spec.and(UserSpecification.hasRole(request.getRole()));
-        spec = spec.and(UserSpecification.hasIntake(request.getIntake()));
-        spec = spec.and(UserSpecification.matchesKeyword(request.getKeyword()));
-        Page<User> userPage = userRepository.findAll(spec, pageable);
-        List<UserSummaryResponse> responseList = userMapper.toUserSummaryResponseList(userPage.getContent());
-        PagingMeta meta = PaginationUtil.buildPagingMeta(request, SortByDataConstant.USER, userPage);
+        spec = spec.and(CompetitionUserSpecification.isMemberOfCompetition(competitionId));
+        spec = spec.and(CompetitionUserSpecification.hasRole(request.getRole()));
+        spec = spec.and(CompetitionUserSpecification.hasIntake(request.getIntake()));
+        spec = spec.and(CompetitionUserSpecification.matchesKeyword(request.getKeyword()));
+
+        Page<CompetitionUser> competitionUserPage = competitionUserRepository.findAll(spec, pageable);
+        List<CompetitionMemberResponse> responseList = competitionUserMapper.toCompetitionMemberResponseList(competitionUserPage.getContent());
+        PagingMeta meta = PaginationUtil.buildPagingMeta(request, SortByDataConstant.USER, competitionUserPage);
 
         return new PaginationResponseDto<>(meta, responseList);
     }
