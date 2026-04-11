@@ -32,7 +32,7 @@ public class CommentCompetitionController {
     }
 
     @GetMapping(UrlConstant.CommentCompetition.GET_COMPETITION_COMMENTS)
-    public ResponseEntity<?> getAllCommentOfCompetition(@PathVariable String id, CommentCompetitionFilterRequest request) {
+    public ResponseEntity<?> getAllCommentsOfCompetition(@PathVariable String id, CommentCompetitionFilterRequest request) {
         return VsResponseUtil.success(commentCompetitionService.getAllCommentOfCompetition(id, request));
     }
 
@@ -55,5 +55,4 @@ public class CommentCompetitionController {
     public ResponseEntity<?> updateMyComment(@PathVariable String id, @Valid @RequestBody CommentCompetitionUpdateRequest request) {
         return VsResponseUtil.success(commentCompetitionService.updateMyComment(id, request));
     }
-
 }

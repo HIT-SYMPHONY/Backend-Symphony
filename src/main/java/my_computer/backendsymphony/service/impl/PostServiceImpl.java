@@ -9,14 +9,17 @@ import my_computer.backendsymphony.domain.dto.pagination.PagingMeta;
 import my_computer.backendsymphony.domain.dto.request.PostFilterRequest;
 import my_computer.backendsymphony.domain.dto.request.PostRequest;
 import my_computer.backendsymphony.domain.dto.response.PostResponse;
+import my_computer.backendsymphony.domain.dto.response.PostWithScoreResponse;
 import my_computer.backendsymphony.domain.dto.response.UserResponse;
 import my_computer.backendsymphony.domain.entity.ClassRoom;
+import my_computer.backendsymphony.domain.entity.CommentPost;
 import my_computer.backendsymphony.domain.entity.Post;
 import my_computer.backendsymphony.domain.entity.User;
 import my_computer.backendsymphony.domain.mapper.PostMapper;
 import my_computer.backendsymphony.exception.NotFoundException;
 import my_computer.backendsymphony.exception.UnauthorizedException;
 import my_computer.backendsymphony.repository.ClassRoomRepository;
+import my_computer.backendsymphony.repository.CommentPostRepository;
 import my_computer.backendsymphony.repository.PostRepository;
 import my_computer.backendsymphony.repository.UserRepository;
 import my_computer.backendsymphony.service.AuthorizationService;
@@ -38,34 +41,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final ClassRoomRepository classRoomRepository;
     private final PostMapper postMapper;
     private final ClassRoomRepository classroomRepository;
     private final UserService userService;
     private final UserRepository userRepository;
     private final AuthorizationService authorizationService;
+    private final CommentPostRepository commentPostRepository;
 
     @Override
     @Transactional
     public PostResponse createPost(PostRequest postRequest) {
-
-        ClassRoom classRoom = classroomRepository.findById(postRequest.getClassRoomId())
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND_ID,
-                        new String[]{postRequest.getClassRoomId()}));
-
-        UserResponse user = userService.getCurrentUser();
-
-        if (user.getRole() == Role.LEADER) {
-            if (!user.getId().equals(classRoom.getLeaderId())) {
-                throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
-            }
+        ClassRoom classRoom = classRoomRepository.findById(postRequest.getClassRoomId())
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND_ID, new String[]{postRequest.getClassRoomId()}));
+        if (!authorizationService.isLeaderOfClassroomOrAdmin(classRoom, SecurityContextHolder.getContext().getAuthentication())) {
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
         }
-
         Post post = postMapper.toEntity(postRequest);
         post.setClassRoom(classRoom);
         Post savedPost = postRepository.save(post);
@@ -73,7 +69,6 @@ public class PostServiceImpl implements PostService {
         enrichPostResponses(Collections.singletonList(response));
         return response;
     }
-
 
     @Override
     @Transactional
@@ -94,9 +89,8 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public void deletePost(String postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID, new String[]{postId}));
-        UserResponse currentUser = userService.getCurrentUser();
-        if (currentUser.getRole() != Role.ADMIN && !currentUser.getId().equals(post.getClassRoom().getLeaderId())) {
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Post.ERR_NOT_FOUND_ID));
+        if (!authorizationService.isLeaderOfClassroomOrAdmin(post.getClassRoom(), SecurityContextHolder.getContext().getAuthentication())) {
             throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
         }
         postRepository.delete(post);
@@ -122,6 +116,33 @@ public class PostServiceImpl implements PostService {
         List<PostResponse> postResponseList = postMapper.toResponseList(posts);
         enrichPostResponses(postResponseList);
         return postResponseList;
+    }
+
+    @Override
+    public List<PostWithScoreResponse> getClassroomPostsWithScore(String classId, PostFilterRequest requestDto) {
+        ClassRoom classroom = classroomRepository.findById(classId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND_ID,
+                        new String[]{classId}));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserId = authentication.getName();
+
+        boolean isValidMember = classroomRepository.existsByIdAndMembers_Id(classId, currentUserId);
+        boolean isValidLeaderOrAdmin = authorizationService.isLeaderOfClassroomOrAdmin(classroom,authentication);
+
+        if (!isValidMember && !isValidLeaderOrAdmin) {
+            throw new UnauthorizedException(ErrorMessage.FORBIDDEN);
+        }
+
+        Specification<Post> spec = Specification.where(PostSpecification.hasClassroomId(classId));
+        Sort sort = PaginationUtil.buildSort(requestDto, SortByDataConstant.POST);
+        List<Post> posts = postRepository.findAll(spec, sort);
+
+        List<String> postIds = posts.stream().map(Post::getId).toList();
+        Map<String, CommentPost> commentMap = commentPostRepository.findByPost_IdInAndCreatedBy(postIds, currentUserId)
+                .stream()
+                .collect(Collectors.toMap(c -> c.getPost().getId(), c -> c));
+
+        return postMapper.toPostWithScoreResponseList(posts, commentMap);
     }
 
     @Override

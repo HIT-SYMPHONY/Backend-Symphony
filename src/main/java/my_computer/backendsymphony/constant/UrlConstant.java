@@ -50,6 +50,7 @@ public class UrlConstant {
     public static class Classroom {
         private static final String PRE_FIX = "/classrooms";
         public static final String CLASSROOM_COMMON = PRE_FIX;
+        public static final String CLASSROOM_SUMMARIES = PRE_FIX + "/summaries";
         public static final String CLASSROOM_ID = PRE_FIX + "/{id}";
         public static final String MEMBERS = PRE_FIX + "/{id}" + "/members";
         public static final String NON_MEMBERS = PRE_FIX + "/{id}/non-members";
@@ -75,6 +76,7 @@ public class UrlConstant {
         public static final String POST_COMMON = PRE_FIX;
         public static final String POST_ID = PRE_FIX + "/{id}";
         public static final String GET_POSTS_BY_CLASSROOM_ID = Classroom.CLASSROOM_ID + "/posts";
+        public static final String GET_POSTS_WITH_SCORE_BY_CLASSROOM_ID = Classroom.CLASSROOM_ID + "/posts/score";
     }
 
     public static class Competition {

@@ -91,7 +91,6 @@ public class UserServiceImpl implements UserService {
 
         user.setUsername(generateUsername(request.getStudentCode()));
         String rawPassword = generatePassword(request.getStudentCode());
-        System.out.println(rawPassword);
         user.setImageUrl("https://res.cloudinary.com/dh6qzqf73/image/upload/v1753189854/lhqcxppwnnm0l4ixrjwz.jpg");
         user.setPassword(passwordEncoder.encode(rawPassword));
         user.setRole(Role.USER);
@@ -156,9 +155,6 @@ public class UserServiceImpl implements UserService {
         }
 
         userMapper.toUser(request, user);
-
-        user.setFullName(user.getFirstName() + " " + user.getLastName());
-
         return userMapper.toUserResponse(userRepository.save(user));
     }
 

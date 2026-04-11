@@ -45,6 +45,11 @@ public class PostController {
         return VsResponseUtil.success(postService.getPostsOfClass(id, requestDto));
     }
 
+    @GetMapping(UrlConstant.Post.GET_POSTS_WITH_SCORE_BY_CLASSROOM_ID)
+    public ResponseEntity<?> getClassroomPostsWithScore(@PathVariable String id, @ModelAttribute PostFilterRequest requestDto) {
+        return VsResponseUtil.success(postService.getClassroomPostsWithScore(id, requestDto));
+    }
+
     @GetMapping(UrlConstant.Post.POST_ID)
     public ResponseEntity<?> getPostById(@PathVariable String id) {
         return VsResponseUtil.success(postService.getPostById(id));

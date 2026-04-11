@@ -20,4 +20,6 @@ public interface CommentPostRepository extends JpaRepository<CommentPost, String
     Page<CommentPost> findByPostId(String postId, Pageable pageable);
     
     boolean existsByPostIdAndCreatedBy(String postId, String userId);
+
+    List<CommentPost> findByPost_IdInAndCreatedBy(List<String> postIds, String userId);
 }
