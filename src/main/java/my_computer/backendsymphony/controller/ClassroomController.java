@@ -7,10 +7,10 @@ import lombok.experimental.FieldDefaults;
 import my_computer.backendsymphony.base.RestApiV1;
 import my_computer.backendsymphony.base.VsResponseUtil;
 import my_computer.backendsymphony.constant.UrlConstant;
-import my_computer.backendsymphony.domain.dto.pagination.PaginationRequestDto;
 import my_computer.backendsymphony.domain.dto.pagination.PaginationResponseDto;
 import my_computer.backendsymphony.domain.dto.request.*;
 import my_computer.backendsymphony.domain.dto.response.ClassroomResponse;
+import my_computer.backendsymphony.domain.dto.response.ClassroomSummaryResponse;
 import my_computer.backendsymphony.service.ClassroomService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -60,6 +60,11 @@ public class ClassroomController {
     public ResponseEntity<?> getAllClassrooms(@ModelAttribute ClassroomFilterRequest request) {
         PaginationResponseDto<ClassroomResponse> response = classroomService.getAllClassrooms(request);
         return VsResponseUtil.success(response);
+    }
+
+    @GetMapping(UrlConstant.Classroom.CLASSROOM_SUMMARIES)
+    public ResponseEntity<?> getAllClassroomSummaries(@ModelAttribute ClassroomFilterRequest request) {
+        return VsResponseUtil.success(classroomService.getAllClassroomSummariesForCurrentUser(request));
     }
 
     @PostMapping(UrlConstant.Classroom.MEMBERS)
